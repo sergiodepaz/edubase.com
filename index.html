@@ -1,57 +1,905 @@
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    
-    function isEduBaseUser() {
-      return request.auth != null && request.auth.token.email.matches('.*@edubase\\.es$');
-    }
-    
-    match /users/{userId} {
-      allow read: if isEduBaseUser();
-      allow create: if isEduBaseUser() && request.auth.uid == userId;
-      allow update, delete: if isEduBaseUser() && request.auth.uid == userId;
-    }
-    
-    match /courses/{courseId} {
-      allow read: if isEduBaseUser();
-      allow create: if isEduBaseUser();
-      allow update, delete: if isEduBaseUser() && resource.data.teacherId == request.auth.uid;
-      
-      match /announcements/{announcementId} {
-        allow read: if isEduBaseUser();
-        allow create: if isEduBaseUser() && get(/databases/$(database)/documents/courses/$(courseId)).data.teacherId == request.auth.uid;
-      }
-      
-      match /tasks/{taskId} {
-        allow read: if isEduBaseUser();
-        allow create: if isEduBaseUser() && get(/databases/$(database)/documents/courses/$(courseId)).data.teacherId == request.auth.uid;
-        
-        match /submissions/{submissionId} {
-          allow read: if isEduBaseUser();
-          allow create: if isEduBaseUser();
-          allow update, delete: if isEduBaseUser() && resource.data.studentId == request.auth.uid;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal EduBase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .hidden-section { display: none !important; }
+        .tab-active { background-color: #4f46e5; color: white; }
+    </style>
+</head>
+<body class="text-gray-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- ==================== AUTENTICACIÓN ==================== -->
+    <div id="auth-section" class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-indigo-600 to-blue-800">
+        <div class="glass-panel p-8 rounded-2xl shadow-2xl w-full max-w-md fade-in">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-bold text-indigo-700"><i class="fas fa-graduation-cap mr-2"></i>EduBase</h1>
+                <p class="text-gray-600 mt-2">Plataforma educativa exclusiva</p>
+            </div>
+
+            <div class="flex mb-6 bg-gray-100 rounded-lg p-1">
+                <button onclick="showAuthTab('login')" id="tab-login" class="flex-1 py-2 rounded-md bg-white shadow text-indigo-700 font-semibold transition">Iniciar Sesión</button>
+                <button onclick="showAuthTab('request')" id="tab-request" class="flex-1 py-2 rounded-md text-gray-600 hover:text-indigo-700 transition">Solicitar Acceso</button>
+            </div>
+
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Correo</label>
+                    <input type="email" id="login-email" required placeholder="usuario@edubase.es" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
+                    <input type="password" id="login-password" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <button type="submit" id="login-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition">Ingresar</button>
+                <p id="login-error" class="text-red-600 text-sm text-center bg-red-50 p-2 rounded-lg hidden-section"></p>
+            </form>
+
+            <form action="https://formspree.io/f/meaowyvj" method="POST" id="request-form" class="space-y-4 hidden-section">
+                <input type="hidden" name="_subject" value="Nueva Solicitud de Acceso EduBase">
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 text-sm text-blue-700">
+                    <i class="fas fa-info-circle mr-1"></i> Solo correos <strong>@edubase.es</strong>. El administrador te dará tus credenciales.
+                </div>
+                <input type="text" name="nombre" required placeholder="Nombre completo" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                <input type="email" name="email" required placeholder="tucorreo@edubase.es" pattern="^[a-zA-Z0-9._%+-]+@edubase\.es$" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                <select name="rol" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <option value="Alumno">Soy Alumno</option>
+                    <option value="Profesor">Soy Profesor</option>
+                </select>
+                <textarea name="mensaje" required rows="3" placeholder="Motivo de la solicitud..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition">
+                    <i class="fas fa-paper-plane mr-2"></i>Enviar Solicitud
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== APP ==================== -->
+    <div id="app-section" class="hidden-section flex-1 flex overflow-hidden">
+        <aside class="w-64 bg-slate-900 text-white flex flex-col shadow-xl">
+            <div class="p-6 border-b border-slate-700">
+                <h2 class="text-xl font-bold flex items-center"><i class="fas fa-graduation-cap mr-2 text-indigo-400"></i> EduBase</h2>
+                <p id="user-display-name" class="text-sm text-slate-400 mt-1 truncate">Usuario</p>
+                <span id="user-role-badge" class="inline-block mt-2 px-2 py-1 text-xs font-semibold rounded-full bg-indigo-600">Rol</span>
+            </div>
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+                <button onclick="showSection('dashboard', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center bg-slate-800 text-indigo-400">
+                    <i class="fas fa-home w-6"></i> Panel
+                </button>
+                <button onclick="showSection('courses', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center">
+                    <i class="fas fa-book w-6"></i> Cursos
+                </button>
+                <button onclick="showSection('inbox', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center justify-between">
+                    <span class="flex items-center"><i class="fas fa-envelope w-6"></i> Mensajes</span>
+                    <span id="inbox-badge" class="bg-red-500 text-xs px-2 py-0.5 rounded-full hidden-section">0</span>
+                </button>
+                <button onclick="showSection('chat', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center">
+                    <i class="fas fa-comments w-6"></i> Chat
+                </button>
+            </nav>
+            <div class="p-4 border-t border-slate-700">
+                <button onclick="logout()" class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition flex items-center justify-center">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Salir
+                </button>
+            </div>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto bg-gray-50 p-8">
+            <!-- DASHBOARD -->
+            <div id="section-dashboard" class="app-section fade-in">
+                <h2 class="text-2xl font-bold mb-6">Panel de Control</h2>
+                <div id="professor-dashboard" class="hidden-section space-y-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-4"><i class="fas fa-plus-circle text-indigo-600 mr-2"></i>Crear Curso</h3>
+                        <form id="create-course-form" class="space-y-4">
+                            <input type="text" id="course-name" placeholder="Nombre del curso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                            <textarea id="course-desc" placeholder="Descripción" required rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">Crear</button>
+                        </form>
+                    </div>
+                </div>
+                <div id="student-dashboard" class="hidden-section">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-4">Mis Cursos</h3>
+                        <div id="student-courses-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CURSOS LISTA -->
+            <div id="section-courses" class="app-section hidden-section fade-in">
+                <h2 class="text-2xl font-bold mb-6">Mis Cursos</h2>
+                <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </div>
+
+            <!-- VISTA DETALLADA DEL CURSO -->
+            <div id="section-course-detail" class="app-section hidden-section fade-in">
+                <div class="mb-6">
+                    <button onclick="showSection('courses')" class="text-indigo-600 hover:text-indigo-800 mb-2">
+                        <i class="fas fa-arrow-left mr-2"></i>Volver a cursos
+                    </button>
+                    <h2 id="course-detail-title" class="text-3xl font-bold"></h2>
+                    <p id="course-detail-desc" class="text-gray-600 mt-2"></p>
+                </div>
+
+                <!-- Tabs -->
+                <div class="flex gap-2 mb-6 border-b border-gray-200">
+                    <button onclick="showCourseTab('announcements', this)" class="course-tab px-6 py-3 font-semibold text-gray-600 hover:text-indigo-600 transition tab-active">
+                        <i class="fas fa-bullhorn mr-2"></i>Avisos
+                    </button>
+                    <button onclick="showCourseTab('tasks', this)" class="course-tab px-6 py-3 font-semibold text-gray-600 hover:text-indigo-600 transition">
+                        <i class="fas fa-tasks mr-2"></i>Tareas
+                    </button>
+                    <button onclick="showCourseTab('grades', this)" class="course-tab px-6 py-3 font-semibold text-gray-600 hover:text-indigo-600 transition">
+                        <i class="fas fa-chart-line mr-2"></i>Notas
+                    </button>
+                    <button onclick="showCourseTab('materials', this)" class="course-tab px-6 py-3 font-semibold text-gray-600 hover:text-indigo-600 transition">
+                        <i class="fas fa-folder-open mr-2"></i>Material
+                    </button>
+                </div>
+
+                <!-- Contenido de tabs -->
+                <div id="tab-announcements" class="course-tab-content">
+                    <div id="professor-announcement-form" class="hidden-section mb-6 bg-white p-6 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-4">Nuevo Aviso</h3>
+                        <form id="add-announcement-form" class="space-y-4">
+                            <input type="text" id="announcement-title" placeholder="Título del aviso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                            <textarea id="announcement-content" placeholder="Contenido del aviso..." required rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">Publicar Aviso</button>
+                        </form>
+                    </div>
+                    <div id="announcements-list" class="space-y-4"></div>
+                </div>
+
+                <div id="tab-tasks" class="course-tab-content hidden-section">
+                    <div id="professor-task-form" class="hidden-section mb-6 bg-white p-6 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-4">Nueva Tarea</h3>
+                        <form id="add-task-form" class="space-y-4">
+                            <input type="text" id="task-title" placeholder="Título de la tarea" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                            <textarea id="task-description" placeholder="Descripción de la tarea..." required rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            <input type="datetime-local" id="task-deadline" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">Crear Tarea</button>
+                        </form>
+                    </div>
+                    <div id="tasks-list" class="space-y-4"></div>
+                </div>
+
+                <div id="tab-grades" class="course-tab-content hidden-section">
+                    <div id="professor-grades-section" class="hidden-section">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border mb-6">
+                            <h3 class="text-lg font-semibold mb-4">Calificar Alumnos</h3>
+                            <div id="grades-students-list" class="space-y-4"></div>
+                        </div>
+                    </div>
+                    <div id="student-grades-section" class="hidden-section">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border">
+                            <h3 class="text-lg font-semibold mb-4">Mis Calificaciones</h3>
+                            <div id="student-grades-list" class="space-y-4"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-materials" class="course-tab-content hidden-section">
+                    <div id="professor-material-form" class="hidden-section mb-6 bg-white p-6 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-4">Subir Material</h3>
+                        <form id="add-material-form" class="space-y-4">
+                            <input type="text" id="material-title" placeholder="Título del material" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                            <textarea id="material-description" placeholder="Descripción..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            <input type="file" id="material-file" class="w-full px-4 py-2 border rounded-lg">
+                            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">Subir Material</button>
+                        </form>
+                    </div>
+                    <div id="materials-list" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <!-- MENSAJES -->
+            <div id="section-inbox" class="app-section hidden-section fade-in">
+                <h2 class="text-2xl font-bold mb-6">Mensajes</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-200px)]">
+                    <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border flex flex-col">
+                        <div class="p-4 border-b">
+                            <button onclick="showComposeModal()" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
+                                <i class="fas fa-pen mr-2"></i>Nuevo Mensaje
+                            </button>
+                        </div>
+                        <div id="inbox-list" class="flex-1 overflow-y-auto p-2 space-y-2"></div>
+                    </div>
+                    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border p-6 flex flex-col">
+                        <div id="inbox-empty-state" class="flex-1 flex items-center justify-center text-gray-400">
+                            <div class="text-center">
+                                <i class="fas fa-inbox text-4xl mb-2"></i>
+                                <p>Selecciona un mensaje</p>
+                            </div>
+                        </div>
+                        <div id="inbox-message-view" class="hidden-section flex-1 flex flex-col">
+                            <div class="border-b pb-4 mb-4">
+                                <h3 id="msg-subject" class="text-xl font-bold"></h3>
+                                <p class="text-sm text-gray-500 mt-1">De: <span id="msg-from" class="font-semibold text-gray-700"></span></p>
+                                <p class="text-xs text-gray-400" id="msg-date"></p>
+                            </div>
+                            <p id="msg-body" class="text-gray-700 flex-1 whitespace-pre-wrap"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHAT -->
+            <div id="section-chat" class="app-section hidden-section fade-in flex flex-col h-[calc(100vh-150px)]">
+                <h2 class="text-2xl font-bold mb-4">Chat</h2>
+                <div class="flex-1 bg-white rounded-xl shadow-sm border flex flex-col overflow-hidden">
+                    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50"></div>
+                    <form id="chat-form" class="p-4 border-t bg-white flex gap-2">
+                        <input type="text" id="chat-input" placeholder="Escribe..." required class="flex-1 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Mensaje -->
+    <div id="compose-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
+            <h3 class="text-lg font-bold mb-4">Nuevo Mensaje</h3>
+            <form id="compose-form" class="space-y-4">
+                <input type="email" id="compose-to" placeholder="Para: usuario@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                <input type="text" id="compose-subject" placeholder="Asunto" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                <textarea id="compose-body" placeholder="Mensaje..." required rows="5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeComposeModal()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Entrega de Tarea -->
+    <div id="submit-task-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
+            <h3 class="text-lg font-bold mb-4">Entregar Tarea</h3>
+            <form id="submit-task-form" class="space-y-4">
+                <input type="hidden" id="submit-task-id">
+                <textarea id="submit-task-comment" placeholder="Comentario (opcional)..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                <input type="file" id="submit-task-file" class="w-full px-4 py-2 border rounded-lg">
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeSubmitTaskModal()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Entregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, getDoc, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-XDzZgBWRn0Rz_qJzM_-LR5edNfTjqJs",
+            authDomain: "portale-b8830.firebaseapp.com",
+            projectId: "portale-b8830",
+            storageBucket: "portale-b8830.firebasestorage.app",
+            messagingSenderId: "559526671209",
+            appId: "1:559526671209:web:c87145d23853a1132603f8",
+            measurementId: "G-HNCX7SEHXG"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        let currentUser = null;
+        let userData = null;
+        let currentCourseId = null;
+        let unsubscribeChat = null;
+        let unsubscribeInbox = null;
+
+        // ==================== AUTENTICACIÓN ====================
+        window.showAuthTab = (tab) => {
+            document.getElementById('login-form').classList.toggle('hidden-section', tab !== 'login');
+            document.getElementById('request-form').classList.toggle('hidden-section', tab !== 'request');
+            document.getElementById('tab-login').classList.toggle('bg-white', tab === 'login');
+            document.getElementById('tab-login').classList.toggle('shadow', tab === 'login');
+            document.getElementById('tab-login').classList.toggle('text-indigo-700', tab === 'login');
+            document.getElementById('tab-request').classList.toggle('bg-white', tab === 'request');
+            document.getElementById('tab-request').classList.toggle('shadow', tab === 'request');
+            document.getElementById('tab-request').classList.toggle('text-indigo-700', tab === 'request');
+        };
+
+        const validateEduBaseEmail = (email) => email.toLowerCase().endsWith('@edubase.es');
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value;
+            const errorEl = document.getElementById('login-error');
+            const btn = document.getElementById('login-btn');
+
+            errorEl.classList.add('hidden-section');
+
+            if (!validateEduBaseEmail(email)) {
+                errorEl.textContent = "️ Solo correos @edubase.es";
+                errorEl.classList.remove('hidden-section');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Entrando...';
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                console.error(error);
+                let msg = " Error al iniciar sesión.";
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                    msg = "❌ Usuario o contraseña incorrectos.";
+                } else if (error.code === 'auth/network-request-failed') {
+                    msg = "🌐 Sin conexión a internet.";
+                } else {
+                    msg = "❌ " + error.message;
+                }
+                errorEl.textContent = msg;
+                errorEl.classList.remove('hidden-section');
+            } finally {
+                btn.innerHTML = 'Ingresar';
+                btn.disabled = false;
+            }
+        });
+
+        window.logout = () => {
+            signOut(auth);
+            if (unsubscribeChat) unsubscribeChat();
+            if (unsubscribeInbox) unsubscribeInbox();
+        };
+
+        // ==================== ESTADO ====================
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                try {
+                    let userDoc = await getDoc(doc(db, "users", user.uid));
+                    
+                    if (!userDoc.exists()) {
+                        const role = user.email.toLowerCase().includes('pf') ? 'profesor' : 'alumno';
+                        const name = user.email.split('@')[0];
+                        
+                        await setDoc(doc(db, "users", user.uid), {
+                            uid: user.uid,
+                            name: name,
+                            email: user.email,
+                            role: role,
+                            createdAt: serverTimestamp()
+                        });
+                        
+                        userDoc = await getDoc(doc(db, "users", user.uid));
+                    }
+                    
+                    if (userDoc.exists()) {
+                        userData = userDoc.data();
+                        userData.id = userDoc.id;
+                        
+                        document.getElementById('auth-section').classList.add('hidden-section');
+                        document.getElementById('app-section').classList.remove('hidden-section');
+                        document.getElementById('user-display-name').textContent = userData.name || user.email;
+                        document.getElementById('user-role-badge').textContent = (userData.role || 'alumno').toUpperCase();
+                        
+                        setupDashboard();
+                        loadCourses();
+                        setupInbox();
+                        setupChat();
+                    } else {
+                        alert("⚠️ Error al configurar la cuenta.");
+                        await signOut(auth);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert(" Error de conexión: " + err.message);
+                    await signOut(auth);
+                }
+            } else {
+                currentUser = null;
+                userData = null;
+                document.getElementById('auth-section').classList.remove('hidden-section');
+                document.getElementById('app-section').classList.add('hidden-section');
+            }
+        });
+
+        window.showSection = (sectionId, btnElement) => {
+            document.querySelectorAll('.app-section').forEach(el => el.classList.add('hidden-section'));
+            document.getElementById(`section-${sectionId}`).classList.remove('hidden-section');
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-slate-800', 'text-indigo-400'));
+            if (btnElement) btnElement.classList.add('bg-slate-800', 'text-indigo-400');
+        };
+
+        // ==================== CURSOS ====================
+        function setupDashboard() {
+            if (userData.role === 'profesor') {
+                document.getElementById('professor-dashboard').classList.remove('hidden-section');
+                document.getElementById('student-dashboard').classList.add('hidden-section');
+            } else {
+                document.getElementById('professor-dashboard').classList.add('hidden-section');
+                document.getElementById('student-dashboard').classList.remove('hidden-section');
+                loadStudentCourses();
+            }
         }
-      }
-      
-      match /grades/{gradeId} {
-        allow read: if isEduBaseUser();
-        allow create: if isEduBaseUser() && get(/databases/$(database)/documents/courses/$(courseId)).data.teacherId == request.auth.uid;
-      }
-      
-      match /materials/{materialId} {
-        allow read: if isEduBaseUser();
-        allow create: if isEduBaseUser() && get(/databases/$(database)/documents/courses/$(courseId)).data.teacherId == request.auth.uid;
-      }
-    }
-    
-    match /messages/{messageId} {
-      allow read: if isEduBaseUser() && resource.data.to == request.auth.token.email;
-      allow create: if isEduBaseUser() && request.resource.data.from == request.auth.token.email;
-      allow update: if isEduBaseUser() && resource.data.to == request.auth.token.email;
-    }
-    
-    match /chat_messages/{chatId} {
-      allow read, create: if isEduBaseUser();
-    }
-  }
-}
+
+        document.getElementById('create-course-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, "courses"), {
+                name: document.getElementById('course-name').value,
+                description: document.getElementById('course-desc').value,
+                teacherId: currentUser.uid,
+                teacherEmail: currentUser.email,
+                teacherName: userData.name,
+                students: [],
+                createdAt: serverTimestamp()
+            });
+            e.target.reset();
+            alert("✅ Curso creado");
+            loadCourses();
+        });
+
+        async function loadStudentCourses() {
+            const q = query(collection(db, "courses"), where("students", "array-contains", currentUser.email));
+            const snapshot = await getDocs(q);
+            const container = document.getElementById('student-courses-list');
+            container.innerHTML = '';
+            
+            if (snapshot.empty) {
+                container.innerHTML = '<p class="text-gray-500 text-sm col-span-full">No tienes cursos asignados aún.</p>';
+                return;
+            }
+            
+            snapshot.docs.forEach(d => {
+                const data = d.data();
+                container.innerHTML += `
+                    <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100 cursor-pointer hover:bg-indigo-100 transition" onclick="openCourse('${d.id}')">
+                        <h4 class="font-bold text-indigo-900">${data.name}</h4>
+                        <p class="text-sm text-indigo-700 mt-1">${data.description}</p>
+                        <p class="text-xs text-gray-500 mt-2">Profesor: ${data.teacherName || data.teacherEmail}</p>
+                    </div>`;
+            });
+        }
+
+        async function loadCourses() {
+            const container = document.getElementById('courses-grid');
+            container.innerHTML = '';
+            
+            let q;
+            if (userData.role === 'profesor') {
+                q = query(collection(db, "courses"), where("teacherId", "==", currentUser.uid));
+            } else {
+                q = query(collection(db, "courses"), where("students", "array-contains", currentUser.email));
+            }
+            
+            const snapshot = await getDocs(q);
+            
+            if (snapshot.empty) {
+                container.innerHTML = '<p class="text-gray-500 col-span-full text-center">No hay cursos disponibles.</p>';
+                return;
+            }
+            
+            snapshot.docs.forEach(d => {
+                const data = d.data();
+                container.innerHTML += `
+                    <div class="bg-white p-6 rounded-xl shadow-sm border cursor-pointer hover:shadow-lg transition" onclick="openCourse('${d.id}')">
+                        <h3 class="text-xl font-bold text-indigo-900 mb-2">${data.name}</h3>
+                        <p class="text-gray-600 text-sm mb-4">${data.description}</p>
+                        <p class="text-xs text-gray-500">Profesor: ${data.teacherName || data.teacherEmail}</p>
+                        <p class="text-xs text-gray-500 mt-1">${data.students ? data.students.length : 0} alumnos</p>
+                    </div>`;
+            });
+        }
+
+        window.openCourse = async (courseId) => {
+            currentCourseId = courseId;
+            const courseDoc = await getDoc(doc(db, "courses", courseId));
+            const courseData = courseDoc.data();
+            
+            document.getElementById('course-detail-title').textContent = courseData.name;
+            document.getElementById('course-detail-desc').textContent = courseData.description;
+            
+            // Mostrar formularios según rol
+            if (userData.role === 'profesor') {
+                document.getElementById('professor-announcement-form').classList.remove('hidden-section');
+                document.getElementById('professor-task-form').classList.remove('hidden-section');
+                document.getElementById('professor-grades-section').classList.remove('hidden-section');
+                document.getElementById('professor-material-form').classList.remove('hidden-section');
+                document.getElementById('student-grades-section').classList.add('hidden-section');
+            } else {
+                document.getElementById('professor-announcement-form').classList.add('hidden-section');
+                document.getElementById('professor-task-form').classList.add('hidden-section');
+                document.getElementById('professor-grades-section').classList.add('hidden-section');
+                document.getElementById('professor-material-form').classList.add('hidden-section');
+                document.getElementById('student-grades-section').classList.remove('hidden-section');
+            }
+            
+            showSection('course-detail');
+            showCourseTab('announcements', document.querySelector('.course-tab'));
+            loadAnnouncements();
+            loadTasks();
+            loadGrades();
+            loadMaterials();
+        };
+
+        window.showCourseTab = (tabName, btnElement) => {
+            document.querySelectorAll('.course-tab-content').forEach(el => el.classList.add('hidden-section'));
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden-section');
+            document.querySelectorAll('.course-tab').forEach(btn => btn.classList.remove('tab-active'));
+            if (btnElement) btnElement.classList.add('tab-active');
+        };
+
+        // ==================== AVISOS ====================
+        document.getElementById('add-announcement-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, "courses", currentCourseId, "announcements"), {
+                title: document.getElementById('announcement-title').value,
+                content: document.getElementById('announcement-content').value,
+                authorId: currentUser.uid,
+                authorName: userData.name,
+                createdAt: serverTimestamp()
+            });
+            e.target.reset();
+            alert("✅ Aviso publicado");
+            loadAnnouncements();
+        });
+
+        async function loadAnnouncements() {
+            const container = document.getElementById('announcements-list');
+            container.innerHTML = '';
+            
+            const q = query(collection(db, "courses", currentCourseId, "announcements"), orderBy("createdAt", "desc"));
+            const snapshot = await getDocs(q);
+            
+            if (snapshot.empty) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No hay avisos aún.</p>';
+                return;
+            }
+            
+            snapshot.docs.forEach(d => {
+                const data = d.data();
+                const date = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString() : '';
+                container.innerHTML += `
+                    <div class="bg-white p-6 rounded-xl shadow-sm border">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg font-bold text-indigo-900">${data.title}</h4>
+                            <span class="text-xs text-gray-500">${date}</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-2">Por: ${data.authorName}</p>
+                        <p class="text-gray-700 whitespace-pre-wrap">${data.content}</p>
+                    </div>`;
+            });
+        }
+
+        // ==================== TAREAS ====================
+        document.getElementById('add-task-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await addDoc(collection(db, "courses", currentCourseId, "tasks"), {
+                title: document.getElementById('task-title').value,
+                description: document.getElementById('task-description').value,
+                deadline: document.getElementById('task-deadline').value,
+                authorId: currentUser.uid,
+                authorName: userData.name,
+                createdAt: serverTimestamp()
+            });
+            e.target.reset();
+            alert("✅ Tarea creada");
+            loadTasks();
+        });
+
+        async function loadTasks() {
+            const container = document.getElementById('tasks-list');
+            container.innerHTML = '';
+            
+            const q = query(collection(db, "courses", currentCourseId, "tasks"), orderBy("deadline", "asc"));
+            const snapshot = await getDocs(q);
+            
+            if (snapshot.empty) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No hay tareas aún.</p>';
+                return;
+            }
+            
+            for (const d of snapshot.docs) {
+                const data = d.data();
+                const deadline = new Date(data.deadline).toLocaleString();
+                const isProfessor = userData.role === 'profesor';
+                
+                let submissionsHTML = '';
+                if (isProfessor) {
+                    const submissionsQ = query(collection(db, "courses", currentCourseId, "tasks", d.id, "submissions"));
+                    const submissionsSnap = await getDocs(submissionsQ);
+                    if (!submissionsSnap.empty) {
+                        submissionsHTML = '<div class="mt-4 pt-4 border-t"><h5 class="font-semibold text-sm mb-2">Entregas:</h5>';
+                        submissionsSnap.docs.forEach(s => {
+                            const sub = s.data();
+                            submissionsHTML += `
+                                <div class="bg-gray-50 p-3 rounded-lg mb-2">
+                                    <p class="text-sm font-semibold">${sub.studentName}</p>
+                                    <p class="text-xs text-gray-600">${sub.comment || 'Sin comentario'}</p>
+                                    ${sub.fileUrl ? `<a href="${sub.fileUrl}" target="_blank" class="text-indigo-600 text-xs hover:underline"><i class="fas fa-file mr-1"></i>Ver archivo</a>` : ''}
+                                </div>`;
+                        });
+                        submissionsHTML += '</div>';
+                    }
+                }
+                
+                container.innerHTML += `
+                    <div class="bg-white p-6 rounded-xl shadow-sm border">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="text-lg font-bold text-indigo-900">${data.title}</h4>
+                            <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Entrega: ${deadline}</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-2">Por: ${data.authorName}</p>
+                        <p class="text-gray-700 whitespace-pre-wrap mb-4">${data.description}</p>
+                        ${!isProfessor ? `<button onclick="openSubmitTaskModal('${d.id}')" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm"><i class="fas fa-upload mr-2"></i>Entregar Tarea</button>` : ''}
+                        ${submissionsHTML}
+                    </div>`;
+            }
+        }
+
+        window.openSubmitTaskModal = (taskId) => {
+            document.getElementById('submit-task-id').value = taskId;
+            document.getElementById('submit-task-modal').classList.remove('hidden-section');
+        };
+
+        window.closeSubmitTaskModal = () => {
+            document.getElementById('submit-task-modal').classList.add('hidden-section');
+            document.getElementById('submit-task-form').reset();
+        };
+
+        document.getElementById('submit-task-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const taskId = document.getElementById('submit-task-id').value;
+            const comment = document.getElementById('submit-task-comment').value;
+            const fileInput = document.getElementById('submit-task-file');
+            
+            let fileUrl = null;
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const fileRef = ref(storage, `courses/${currentCourseId}/tasks/${taskId}/${currentUser.uid}/${file.name}`);
+                await uploadBytes(fileRef, file);
+                fileUrl = await getDownloadURL(fileRef);
+            }
+            
+            await addDoc(collection(db, "courses", currentCourseId, "tasks", taskId, "submissions"), {
+                studentId: currentUser.uid,
+                studentName: userData.name,
+                studentEmail: currentUser.email,
+                comment: comment,
+                fileUrl: fileUrl,
+                submittedAt: serverTimestamp()
+            });
+            
+            closeSubmitTaskModal();
+            alert("✅ Tarea entregada");
+            loadTasks();
+        });
+
+        // ==================== NOTAS ====================
+        async function loadGrades() {
+            if (userData.role === 'profesor') {
+                const container = document.getElementById('grades-students-list');
+                container.innerHTML = '';
+                
+                const courseDoc = await getDoc(doc(db, "courses", currentCourseId));
+                const students = courseDoc.data().students || [];
+                
+                if (students.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500">No hay alumnos en este curso.</p>';
+                    return;
+                }
+                
+                for (const studentEmail of students) {
+                    container.innerHTML += `
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="font-semibold mb-2">${studentEmail}</p>
+                            <div class="flex gap-2">
+                                <input type="number" id="grade-${studentEmail}" placeholder="Nota (0-10)" min="0" max="10" step="0.1" class="px-3 py-2 border rounded-lg w-32">
+                                <input type="text" id="grade-comment-${studentEmail}" placeholder="Comentario" class="px-3 py-2 border rounded-lg flex-1">
+                                <button onclick="saveGrade('${studentEmail}')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Guardar</button>
+                            </div>
+                        </div>`;
+                }
+            } else {
+                const container = document.getElementById('student-grades-list');
+                container.innerHTML = '';
+                
+                const q = query(collection(db, "courses", currentCourseId, "grades"), where("studentEmail", "==", currentUser.email));
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '<p class="text-gray-500">Aún no tienes calificaciones.</p>';
+                    return;
+                }
+                
+                snapshot.docs.forEach(d => {
+                    const data = d.data();
+                    container.innerHTML += `
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-semibold">${data.taskTitle || 'Evaluación'}</p>
+                                    <p class="text-sm text-gray-600">${data.comment || ''}</p>
+                                </div>
+                                <span class="text-2xl font-bold text-indigo-600">${data.grade}</span>
+                            </div>
+                        </div>`;
+                });
+            }
+        }
+
+        window.saveGrade = async (studentEmail) => {
+            const grade = document.getElementById(`grade-${studentEmail}`).value;
+            const comment = document.getElementById(`grade-comment-${studentEmail}`).value;
+            
+            if (!grade) {
+                alert("⚠️ Introduce una nota");
+                return;
+            }
+            
+            await addDoc(collection(db, "courses", currentCourseId, "grades"), {
+                studentEmail: studentEmail,
+                grade: parseFloat(grade),
+                comment: comment,
+                gradedBy: currentUser.uid,
+                gradedByName: userData.name,
+                createdAt: serverTimestamp()
+            });
+            
+            alert("✅ Nota guardada");
+            document.getElementById(`grade-${studentEmail}`).value = '';
+            document.getElementById(`grade-comment-${studentEmail}`).value = '';
+        };
+
+        // ==================== MATERIAL ====================
+        document.getElementById('add-material-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('material-title').value;
+            const description = document.getElementById('material-description').value;
+            const fileInput = document.getElementById('material-file');
+            
+            let fileUrl = null;
+            let fileName = null;
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const fileRef = ref(storage, `courses/${currentCourseId}/materials/${Date.now()}_${file.name}`);
+                await uploadBytes(fileRef, file);
+                fileUrl = await getDownloadURL(fileRef);
+                fileName = file.name;
+            }
+            
+            await addDoc(collection(db, "courses", currentCourseId, "materials"), {
+                title: title,
+                description: description,
+                fileUrl: fileUrl,
+                fileName: fileName,
+                authorId: currentUser.uid,
+                authorName: userData.name,
+                createdAt: serverTimestamp()
+            });
+            
+            e.target.reset();
+            alert("✅ Material subido");
+            loadMaterials();
+        });
+
+        async function loadMaterials() {
+            const container = document.getElementById('materials-list');
+            container.innerHTML = '';
+            
+            const q = query(collection(db, "courses", currentCourseId, "materials"), orderBy("createdAt", "desc"));
+            const snapshot = await getDocs(q);
+            
+            if (snapshot.empty) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No hay material aún.</p>';
+                return;
+            }
+            
+            snapshot.docs.forEach(d => {
+                const data = d.data();
+                container.innerHTML += `
+                    <div class="bg-white p-6 rounded-xl shadow-sm border">
+                        <h4 class="text-lg font-bold text-indigo-900 mb-2">${data.title}</h4>
+                        <p class="text-sm text-gray-500 mb-2">Por: ${data.authorName}</p>
+                        <p class="text-gray-700 mb-4">${data.description || ''}</p>
+                        ${data.fileUrl ? `<a href="${data.fileUrl}" target="_blank" class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm"><i class="fas fa-download mr-2"></i>${data.fileName || 'Descargar'}</a>` : ''}
+                    </div>`;
+            });
+        }
+
+        // ==================== MENSAJES ====================
+        function setupInbox() {
+            const q = query(collection(db, "messages"), where("to", "==", currentUser.email), orderBy("createdAt", "desc"));
+            unsubscribeInbox = onSnapshot(q, (snapshot) => {
+                const container = document.getElementById('inbox-list');
+                container.innerHTML = '';
+                let unread = 0;
+                snapshot.docs.forEach(d => {
+                    const data = d.data();
+                    if (!data.read) unread++;
+                    const div = document.createElement('div');
+                    div.className = `p-3 rounded-lg cursor-pointer transition ${data.read ? 'bg-white hover:bg-gray-50' : 'bg-indigo-50 border-l-4 border-indigo-500'}`;
+                    div.innerHTML = `<p class="font-semibold text-sm truncate">${data.subject}</p><p class="text-xs text-gray-600 truncate">De: ${data.from}</p>`;
+                    div.onclick = () => viewMessage(d.id, data);
+                    container.appendChild(div);
+                });
+                const badge = document.getElementById('inbox-badge');
+                if (unread > 0) { badge.textContent = unread; badge.classList.remove('hidden-section'); } 
+                else { badge.classList.add('hidden-section'); }
+            });
+        }
+
+        function viewMessage(id, data) {
+            document.getElementById('inbox-empty-state').classList.add('hidden-section');
+            document.getElementById('inbox-message-view').classList.remove('hidden-section');
+            document.getElementById('msg-subject').textContent = data.subject;
+            document.getElementById('msg-from').textContent = data.from;
+            document.getElementById('msg-body').textContent = data.body;
+            document.getElementById('msg-date').textContent = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString() : '';
+            if (!data.read) updateDoc(doc(db, "messages", id), { read: true });
+        }
+
+        window.showComposeModal = () => document.getElementById('compose-modal').classList.remove('hidden-section');
+        window.closeComposeModal = () => document.getElementById('compose-modal').classList.add('hidden-section');
+
+        document.getElementById('compose-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const to = document.getElementById('compose-to').value;
+            if (!validateEduBaseEmail(to)) { alert("️ Solo correos @edubase.es"); return; }
+            await addDoc(collection(db, "messages"), {
+                to, from: currentUser.email,
+                subject: document.getElementById('compose-subject').value,
+                body: document.getElementById('compose-body').value,
+                read: false, createdAt: serverTimestamp()
+            });
+            closeComposeModal(); e.target.reset(); alert("✅ Enviado");
+        });
+
+        // ==================== CHAT ====================
+        function setupChat() {
+            const q = query(collection(db, "chat_messages"), orderBy("createdAt", "asc"));
+            unsubscribeChat = onSnapshot(q, (snapshot) => {
+                const container = document.getElementById('chat-messages');
+                container.innerHTML = '';
+                snapshot.docs.forEach(d => {
+                    const data = d.data();
+                    const isMe = data.email === currentUser.email;
+                    const div = document.createElement('div');
+                    div.className = `flex ${isMe ? 'justify-end' : 'justify-start'}`;
+                    div.innerHTML = `
+                        <div class="max-w-[70%] ${isMe ? 'bg-indigo-600 text-white' : 'bg-white border text-gray-800'} rounded-2xl px-4 py-2 shadow-sm">
+                            <p class="text-xs ${isMe ? 'text-indigo-200' : 'text-gray-500'} mb-1">${data.name} • ${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</p>
+                            <p>${data.text}</p>
+                        </div>`;
+                    container.appendChild(div);
+                });
+                container.scrollTop = container.scrollHeight;
+            });
+        }
+
+        document.getElementById('chat-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            if (!input.value.trim()) return;
+            await addDoc(collection(db, "chat_messages"), {
+                text: input.value.trim(), email: currentUser.email, name: userData.name, createdAt: serverTimestamp()
+            });
+            input.value = '';
+        });
+    </script>
+</body>
+</html>
