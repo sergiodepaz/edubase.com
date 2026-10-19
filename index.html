@@ -210,7 +210,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, getDoc, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, getDoc, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC-XDzZgBWRn0Rz_qJzM_-LR5edNfTjqJs",
@@ -255,7 +255,7 @@
             errorEl.classList.add('hidden-section');
 
             if (!validateEduBaseEmail(email)) {
-                errorEl.textContent = "⚠️ Solo correos @edubase.es";
+                errorEl.textContent = "️ Solo correos @edubase.es";
                 errorEl.classList.remove('hidden-section');
                 return;
             }
@@ -267,7 +267,7 @@
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
                 console.error(error);
-                let msg = "❌ Error al iniciar sesión.";
+                let msg = " Error al iniciar sesión.";
                 if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
                     msg = "❌ Usuario o contraseña incorrectos.";
                 } else if (error.code === 'auth/network-request-failed') {
@@ -289,29 +289,29 @@
             if (unsubscribeInbox) unsubscribeInbox();
         };
 
-        // ==================== ESTADO - BÚSQUEDA INTELIGENTE ====================
+        // ==================== ESTADO - CREACIÓN AUTOMÁTICA ====================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 try {
+                    // Buscar usuario en Firestore
                     let userDoc = await getDoc(doc(db, "users", user.uid));
                     
-                    // Si no lo encuentra por UID como ID, buscar por campo uid
+                    // Si no existe, crearlo automáticamente
                     if (!userDoc.exists()) {
-                        const q = query(collection(db, "users"), where("uid", "==", user.uid));
-                        const snapshot = await getDocs(q);
-                        if (!snapshot.empty) {
-                            userDoc = snapshot.docs[0];
-                        }
-                    }
-                    
-                    // Si aún no lo encuentra, buscar por email
-                    if (!userDoc.exists()) {
-                        const q = query(collection(db, "users"), where("email", "==", user.email));
-                        const snapshot = await getDocs(q);
-                        if (!snapshot.empty) {
-                            userDoc = snapshot.docs[0];
-                        }
+                        // Determinar rol basado en el correo (si contiene "pf" es profesor, sino alumno)
+                        const role = user.email.toLowerCase().includes('pf') ? 'profesor' : 'alumno';
+                        const name = user.email.split('@')[0];
+                        
+                        await setDoc(doc(db, "users", user.uid), {
+                            uid: user.uid,
+                            name: name,
+                            email: user.email,
+                            role: role,
+                            createdAt: serverTimestamp()
+                        });
+                        
+                        userDoc = await getDoc(doc(db, "users", user.uid));
                     }
                     
                     if (userDoc.exists()) {
@@ -321,14 +321,14 @@
                         document.getElementById('auth-section').classList.add('hidden-section');
                         document.getElementById('app-section').classList.remove('hidden-section');
                         document.getElementById('user-display-name').textContent = userData.name || user.email;
-                        document.getElementById('user-role-badge').textContent = (userData.role || 'usuario').toUpperCase();
+                        document.getElementById('user-role-badge').textContent = (userData.role || 'alumno').toUpperCase();
                         
                         setupDashboard();
                         loadCourses();
                         setupInbox();
                         setupChat();
                     } else {
-                        alert("⚠️ Tu cuenta no está configurada en la base de datos. Contacta al administrador.");
+                        alert("⚠️ Error al configurar la cuenta. Intenta de nuevo.");
                         await signOut(auth);
                     }
                 } catch (err) {
@@ -396,7 +396,7 @@
             e.preventDefault();
             const studentEmail = document.getElementById('student-email').value.toLowerCase();
             if (!validateEduBaseEmail(studentEmail)) {
-                alert("⚠️ El correo debe ser @edubase.es");
+                alert("️ El correo debe ser @edubase.es");
                 return;
             }
             await addDoc(collection(db, "messages"), {
@@ -497,7 +497,7 @@
         document.getElementById('compose-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const to = document.getElementById('compose-to').value;
-            if (!validateEduBaseEmail(to)) { alert("⚠️ Solo correos @edubase.es"); return; }
+            if (!validateEduBaseEmail(to)) { alert("️ Solo correos @edubase.es"); return; }
             await addDoc(collection(db, "messages"), {
                 to, from: currentUser.email,
                 subject: document.getElementById('compose-subject').value,
