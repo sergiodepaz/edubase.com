@@ -8,233 +8,284 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; background-color: #f5f5f5; }
         .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .hidden-section { display: none !important; }
-        .tab-active { background-color: #4f46e5; color: white; }
+        .tab-active { color: #ea580c; border-bottom: 2px solid #ea580c; }
+        
+        /* Estilo Moodle para unidades */
+        .unit-header {
+            background: linear-gradient(135deg, #fff 0%, #fef3c7 100%);
+            border-left: 4px solid #f59e0b;
+        }
+        .unit-header:hover { background: linear-gradient(135deg, #fffbeb 0%, #fde68a 100%); }
+        .unit-content { border-left: 4px solid #fbbf24; }
+        .resource-item { transition: all 0.2s; }
+        .resource-item:hover { background-color: #f9fafb; transform: translateX(4px); }
+        .activity-item { transition: all 0.2s; }
+        .activity-item:hover { background-color: #eff6ff; transform: translateX(4px); }
+        
+        .moodle-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        .moodle-card-header {
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            user-select: none;
+        }
+        .moodle-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .moodle-icon-unit { background: #fef3c7; color: #d97706; border: 2px solid #f59e0b; }
+        .moodle-icon-resource { background: #dbeafe; color: #2563eb; }
+        .moodle-icon-activity { background: #fce7f3; color: #db2777; }
+        .moodle-icon-file { background: #e0e7ff; color: #4f46e5; }
     </style>
 </head>
 <body class="text-gray-800 h-screen flex flex-col overflow-hidden">
 
     <!-- ==================== AUTENTICACIÓN ==================== -->
-    <div id="auth-section" class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-indigo-600 to-blue-800">
+    <div id="auth-section" class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-orange-500 to-amber-600">
         <div class="glass-panel p-8 rounded-2xl shadow-2xl w-full max-w-md fade-in">
             <div class="text-center mb-6">
-                <h1 class="text-3xl font-bold text-indigo-700"><i class="fas fa-graduation-cap mr-2"></i>EduBase</h1>
-                <p class="text-gray-600 mt-2">Plataforma educativa exclusiva</p>
+                <h1 class="text-3xl font-bold text-orange-600"><i class="fas fa-graduation-cap mr-2"></i>EduBase</h1>
+                <p class="text-gray-600 mt-2">Aulas Virtuales</p>
             </div>
             <div class="flex mb-6 bg-gray-100 rounded-lg p-1">
-                <button onclick="showAuthTab('login')" id="tab-login" class="flex-1 py-2 rounded-md bg-white shadow text-indigo-700 font-semibold transition">Iniciar Sesión</button>
-                <button onclick="showAuthTab('request')" id="tab-request" class="flex-1 py-2 rounded-md text-gray-600 hover:text-indigo-700 transition">Solicitar Acceso</button>
+                <button onclick="showAuthTab('login')" id="tab-login" class="flex-1 py-2 rounded-md bg-white shadow text-orange-600 font-semibold transition">Iniciar Sesión</button>
+                <button onclick="showAuthTab('request')" id="tab-request" class="flex-1 py-2 rounded-md text-gray-600 hover:text-orange-600 transition">Solicitar Acceso</button>
             </div>
             <form id="login-form" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Correo</label>
-                    <input type="email" id="login-email" required placeholder="usuario@edubase.es" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <input type="email" id="login-email" required placeholder="usuario@edubase.es" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-                    <input type="password" id="login-password" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <input type="password" id="login-password" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
                 </div>
-                <button type="submit" id="login-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition">Ingresar</button>
+                <button type="submit" id="login-btn" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2.5 rounded-lg transition">Ingresar</button>
                 <p id="login-error" class="text-red-600 text-sm text-center bg-red-50 p-2 rounded-lg hidden-section"></p>
             </form>
             <form action="https://formspree.io/f/meaowyvj" method="POST" id="request-form" class="space-y-4 hidden-section">
                 <input type="hidden" name="_subject" value="Nueva Solicitud de Acceso EduBase">
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-3 text-sm text-blue-700">
-                    <i class="fas fa-info-circle mr-1"></i> Solo correos <strong>@edubase.es</strong>. El administrador te dará tus credenciales.
+                    <i class="fas fa-info-circle mr-1"></i> Solo correos <strong>@edubase.es</strong>
                 </div>
-                <input type="text" name="nombre" required placeholder="Nombre completo" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                <input type="email" name="email" required placeholder="tucorreo@edubase.es" pattern="^[a-zA-Z0-9._%+-]+@edubase\.es$" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                <select name="rol" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                <input type="text" name="nombre" required placeholder="Nombre completo" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                <input type="email" name="email" required placeholder="tucorreo@edubase.es" pattern="^[a-zA-Z0-9._%+-]+@edubase\.es$" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                <select name="rol" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
                     <option value="Alumno">Soy Alumno</option>
                     <option value="Profesor">Soy Profesor</option>
                 </select>
-                <textarea name="mensaje" required rows="3" placeholder="Motivo de la solicitud..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
-                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition">
-                    <i class="fas fa-paper-plane mr-2"></i>Enviar Solicitud
-                </button>
+                <textarea name="mensaje" required rows="3" placeholder="Motivo..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea>
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition">Enviar Solicitud</button>
             </form>
         </div>
     </div>
 
     <!-- ==================== APP ==================== -->
     <div id="app-section" class="hidden-section flex-1 flex overflow-hidden">
-        <aside class="w-64 bg-slate-900 text-white flex flex-col shadow-xl">
-            <div class="p-6 border-b border-slate-700">
-                <h2 class="text-xl font-bold flex items-center"><i class="fas fa-graduation-cap mr-2 text-indigo-400"></i> EduBase</h2>
-                <p id="user-display-name" class="text-sm text-slate-400 mt-1 truncate">Usuario</p>
-                <span id="user-role-badge" class="inline-block mt-2 px-2 py-1 text-xs font-semibold rounded-full bg-indigo-600">Rol</span>
+        <!-- Topbar estilo Moodle -->
+        <div class="absolute top-0 left-0 right-0 bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+            <div class="flex items-center gap-6">
+                <h1 class="text-orange-600 font-bold text-lg"><i class="fas fa-graduation-cap mr-2"></i>aulas virtuales</h1>
+                <nav class="flex gap-4 text-sm">
+                    <button onclick="showSection('dashboard')" class="text-gray-600 hover:text-orange-600 font-medium">página principal</button>
+                    <button onclick="showSection('profile')" class="text-gray-600 hover:text-orange-600 font-medium">área personal</button>
+                    <button onclick="showSection('courses')" class="text-gray-600 hover:text-orange-600 font-medium">mis cursos</button>
+                </nav>
             </div>
-            <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-                <button onclick="showSection('dashboard', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center bg-slate-800 text-indigo-400">
-                    <i class="fas fa-home w-6"></i> Panel
+            <div class="flex items-center gap-4">
+                <button onclick="showSection('inbox')" class="relative text-gray-600 hover:text-orange-600">
+                    <i class="fas fa-envelope text-lg"></i>
+                    <span id="inbox-badge-top" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden-section">0</span>
                 </button>
-                <button onclick="showSection('courses', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center">
-                    <i class="fas fa-book w-6"></i> Cursos
+                <button onclick="showSection('chat')" class="text-gray-600 hover:text-orange-600">
+                    <i class="fas fa-comments text-lg"></i>
                 </button>
-                <button onclick="showSection('inbox', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center justify-between">
-                    <span class="flex items-center"><i class="fas fa-envelope w-6"></i> Mensajes</span>
-                    <span id="inbox-badge" class="bg-red-500 text-xs px-2 py-0.5 rounded-full hidden-section">0</span>
-                </button>
-                <button onclick="showSection('chat', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center">
-                    <i class="fas fa-comments w-6"></i> Chat
-                </button>
-            </nav>
-            <div class="p-4 border-t border-slate-700">
-                <button onclick="logout()" class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition flex items-center justify-center">
-                    <i class="fas fa-sign-out-alt mr-2"></i> Salir
-                </button>
-            </div>
-        </aside>
-
-        <main class="flex-1 overflow-y-auto bg-gray-50 p-8">
-            <!-- DASHBOARD -->
-            <div id="section-dashboard" class="app-section fade-in">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold">Panel de Control</h2>
-                    <div id="professor-actions" class="hidden-section flex gap-3">
-                        <button onclick="openModal('create-course-modal')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center">
-                            <i class="fas fa-plus-circle mr-2"></i>Crear Curso
-                        </button>
-                        <button onclick="openModal('add-student-modal')" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center">
-                            <i class="fas fa-user-plus mr-2"></i>Añadir Alumno
-                        </button>
-                    </div>
+                <div class="flex items-center gap-2 cursor-pointer" onclick="showSection('profile')">
+                    <div class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-sm" id="user-avatar">U</div>
+                    <span id="user-display-name-top" class="text-sm font-medium text-gray-700">Usuario</span>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border">
-                    <h3 class="text-lg font-semibold mb-4">Mis Cursos</h3>
-                    <div id="courses-list-dashboard" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                <button onclick="logout()" class="text-gray-500 hover:text-red-600" title="Salir">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <main class="flex-1 overflow-y-auto bg-gray-50 pt-16">
+            <!-- DASHBOARD -->
+            <div id="section-dashboard" class="app-section fade-in p-8">
+                <div class="max-w-6xl mx-auto">
+                    <h2 class="text-2xl font-bold mb-6 text-gray-800">Mis cursos</h2>
+                    <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                </div>
+            </div>
+
+            <!-- PERFIL -->
+            <div id="section-profile" class="app-section hidden-section fade-in p-8">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-bold mb-6">Área Personal</h2>
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="w-20 h-20 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-2xl" id="profile-avatar">U</div>
+                            <div>
+                                <h3 id="profile-name" class="text-xl font-bold"></h3>
+                                <p id="profile-email" class="text-gray-600"></p>
+                                <span id="profile-role" class="inline-block mt-2 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold"></span>
+                            </div>
+                        </div>
+                        <div id="professor-actions" class="hidden-section border-t pt-6">
+                            <h4 class="font-semibold mb-3">Acciones de Profesor</h4>
+                            <div class="flex gap-3">
+                                <button onclick="openModal('create-course-modal')" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
+                                    <i class="fas fa-plus mr-2"></i>Crear Curso
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- CURSOS LISTA -->
-            <div id="section-courses" class="app-section hidden-section fade-in">
-                <h2 class="text-2xl font-bold mb-6">Mis Cursos</h2>
-                <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <div id="section-courses" class="app-section hidden-section fade-in p-8">
+                <div class="max-w-6xl mx-auto">
+                    <h2 class="text-2xl font-bold mb-6">Mis Cursos</h2>
+                    <div id="courses-list-page" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                </div>
             </div>
 
-            <!-- VISTA DETALLADA DEL CURSO -->
+            <!-- VISTA DETALLADA DEL CURSO (ESTILO MOODLE) -->
             <div id="section-course-detail" class="app-section hidden-section fade-in">
-                <div class="mb-6">
-                    <button onclick="showSection('courses')" class="text-indigo-600 hover:text-indigo-800 mb-2">
-                        <i class="fas fa-arrow-left mr-2"></i>Volver a cursos
-                    </button>
-                    <div class="flex justify-between items-start flex-wrap gap-2">
-                        <div>
-                            <h2 id="course-detail-title" class="text-3xl font-bold"></h2>
-                            <p id="course-detail-desc" class="text-gray-600 mt-2"></p>
-                        </div>
-                        <div id="course-actions-professor" class="hidden-section flex gap-2">
-                            <button onclick="openModal('add-student-modal')" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm">
-                                <i class="fas fa-user-plus mr-2"></i>Añadir Alumno
+                <!-- Header del curso -->
+                <div class="bg-white border-b border-gray-200 px-8 py-4">
+                    <div class="max-w-5xl mx-auto">
+                        <button onclick="showSection('courses')" class="text-orange-600 hover:text-orange-800 mb-2 text-sm">
+                            <i class="fas fa-arrow-left mr-1"></i>Volver a mis cursos
+                        </button>
+                        <h1 id="course-detail-title" class="text-2xl font-bold text-gray-800"></h1>
+                        <p id="course-detail-teacher" class="text-sm text-gray-600 mt-1"></p>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="bg-white border-b border-gray-200">
+                    <div class="max-w-5xl mx-auto flex gap-6 px-8">
+                        <button onclick="showCourseTab('course', this)" class="course-tab py-3 text-sm font-medium tab-active">curso</button>
+                        <button onclick="showCourseTab('participants', this)" class="course-tab py-3 text-sm font-medium text-gray-600 hover:text-orange-600">participantes</button>
+                        <button onclick="showCourseTab('grades', this)" class="course-tab py-3 text-sm font-medium text-gray-600 hover:text-orange-600">calificaciones</button>
+                    </div>
+                </div>
+
+                <!-- Contenido -->
+                <div class="max-w-5xl mx-auto p-8">
+                    <!-- TAB CURSO -->
+                    <div id="tab-course" class="course-tab-content">
+                        <div id="professor-course-actions" class="hidden-section mb-6 flex gap-3">
+                            <button onclick="openModal('add-unit-modal')" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 text-sm">
+                                <i class="fas fa-plus mr-2"></i>Añadir Unidad Temática
+                            </button>
+                            <button onclick="openModal('add-announcement-modal')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm">
+                                <i class="fas fa-bullhorn mr-2"></i>Añadir Aviso
                             </button>
                         </div>
+
+                        <!-- Avisos -->
+                        <div id="announcements-section" class="mb-6"></div>
+
+                        <!-- Lista de Unidades -->
+                        <div id="units-list" class="space-y-3"></div>
                     </div>
-                </div>
 
-                <div class="flex gap-2 mb-6 border-b border-gray-200 flex-wrap">
-                    <button onclick="showCourseTab('announcements', this)" class="course-tab px-6 py-3 font-semibold text-gray-600 hover:text-indigo-600 transition tab-active">
-                        <i class="fas fa-bullhorn mr-2"></i>Avisos
-                    </button>
-                    <button onclick="showCourseTab('tasks', this)" class="course-tab px-6 py-3 font-semibold text-gray-600 hover:text-indigo-600 transition">
-                        <i class="fas fa-tasks mr-2"></i>Tareas
-                    </button>
-                    <button onclick="showCourseTab('grades', this)" class="course-tab px-6 py-3 font-semibold text-gray-600 hover:text-indigo-600 transition">
-                        <i class="fas fa-chart-line mr-2"></i>Notas
-                    </button>
-                    <button onclick="showCourseTab('materials', this)" class="course-tab px-6 py-3 font-semibold text-gray-600 hover:text-indigo-600 transition">
-                        <i class="fas fa-folder-open mr-2"></i>Material
-                    </button>
-                </div>
-
-                <div id="tab-announcements" class="course-tab-content">
-                    <div id="professor-announcement-btn" class="hidden-section mb-4">
-                        <button onclick="openModal('announcement-modal')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
-                            <i class="fas fa-plus mr-2"></i>Nuevo Aviso
-                        </button>
-                    </div>
-                    <div id="announcements-list" class="space-y-4"></div>
-                </div>
-
-                <div id="tab-tasks" class="course-tab-content hidden-section">
-                    <div id="professor-task-btn" class="hidden-section mb-4">
-                        <button onclick="openModal('task-modal')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
-                            <i class="fas fa-plus mr-2"></i>Nueva Tarea
-                        </button>
-                    </div>
-                    <div id="tasks-list" class="space-y-4"></div>
-                </div>
-
-                <div id="tab-grades" class="course-tab-content hidden-section">
-                    <div id="professor-grades-section" class="hidden-section">
-                        <div class="bg-white p-6 rounded-xl shadow-sm border">
-                            <h3 class="text-lg font-semibold mb-4">Calificaciones de Alumnos</h3>
-                            <div id="grades-students-list" class="space-y-4"></div>
+                    <!-- TAB PARTICIPANTES -->
+                    <div id="tab-participants" class="course-tab-content hidden-section">
+                        <div class="bg-white rounded-lg shadow p-6">
+                            <h3 class="text-lg font-bold mb-4">Participantes</h3>
+                            <div id="participants-list" class="space-y-2"></div>
                         </div>
                     </div>
-                    <div id="student-grades-section" class="hidden-section">
-                        <div class="bg-white p-6 rounded-xl shadow-sm border">
-                            <h3 class="text-lg font-semibold mb-4">Mis Calificaciones</h3>
-                            <div id="student-grades-list" class="space-y-4"></div>
+
+                    <!-- TAB CALIFICACIONES -->
+                    <div id="tab-grades" class="course-tab-content hidden-section">
+                        <div id="professor-grades-view" class="hidden-section">
+                            <div class="bg-white rounded-lg shadow p-6">
+                                <h3 class="text-lg font-bold mb-4">Calificaciones de Alumnos</h3>
+                                <div id="grades-students-list" class="space-y-4"></div>
+                            </div>
+                        </div>
+                        <div id="student-grades-view" class="hidden-section">
+                            <div class="bg-white rounded-lg shadow p-6">
+                                <h3 class="text-lg font-bold mb-4">Mis Calificaciones</h3>
+                                <div id="student-grades-list" class="space-y-4"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div id="tab-materials" class="course-tab-content hidden-section">
-                    <div id="professor-material-btn" class="hidden-section mb-4">
-                        <button onclick="openModal('material-modal')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
-                            <i class="fas fa-plus mr-2"></i>Subir Material
-                        </button>
-                    </div>
-                    <div id="materials-list" class="space-y-4"></div>
                 </div>
             </div>
 
             <!-- MENSAJES -->
-            <div id="section-inbox" class="app-section hidden-section fade-in">
-                <h2 class="text-2xl font-bold mb-6">Mensajes</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-200px)]">
-                    <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border flex flex-col">
-                        <div class="p-4 border-b">
-                            <button onclick="openModal('compose-modal')" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
-                                <i class="fas fa-pen mr-2"></i>Nuevo Mensaje
-                            </button>
-                        </div>
-                        <div id="inbox-list" class="flex-1 overflow-y-auto p-2 space-y-2"></div>
-                    </div>
-                    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border p-6 flex flex-col">
-                        <div id="inbox-empty-state" class="flex-1 flex items-center justify-center text-gray-400">
-                            <div class="text-center">
-                                <i class="fas fa-inbox text-4xl mb-2"></i>
-                                <p>Selecciona un mensaje</p>
+            <div id="section-inbox" class="app-section hidden-section fade-in p-8">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="text-2xl font-bold mb-6">Mensajes</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-250px)]">
+                        <div class="lg:col-span-1 bg-white rounded-lg shadow flex flex-col">
+                            <div class="p-4 border-b">
+                                <button onclick="openModal('compose-modal')" class="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">
+                                    <i class="fas fa-pen mr-2"></i>Nuevo Mensaje
+                                </button>
                             </div>
+                            <div id="inbox-list" class="flex-1 overflow-y-auto p-2 space-y-2"></div>
                         </div>
-                        <div id="inbox-message-view" class="hidden-section flex-1 flex flex-col">
-                            <div class="border-b pb-4 mb-4">
-                                <h3 id="msg-subject" class="text-xl font-bold"></h3>
-                                <p class="text-sm text-gray-500 mt-1">De: <span id="msg-from" class="font-semibold text-gray-700"></span></p>
-                                <p class="text-xs text-gray-400" id="msg-date"></p>
+                        <div class="lg:col-span-2 bg-white rounded-lg shadow p-6 flex flex-col">
+                            <div id="inbox-empty-state" class="flex-1 flex items-center justify-center text-gray-400">
+                                <div class="text-center">
+                                    <i class="fas fa-inbox text-4xl mb-2"></i>
+                                    <p>Selecciona un mensaje</p>
+                                </div>
                             </div>
-                            <p id="msg-body" class="text-gray-700 flex-1 whitespace-pre-wrap"></p>
+                            <div id="inbox-message-view" class="hidden-section flex-1 flex flex-col">
+                                <div class="border-b pb-4 mb-4">
+                                    <h3 id="msg-subject" class="text-xl font-bold"></h3>
+                                    <p class="text-sm text-gray-500 mt-1">De: <span id="msg-from" class="font-semibold"></span></p>
+                                    <p class="text-xs text-gray-400" id="msg-date"></p>
+                                </div>
+                                <p id="msg-body" class="text-gray-700 flex-1 whitespace-pre-wrap"></p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- CHAT -->
-            <div id="section-chat" class="app-section hidden-section fade-in flex flex-col h-[calc(100vh-150px)]">
-                <h2 class="text-2xl font-bold mb-4">Chat</h2>
-                <div class="flex-1 bg-white rounded-xl shadow-sm border flex flex-col overflow-hidden">
-                    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50"></div>
-                    <form id="chat-form" class="p-4 border-t bg-white flex gap-2">
-                        <input type="text" id="chat-input" placeholder="Escribe..." required class="flex-1 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                        <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </form>
+            <div id="section-chat" class="app-section hidden-section fade-in p-8">
+                <div class="max-w-4xl mx-auto h-[calc(100vh-200px)] flex flex-col">
+                    <h2 class="text-2xl font-bold mb-4">Chat General</h2>
+                    <div class="flex-1 bg-white rounded-lg shadow flex flex-col overflow-hidden">
+                        <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50"></div>
+                        <form id="chat-form" class="p-4 border-t bg-white flex gap-2">
+                            <input type="text" id="chat-input" placeholder="Escribe un mensaje..." required class="flex-1 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                            <button type="submit" class="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </main>
@@ -250,121 +301,115 @@
                 <button onclick="closeModal('create-course-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
             <form id="create-course-form" class="space-y-4">
-                <input type="text" id="course-name" placeholder="Nombre del curso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                <textarea id="course-desc" placeholder="Descripción" required rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                <input type="text" id="course-name" placeholder="Nombre del curso (ej: Sistemas Operativos en Red)" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                <input type="text" id="course-center" placeholder="Centro educativo (ej: IES Virgen de Covadonga)" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                <textarea id="course-desc" placeholder="Descripción breve" rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea>
                 <div class="flex justify-end gap-3">
                     <button type="button" onclick="closeModal('create-course-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Crear</button>
+                    <button type="submit" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Crear</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Añadir Alumno -->
-    <div id="add-student-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
+    <!-- Modal Añadir Unidad -->
+    <div id="add-unit-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold">Añadir Alumno a un Curso</h3>
-                <button onclick="closeModal('add-student-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+                <h3 id="unit-modal-title" class="text-lg font-bold">Añadir Unidad Temática</h3>
+                <button onclick="closeModal('add-unit-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
-            <form id="add-student-form" class="space-y-4">
-                <select id="select-course" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="">Selecciona un curso...</option>
-                </select>
-                <input type="email" id="student-email" placeholder="alumno@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+            <form id="add-unit-form" class="space-y-4">
+                <input type="hidden" id="unit-edit-id">
+                <input type="text" id="unit-title" placeholder="Título (ej: UT0. Introducción a los sistemas)" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                <textarea id="unit-description" placeholder="Descripción / Objetivos de la unidad..." rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea>
                 <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closeModal('add-student-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Añadir</button>
+                    <button type="button" onclick="closeModal('add-unit-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Guardar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Nuevo Aviso -->
-    <div id="announcement-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
+    <!-- Modal Añadir Recurso/Apunte -->
+    <div id="add-resource-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
-                <h3 id="announcement-modal-title" class="text-lg font-bold">Nuevo Aviso</h3>
-                <button onclick="closeModal('announcement-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+                <h3 id="resource-modal-title" class="text-lg font-bold">Añadir Recurso/Apunte</h3>
+                <button onclick="closeModal('add-resource-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
-            <form id="add-announcement-form" class="space-y-4">
-                <input type="hidden" id="announcement-edit-id">
-                <input type="text" id="announcement-title" placeholder="Título del aviso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                <textarea id="announcement-content" placeholder="Contenido del aviso..." required rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closeModal('announcement-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Publicar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Nueva Tarea -->
-    <div id="task-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
-            <div class="flex justify-between items-center mb-4">
-                <h3 id="task-modal-title" class="text-lg font-bold">Nueva Tarea</h3>
-                <button onclick="closeModal('task-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
-            </div>
-            <form id="add-task-form" class="space-y-4">
-                <input type="hidden" id="task-edit-id">
-                <input type="text" id="task-title" placeholder="Título de la tarea" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                <textarea id="task-description" placeholder="Descripción y reglas de la tarea..." required rows="5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+            <form id="add-resource-form" class="space-y-4">
+                <input type="hidden" id="resource-unit-id">
+                <input type="hidden" id="resource-edit-id">
+                <input type="text" id="resource-title" placeholder="Título del recurso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                <textarea id="resource-content" placeholder="Contenido del apunte (texto, enlaces, etc.)..." rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de entrega</label>
-                    <input type="datetime-local" id="task-deadline" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Puntuación máxima (opcional)</label>
-                    <input type="number" id="task-max-score" placeholder="10" min="1" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Archivo adjunto (PDF, imagen, etc.)</label>
+                    <input type="file" id="resource-file" class="w-full px-4 py-2 border rounded-lg">
                 </div>
                 <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closeModal('task-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Guardar Tarea</button>
+                    <button type="button" onclick="closeModal('add-resource-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Guardar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Subir Material -->
-    <div id="material-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
+    <!-- Modal Añadir Tarea/Actividad -->
+    <div id="add-activity-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold">Subir Material</h3>
-                <button onclick="closeModal('material-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+                <h3 id="activity-modal-title" class="text-lg font-bold">Añadir Tarea/Actividad</h3>
+                <button onclick="closeModal('add-activity-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
-            <form id="add-material-form" class="space-y-4">
-                <input type="text" id="material-title" placeholder="Título del material" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                <textarea id="material-description" placeholder="Descripción..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                <input type="file" id="material-file" class="w-full px-4 py-2 border rounded-lg">
+            <form id="add-activity-form" class="space-y-4">
+                <input type="hidden" id="activity-unit-id">
+                <input type="hidden" id="activity-edit-id">
+                <input type="text" id="activity-title" placeholder="Título de la tarea" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                <textarea id="activity-description" placeholder="Enunciado, instrucciones, reglas..." required rows="5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha límite</label>
+                        <input type="datetime-local" id="activity-deadline" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Puntuación máxima</label>
+                        <input type="number" id="activity-max-score" placeholder="10" min="1" value="10" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Archivo de la tarea (opcional)</label>
+                    <input type="file" id="activity-file" class="w-full px-4 py-2 border rounded-lg">
+                </div>
                 <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closeModal('material-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Subir</button>
+                    <button type="button" onclick="closeModal('add-activity-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700">Guardar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Vista de Tarea (Alumno) -->
-    <div id="view-task-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
+    <!-- Modal Ver Tarea (Alumno) -->
+    <div id="view-activity-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 fade-in max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-start mb-4">
                 <div>
-                    <h3 id="view-task-title" class="text-2xl font-bold text-indigo-900"></h3>
-                    <p id="view-task-deadline" class="text-sm text-gray-500 mt-1"></p>
+                    <h3 id="view-activity-title" class="text-2xl font-bold text-gray-900"></h3>
+                    <p id="view-activity-meta" class="text-sm text-gray-500 mt-1"></p>
                 </div>
-                <button onclick="closeModal('view-task-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+                <button onclick="closeModal('view-activity-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
             <div class="border-t pt-4">
-                <h4 class="font-semibold text-gray-700 mb-2">Descripción y reglas:</h4>
-                <p id="view-task-description" class="text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-lg"></p>
+                <h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-clipboard-list mr-2"></i>Enunciado:</h4>
+                <div id="view-activity-description" class="text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-lg"></div>
             </div>
-            <div id="view-task-submission-status" class="mt-4 p-4 rounded-lg"></div>
-            <div id="view-task-submit-section" class="mt-4">
-                <h4 class="font-semibold text-gray-700 mb-2">Entregar tarea:</h4>
-                <form id="view-task-submit-form" class="space-y-3">
-                    <textarea id="view-task-comment" placeholder="Comentario para el profesor (opcional)..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                    <input type="file" id="view-task-file" class="w-full px-4 py-2 border rounded-lg">
+            <div id="view-activity-file-section" class="mt-4"></div>
+            <div id="view-activity-submission-status" class="mt-4 p-4 rounded-lg"></div>
+            <div id="view-activity-submit-section" class="mt-4 hidden-section">
+                <h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-upload mr-2"></i>Entregar tarea:</h4>
+                <form id="view-activity-submit-form" class="space-y-3">
+                    <textarea id="view-activity-comment" placeholder="Comentario para el profesor (opcional)..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea>
+                    <input type="file" id="view-activity-file" class="w-full px-4 py-2 border rounded-lg">
                     <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
                         <i class="fas fa-upload mr-2"></i>Entregar Tarea
                     </button>
@@ -377,14 +422,14 @@
     <div id="submissions-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl p-6 fade-in max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4">
-                <h3 id="submissions-task-title" class="text-xl font-bold"></h3>
+                <h3 id="submissions-activity-title" class="text-xl font-bold"></h3>
                 <button onclick="closeModal('submissions-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
             <div id="submissions-list" class="space-y-3"></div>
         </div>
     </div>
 
-    <!-- Modal Calificar Entrega -->
+    <!-- Modal Calificar -->
     <div id="grade-submission-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
@@ -392,34 +437,51 @@
                 <button onclick="closeModal('grade-submission-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
             <form id="grade-submission-form" class="space-y-4">
-                <input type="hidden" id="grade-submission-task-id">
-                <input type="hidden" id="grade-submission-student-id">
+                <input type="hidden" id="grade-activity-id">
                 <input type="hidden" id="grade-submission-id">
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <p class="font-semibold" id="grade-student-name"></p>
                     <p class="text-sm text-gray-600" id="grade-student-email"></p>
                     <p class="text-sm text-gray-600 mt-2 italic" id="grade-student-comment"></p>
-                    <a id="grade-student-file" href="#" target="_blank" class="text-indigo-600 text-sm hover:underline hidden-section mt-2 inline-block">
+                    <a id="grade-student-file" href="#" target="_blank" class="text-blue-600 text-sm hover:underline mt-2 inline-block hidden-section">
                         <i class="fas fa-file mr-1"></i>Ver archivo adjunto
                     </a>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nota</label>
-                    <input type="number" id="grade-value" placeholder="0-10" min="0" max="10" step="0.1" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nota (0-10)</label>
+                    <input type="number" id="grade-value" placeholder="0-10" min="0" max="10" step="0.1" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Comentario de feedback</label>
-                    <textarea id="grade-feedback" placeholder="Comentarios para el alumno..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    <textarea id="grade-feedback" placeholder="Comentarios para el alumno..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea>
                 </div>
                 <div class="flex justify-end gap-3">
                     <button type="button" onclick="closeModal('grade-submission-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Guardar Nota</button>
+                    <button type="submit" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Guardar Nota</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Nuevo Mensaje -->
+    <!-- Modal Aviso -->
+    <div id="add-announcement-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Nuevo Aviso</h3>
+                <button onclick="closeModal('add-announcement-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <form id="add-announcement-form" class="space-y-4">
+                <input type="text" id="announcement-title" placeholder="Título del aviso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                <textarea id="announcement-content" placeholder="Contenido del aviso..." required rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea>
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeModal('add-announcement-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Publicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Mensaje -->
     <div id="compose-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
@@ -427,12 +489,12 @@
                 <button onclick="closeModal('compose-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
             <form id="compose-form" class="space-y-4">
-                <input type="email" id="compose-to" placeholder="Para: usuario@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                <input type="text" id="compose-subject" placeholder="Asunto" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                <textarea id="compose-body" placeholder="Mensaje..." required rows="5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                <input type="email" id="compose-to" placeholder="Para: usuario@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                <input type="text" id="compose-subject" placeholder="Asunto" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                <textarea id="compose-body" placeholder="Mensaje..." required rows="5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea>
                 <div class="flex justify-end gap-3">
                     <button type="button" onclick="closeModal('compose-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Enviar</button>
+                    <button type="submit" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Enviar</button>
                 </div>
             </form>
         </div>
@@ -462,7 +524,8 @@
         let currentUser = null;
         let userData = null;
         let currentCourseId = null;
-        let currentViewTaskId = null;
+        let currentViewActivityId = null;
+        let currentViewUnitId = null;
         let unsubscribeChat = null;
         let unsubscribeInbox = null;
 
@@ -472,10 +535,10 @@
             document.getElementById('request-form').classList.toggle('hidden-section', tab !== 'request');
             document.getElementById('tab-login').classList.toggle('bg-white', tab === 'login');
             document.getElementById('tab-login').classList.toggle('shadow', tab === 'login');
-            document.getElementById('tab-login').classList.toggle('text-indigo-700', tab === 'login');
+            document.getElementById('tab-login').classList.toggle('text-orange-600', tab === 'login');
             document.getElementById('tab-request').classList.toggle('bg-white', tab === 'request');
             document.getElementById('tab-request').classList.toggle('shadow', tab === 'request');
-            document.getElementById('tab-request').classList.toggle('text-indigo-700', tab === 'request');
+            document.getElementById('tab-request').classList.toggle('text-orange-600', tab === 'request');
         };
 
         const validateEduBaseEmail = (email) => email.toLowerCase().endsWith('@edubase.es');
@@ -488,9 +551,8 @@
             const btn = document.getElementById('login-btn');
 
             errorEl.classList.add('hidden-section');
-
             if (!validateEduBaseEmail(email)) {
-                errorEl.textContent = "⚠️ Solo correos @edubase.es";
+                errorEl.textContent = "️ Solo correos @edubase.es";
                 errorEl.classList.remove('hidden-section');
                 return;
             }
@@ -501,7 +563,6 @@
             try {
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
-                console.error(error);
                 let msg = "❌ Error al iniciar sesión.";
                 if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
                     msg = "❌ Usuario o contraseña incorrectos.";
@@ -530,42 +591,41 @@
                 currentUser = user;
                 try {
                     let userDoc = await getDoc(doc(db, "users", user.uid));
-                    
                     if (!userDoc.exists()) {
                         const role = user.email.toLowerCase().includes('pf') ? 'profesor' : 'alumno';
                         const name = user.email.split('@')[0];
-                        
                         await setDoc(doc(db, "users", user.uid), {
-                            uid: user.uid,
-                            name: name,
-                            email: user.email,
-                            role: role,
+                            uid: user.uid, name, email: user.email, role,
                             createdAt: serverTimestamp()
                         });
-                        
                         userDoc = await getDoc(doc(db, "users", user.uid));
                     }
-                    
                     if (userDoc.exists()) {
                         userData = userDoc.data();
                         userData.id = userDoc.id;
                         
                         document.getElementById('auth-section').classList.add('hidden-section');
                         document.getElementById('app-section').classList.remove('hidden-section');
-                        document.getElementById('user-display-name').textContent = userData.name || user.email;
-                        document.getElementById('user-role-badge').textContent = (userData.role || 'alumno').toUpperCase();
+                        
+                        const displayName = userData.name || user.email;
+                        const initial = displayName.charAt(0).toUpperCase();
+                        document.getElementById('user-display-name-top').textContent = displayName;
+                        document.getElementById('user-avatar').textContent = initial;
+                        document.getElementById('profile-avatar').textContent = initial;
+                        document.getElementById('profile-name').textContent = displayName;
+                        document.getElementById('profile-email').textContent = user.email;
+                        document.getElementById('profile-role').textContent = userData.role.toUpperCase();
                         
                         if (userData.role === 'profesor') {
                             document.getElementById('professor-actions').classList.remove('hidden-section');
-                        } else {
-                            document.getElementById('professor-actions').classList.add('hidden-section');
                         }
                         
                         loadCourses();
                         setupInbox();
                         setupChat();
+                        showSection('dashboard');
                     } else {
-                        alert("⚠️ Error al configurar la cuenta.");
+                        alert("️ Error al configurar la cuenta.");
                         await signOut(auth);
                     }
                 } catch (err) {
@@ -581,29 +641,18 @@
             }
         });
 
-        // ==================== MODALES ====================
-        window.openModal = (modalId) => {
-            document.getElementById(modalId).classList.remove('hidden-section');
-            if (modalId === 'add-student-modal') {
-                loadProfessorCoursesForSelect();
-            }
+        // ==================== NAVEGACIÓN ====================
+        window.showSection = (sectionId) => {
+            document.querySelectorAll('.app-section').forEach(el => el.classList.add('hidden-section'));
+            document.getElementById(`section-${sectionId}`).classList.remove('hidden-section');
+            if (sectionId === 'courses' || sectionId === 'dashboard') loadCourses();
         };
 
+        window.openModal = (modalId) => document.getElementById(modalId).classList.remove('hidden-section');
         window.closeModal = (modalId) => {
             document.getElementById(modalId).classList.add('hidden-section');
             const form = document.querySelector(`#${modalId} form`);
             if (form) form.reset();
-        };
-
-        window.showSection = (sectionId, btnElement) => {
-            document.querySelectorAll('.app-section').forEach(el => el.classList.add('hidden-section'));
-            document.getElementById(`section-${sectionId}`).classList.remove('hidden-section');
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-slate-800', 'text-indigo-400'));
-            if (btnElement) btnElement.classList.add('bg-slate-800', 'text-indigo-400');
-            
-            if (sectionId === 'courses' || sectionId === 'dashboard') {
-                loadCourses();
-            }
         };
 
         // ==================== CURSOS ====================
@@ -611,6 +660,7 @@
             e.preventDefault();
             await addDoc(collection(db, "courses"), {
                 name: document.getElementById('course-name').value,
+                center: document.getElementById('course-center').value,
                 description: document.getElementById('course-desc').value,
                 teacherId: currentUser.uid,
                 teacherEmail: currentUser.email,
@@ -624,53 +674,12 @@
             loadCourses();
         });
 
-        async function loadProfessorCoursesForSelect() {
-            const q = query(collection(db, "courses"), where("teacherId", "==", currentUser.uid));
-            const snapshot = await getDocs(q);
-            const select = document.getElementById('select-course');
-            select.innerHTML = '<option value="">Selecciona un curso...</option>';
-            snapshot.docs.forEach(d => {
-                const opt = document.createElement('option');
-                opt.value = d.id;
-                opt.textContent = d.data().name;
-                select.appendChild(opt);
-            });
-        }
-
-        document.getElementById('add-student-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const courseId = document.getElementById('select-course').value;
-            const studentEmail = document.getElementById('student-email').value.toLowerCase();
-            
-            if (!validateEduBaseEmail(studentEmail)) {
-                alert("️ El correo debe ser @edubase.es");
-                return;
-            }
-            
-            await updateDoc(doc(db, "courses", courseId), {
-                students: arrayUnion(studentEmail)
-            });
-            
-            await addDoc(collection(db, "messages"), {
-                to: studentEmail,
-                from: currentUser.email,
-                subject: "Invitación a Curso",
-                body: `Has sido añadido al curso. Revisa la sección de cursos.`,
-                read: false,
-                createdAt: serverTimestamp()
-            });
-            
-            e.target.reset();
-            closeModal('add-student-modal');
-            alert("✅ Alumno añadido al curso");
-        });
-
         async function loadCourses() {
-            const container = document.getElementById('courses-grid');
-            const dashboardList = document.getElementById('courses-list-dashboard');
-            
-            if (container) container.innerHTML = '';
-            if (dashboardList) dashboardList.innerHTML = '';
+            const containers = [
+                document.getElementById('courses-grid'),
+                document.getElementById('courses-list-page')
+            ];
+            containers.forEach(c => { if (c) c.innerHTML = ''; });
             
             let q;
             if (userData.role === 'profesor') {
@@ -683,25 +692,27 @@
             
             if (snapshot.empty) {
                 const emptyMsg = '<p class="text-gray-500 col-span-full text-center py-8">No hay cursos disponibles.</p>';
-                if (container) container.innerHTML = emptyMsg;
-                if (dashboardList) dashboardList.innerHTML = emptyMsg;
+                containers.forEach(c => { if (c) c.innerHTML = emptyMsg; });
                 return;
             }
             
             const cardsHTML = snapshot.docs.map(d => {
                 const data = d.data();
+                const title = data.name;
+                const center = data.center ? ` - ${data.center}` : '';
                 return `
-                    <div class="bg-white p-6 rounded-xl shadow-sm border cursor-pointer hover:shadow-lg transition" onclick="openCourse('${d.id}')">
-                        <h3 class="text-xl font-bold text-indigo-900 mb-2">${data.name}</h3>
-                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">${data.description}</p>
-                        <div class="flex justify-between items-center text-xs text-gray-500">
-                            <span>${userData.role === 'profesor' ? (data.students ? data.students.length : 0) + ' alumnos' : 'Profesor: ' + (data.teacherName || data.teacherEmail)}</span>
+                    <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden cursor-pointer hover:shadow-lg transition" onclick="openCourse('${d.id}')">
+                        <div class="h-32 bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center">
+                            <i class="fas fa-book-open text-white text-5xl opacity-80"></i>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-bold text-gray-900 mb-1 line-clamp-2">${title}${center}</h3>
+                            <p class="text-xs text-gray-500">${userData.role === 'profesor' ? (data.students ? data.students.length : 0) + ' alumnos' : 'Profesor: ' + (data.teacherName || data.teacherEmail)}</p>
                         </div>
                     </div>`;
             }).join('');
             
-            if (container) container.innerHTML = cardsHTML;
-            if (dashboardList) dashboardList.innerHTML = cardsHTML;
+            containers.forEach(c => { if (c) c.innerHTML = cardsHTML; });
         }
 
         window.openCourse = async (courseId) => {
@@ -709,251 +720,436 @@
             const courseDoc = await getDoc(doc(db, "courses", courseId));
             const courseData = courseDoc.data();
             
-            document.getElementById('course-detail-title').textContent = courseData.name;
-            document.getElementById('course-detail-desc').textContent = courseData.description;
+            const center = courseData.center ? ` - ${courseData.center}` : '';
+            document.getElementById('course-detail-title').textContent = courseData.name + center;
+            document.getElementById('course-detail-teacher').textContent = 'Profesor: ' + (courseData.teacherName || courseData.teacherEmail);
             
             if (userData.role === 'profesor') {
-                document.getElementById('professor-announcement-btn').classList.remove('hidden-section');
-                document.getElementById('professor-task-btn').classList.remove('hidden-section');
-                document.getElementById('professor-grades-section').classList.remove('hidden-section');
-                document.getElementById('professor-material-btn').classList.remove('hidden-section');
-                document.getElementById('student-grades-section').classList.add('hidden-section');
-                document.getElementById('course-actions-professor').classList.remove('hidden-section');
+                document.getElementById('professor-course-actions').classList.remove('hidden-section');
+                document.getElementById('professor-grades-view').classList.remove('hidden-section');
+                document.getElementById('student-grades-view').classList.add('hidden-section');
             } else {
-                document.getElementById('professor-announcement-btn').classList.add('hidden-section');
-                document.getElementById('professor-task-btn').classList.add('hidden-section');
-                document.getElementById('professor-grades-section').classList.add('hidden-section');
-                document.getElementById('professor-material-btn').classList.add('hidden-section');
-                document.getElementById('student-grades-section').classList.remove('hidden-section');
-                document.getElementById('course-actions-professor').classList.add('hidden-section');
+                document.getElementById('professor-course-actions').classList.add('hidden-section');
+                document.getElementById('professor-grades-view').classList.add('hidden-section');
+                document.getElementById('student-grades-view').classList.remove('hidden-section');
             }
             
             showSection('course-detail');
-            showCourseTab('announcements', document.querySelector('.course-tab'));
+            showCourseTab('course', document.querySelector('.course-tab'));
             loadAnnouncements();
-            loadTasks();
+            loadUnits();
+            loadParticipants();
             loadGrades();
-            loadMaterials();
         };
 
         window.showCourseTab = (tabName, btnElement) => {
             document.querySelectorAll('.course-tab-content').forEach(el => el.classList.add('hidden-section'));
             document.getElementById(`tab-${tabName}`).classList.remove('hidden-section');
-            document.querySelectorAll('.course-tab').forEach(btn => btn.classList.remove('tab-active'));
-            if (btnElement) btnElement.classList.add('tab-active');
+            document.querySelectorAll('.course-tab').forEach(btn => {
+                btn.classList.remove('tab-active');
+                btn.classList.add('text-gray-600');
+            });
+            if (btnElement) {
+                btnElement.classList.add('tab-active');
+                btnElement.classList.remove('text-gray-600');
+            }
         };
 
         // ==================== AVISOS ====================
         document.getElementById('add-announcement-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const editId = document.getElementById('announcement-edit-id').value;
-            const title = document.getElementById('announcement-title').value;
-            const content = document.getElementById('announcement-content').value;
-            
-            if (editId) {
-                await updateDoc(doc(db, "courses", currentCourseId, "announcements", editId), {
-                    title, content, updatedAt: serverTimestamp()
-                });
-                alert("✅ Aviso actualizado");
-            } else {
-                await addDoc(collection(db, "courses", currentCourseId, "announcements"), {
-                    title, content,
-                    authorId: currentUser.uid,
-                    authorName: userData.name,
-                    createdAt: serverTimestamp()
-                });
-                alert("✅ Aviso publicado");
-            }
+            await addDoc(collection(db, "courses", currentCourseId, "announcements"), {
+                title: document.getElementById('announcement-title').value,
+                content: document.getElementById('announcement-content').value,
+                authorId: currentUser.uid,
+                authorName: userData.name,
+                createdAt: serverTimestamp()
+            });
             e.target.reset();
-            closeModal('announcement-modal');
+            closeModal('add-announcement-modal');
+            alert("✅ Aviso publicado");
             loadAnnouncements();
         });
 
         async function loadAnnouncements() {
-            const container = document.getElementById('announcements-list');
+            const container = document.getElementById('announcements-section');
             container.innerHTML = '';
             
             const q = query(collection(db, "courses", currentCourseId, "announcements"), orderBy("createdAt", "desc"));
             const snapshot = await getDocs(q);
             
-            if (snapshot.empty) {
-                container.innerHTML = '<p class="text-gray-500 text-center py-8">No hay avisos aún.</p>';
-                return;
-            }
+            if (snapshot.empty) return;
             
+            const isProfessor = userData.role === 'profesor';
+            let html = '';
             snapshot.docs.forEach(d => {
                 const data = d.data();
                 const date = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString() : '';
-                const isProfessor = userData.role === 'profesor';
-                container.innerHTML += `
-                    <div class="bg-white p-6 rounded-xl shadow-sm border">
-                        <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
-                            <h4 class="text-lg font-bold text-indigo-900 flex-1">${data.title}</h4>
-                            ${isProfessor ? `
-                                <div class="flex gap-2">
-                                    <button onclick="editAnnouncement('${d.id}', '${data.title.replace(/'/g, "\\'")}', \`${data.content.replace(/`/g, '\\`').replace(/\n/g, '\\n')}\`)" class="text-blue-600 hover:text-blue-800 text-sm"><i class="fas fa-edit"></i></button>
-                                    <button onclick="deleteAnnouncement('${d.id}')" class="text-red-600 hover:text-red-800 text-sm"><i class="fas fa-trash"></i></button>
-                                </div>
-                            ` : ''}
+                html += `
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg mb-3">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-blue-900"><i class="fas fa-bullhorn mr-2"></i>${data.title}</h4>
+                                <p class="text-sm text-gray-600 mt-1 whitespace-pre-wrap">${data.content}</p>
+                                <p class="text-xs text-gray-500 mt-2">${date} • ${data.authorName}</p>
+                            </div>
+                            ${isProfessor ? `<button onclick="deleteAnnouncement('${d.id}')" class="text-red-600 hover:text-red-800 ml-2"><i class="fas fa-trash"></i></button>` : ''}
                         </div>
-                        <span class="text-xs text-gray-500">${date} • Por: ${data.authorName}</span>
-                        <p class="text-gray-700 whitespace-pre-wrap mt-3">${data.content}</p>
                     </div>`;
             });
+            container.innerHTML = html;
         }
 
-        window.editAnnouncement = (id, title, content) => {
-            document.getElementById('announcement-edit-id').value = id;
-            document.getElementById('announcement-title').value = title;
-            document.getElementById('announcement-content').value = content;
-            document.getElementById('announcement-modal-title').textContent = 'Editar Aviso';
-            openModal('announcement-modal');
-        };
-
         window.deleteAnnouncement = async (id) => {
-            if (confirm('¿Seguro que quieres eliminar este aviso?')) {
+            if (confirm('¿Eliminar este aviso?')) {
                 await deleteDoc(doc(db, "courses", currentCourseId, "announcements", id));
-                alert("✅ Aviso eliminado");
                 loadAnnouncements();
             }
         };
 
-        // ==================== TAREAS ====================
-        document.getElementById('add-task-form').addEventListener('submit', async (e) => {
+        // ==================== UNIDADES TEMÁTICAS (ESTILO MOODLE) ====================
+        document.getElementById('add-unit-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const editId = document.getElementById('task-edit-id').value;
-            const taskData = {
-                title: document.getElementById('task-title').value,
-                description: document.getElementById('task-description').value,
-                deadline: document.getElementById('task-deadline').value,
-                maxScore: document.getElementById('task-max-score').value || 10,
-                authorId: currentUser.uid,
-                authorName: userData.name,
+            const editId = document.getElementById('unit-edit-id').value;
+            const unitData = {
+                title: document.getElementById('unit-title').value,
+                description: document.getElementById('unit-description').value,
+                order: Date.now(),
+                updatedAt: serverTimestamp()
             };
             
             if (editId) {
-                taskData.updatedAt = serverTimestamp();
-                await updateDoc(doc(db, "courses", currentCourseId, "tasks", editId), taskData);
-                alert("✅ Tarea actualizada");
+                await updateDoc(doc(db, "courses", currentCourseId, "units", editId), unitData);
+                alert("✅ Unidad actualizada");
             } else {
-                taskData.createdAt = serverTimestamp();
-                await addDoc(collection(db, "courses", currentCourseId, "tasks"), taskData);
-                alert("✅ Tarea creada");
+                unitData.createdAt = serverTimestamp();
+                await addDoc(collection(db, "courses", currentCourseId, "units"), unitData);
+                alert("✅ Unidad creada");
             }
             e.target.reset();
-            closeModal('task-modal');
-            loadTasks();
+            closeModal('add-unit-modal');
+            loadUnits();
         });
 
-        async function loadTasks() {
-            const container = document.getElementById('tasks-list');
+        async function loadUnits() {
+            const container = document.getElementById('units-list');
             container.innerHTML = '';
             
-            const q = query(collection(db, "courses", currentCourseId, "tasks"), orderBy("deadline", "asc"));
+            const q = query(collection(db, "courses", currentCourseId, "units"), orderBy("order", "asc"));
             const snapshot = await getDocs(q);
             
             if (snapshot.empty) {
-                container.innerHTML = '<p class="text-gray-500 text-center py-8">No hay tareas aún.</p>';
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">No hay unidades temáticas aún.</p>';
                 return;
             }
             
             const isProfessor = userData.role === 'profesor';
             
-            for (const d of snapshot.docs) {
-                const data = d.data();
-                const deadline = new Date(data.deadline).toLocaleString();
-                const isLate = new Date(data.deadline) < new Date();
+            for (const unitDoc of snapshot.docs) {
+                const unitData = unitDoc.data();
+                const unitId = unitDoc.id;
                 
-                let actionsHTML = '';
-                let infoHTML = '';
+                // Cargar recursos y actividades de esta unidad
+                const resourcesSnap = await getDocs(collection(db, "courses", currentCourseId, "units", unitId, "resources"));
+                const activitiesSnap = await getDocs(collection(db, "courses", currentCourseId, "units", unitId, "activities"));
                 
-                if (isProfessor) {
-                    // Contar entregas
-                    const submissionsQ = query(collection(db, "courses", currentCourseId, "tasks", d.id, "submissions"));
-                    const submissionsSnap = await getDocs(submissionsQ);
-                    const submissionsCount = submissionsSnap.size;
-                    
-                    actionsHTML = `
-                        <div class="flex gap-2 mt-3">
-                            <button onclick="viewSubmissions('${d.id}', '${data.title.replace(/'/g, "\\'")}')" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 text-sm">
-                                <i class="fas fa-users mr-1"></i>Ver entregas (${submissionsCount})
-                            </button>
-                            <button onclick="editTask('${d.id}')" class="bg-yellow-500 text-white px-3 py-1.5 rounded-lg hover:bg-yellow-600 text-sm">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button onclick="deleteTask('${d.id}')" class="bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-red-700 text-sm">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                let resourcesHTML = '';
+                resourcesSnap.docs.forEach(r => {
+                    const rData = r.data();
+                    resourcesHTML += `
+                        <div class="resource-item flex items-center gap-3 p-3 rounded-lg border border-gray-100">
+                            <div class="moodle-icon moodle-icon-resource"><i class="fas fa-file-alt"></i></div>
+                            <div class="flex-1">
+                                <p class="font-medium text-sm text-gray-900">${rData.title}</p>
+                                ${rData.content ? `<p class="text-xs text-gray-600 line-clamp-2">${rData.content}</p>` : ''}
+                            </div>
+                            <div class="flex gap-2">
+                                ${rData.fileUrl ? `<a href="${rData.fileUrl}" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm"><i class="fas fa-download"></i></a>` : ''}
+                                ${isProfessor ? `
+                                    <button onclick="editResource('${unitId}', '${r.id}')" class="text-yellow-600 hover:text-yellow-800 text-sm"><i class="fas fa-edit"></i></button>
+                                    <button onclick="deleteResource('${unitId}', '${r.id}')" class="text-red-600 hover:text-red-800 text-sm"><i class="fas fa-trash"></i></button>
+                                ` : ''}
+                            </div>
                         </div>`;
-                    infoHTML = `<p class="text-xs text-gray-500 mt-2">${submissionsCount} entrega(s) recibida(s)</p>`;
-                } else {
-                    // Alumno: verificar si ya entregó
-                    const mySubmissionQ = query(
-                        collection(db, "courses", currentCourseId, "tasks", d.id, "submissions"),
-                        where("studentId", "==", currentUser.uid)
-                    );
-                    const mySnap = await getDocs(mySubmissionQ);
-                    const hasSubmitted = !mySnap.empty;
+                });
+                
+                let activitiesHTML = '';
+                for (const aDoc of activitiesSnap.docs) {
+                    const aData = aDoc.data();
+                    const deadline = new Date(aData.deadline).toLocaleString();
+                    const isLate = new Date(aData.deadline) < new Date();
                     
-                    if (hasSubmitted) {
-                        const subData = mySnap.docs[0].data();
-                        const gradeInfo = subData.grade !== undefined ? `<span class="ml-2 bg-green-100 text-green-800 px-2 py-0.5 rounded text-xs">Nota: ${subData.grade}${subData.maxScore ? '/' + subData.maxScore : ''}</span>` : '';
-                        infoHTML = `<p class="text-xs text-green-600 mt-2"><i class="fas fa-check-circle mr-1"></i>Entregada${gradeInfo}</p>`;
+                    let statusHTML = '';
+                    if (!isProfessor) {
+                        const mySubQ = query(
+                            collection(db, "courses", currentCourseId, "units", unitId, "activities", aDoc.id, "submissions"),
+                            where("studentId", "==", currentUser.uid)
+                        );
+                        const mySnap = await getDocs(mySubQ);
+                        if (!mySnap.empty) {
+                            const sub = mySnap.docs[0].data();
+                            const gradeInfo = sub.grade !== undefined ? `<span class="ml-2 bg-green-100 text-green-800 px-2 py-0.5 rounded text-xs">Nota: ${sub.grade}/${sub.maxScore || 10}</span>` : '';
+                            statusHTML = `<span class="text-xs text-green-600"><i class="fas fa-check-circle mr-1"></i>Entregada${gradeInfo}</span>`;
+                        } else {
+                            statusHTML = `<span class="text-xs ${isLate ? 'text-red-600' : 'text-orange-600'}"><i class="fas fa-clock mr-1"></i>${isLate ? 'Fecha pasada' : 'Pendiente'}</span>`;
+                        }
                     } else {
-                        infoHTML = `<p class="text-xs text-orange-600 mt-2"><i class="fas fa-clock mr-1"></i>Pendiente de entregar</p>`;
+                        const subSnap = await getDocs(collection(db, "courses", currentCourseId, "units", unitId, "activities", aDoc.id, "submissions"));
+                        statusHTML = `<span class="text-xs text-blue-600">${subSnap.size} entrega(s)</span>`;
                     }
                     
-                    actionsHTML = `
-                        <button onclick="viewTaskDetail('${d.id}')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm mt-3">
-                            <i class="fas fa-eye mr-2"></i>Ver tarea y entregar
-                        </button>`;
+                    activitiesHTML += `
+                        <div class="activity-item flex items-center gap-3 p-3 rounded-lg border border-gray-100">
+                            <div class="moodle-icon moodle-icon-activity"><i class="fas fa-tasks"></i></div>
+                            <div class="flex-1">
+                                <p class="font-medium text-sm text-gray-900">${aData.title}</p>
+                                <p class="text-xs text-gray-500"><i class="fas fa-clock mr-1"></i>${deadline} • ${aData.maxScore || 10} pts</p>
+                                ${statusHTML}
+                            </div>
+                            <div class="flex gap-2">
+                                ${!isProfessor ? `<button onclick="viewActivityDetail('${unitId}', '${aDoc.id}')" class="text-orange-600 hover:text-orange-800 text-sm font-medium">Ver</button>` : ''}
+                                ${isProfessor ? `
+                                    <button onclick="viewSubmissions('${unitId}', '${aDoc.id}', '${aData.title.replace(/'/g, "\\'")}')" class="text-blue-600 hover:text-blue-800 text-sm"><i class="fas fa-users"></i></button>
+                                    <button onclick="editActivity('${unitId}', '${aDoc.id}')" class="text-yellow-600 hover:text-yellow-800 text-sm"><i class="fas fa-edit"></i></button>
+                                    <button onclick="deleteActivity('${unitId}', '${aDoc.id}')" class="text-red-600 hover:text-red-800 text-sm"><i class="fas fa-trash"></i></button>
+                                ` : ''}
+                            </div>
+                        </div>`;
                 }
                 
                 container.innerHTML += `
-                    <div class="bg-white p-6 rounded-xl shadow-sm border">
-                        <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
-                            <h4 class="text-lg font-bold text-indigo-900 flex-1">${data.title}</h4>
-                            <span class="text-xs ${isLate ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'} px-2 py-1 rounded">
-                                <i class="fas fa-clock mr-1"></i>${deadline}
-                            </span>
+                    <div class="moodle-card">
+                        <div class="moodle-card-header unit-header" onclick="toggleUnit('${unitId}')">
+                            <div class="moodle-icon moodle-icon-unit"><i class="fas fa-chevron-right" id="unit-icon-${unitId}"></i></div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-900">${unitData.title}</h4>
+                                ${unitData.description ? `<p class="text-xs text-gray-600 mt-1 line-clamp-1">${unitData.description}</p>` : ''}
+                            </div>
+                            ${isProfessor ? `
+                                <div class="flex gap-2" onclick="event.stopPropagation()">
+                                    <button onclick="openAddResource('${unitId}')" class="text-blue-600 hover:text-blue-800 text-sm" title="Añadir apunte"><i class="fas fa-file-alt"></i></button>
+                                    <button onclick="openAddActivity('${unitId}')" class="text-pink-600 hover:text-pink-800 text-sm" title="Añadir tarea"><i class="fas fa-tasks"></i></button>
+                                    <button onclick="editUnit('${unitId}')" class="text-yellow-600 hover:text-yellow-800 text-sm"><i class="fas fa-edit"></i></button>
+                                    <button onclick="deleteUnit('${unitId}')" class="text-red-600 hover:text-red-800 text-sm"><i class="fas fa-trash"></i></button>
+                                </div>
+                            ` : ''}
                         </div>
-                        <p class="text-sm text-gray-500 mb-2">Por: ${data.authorName} • Puntuación: ${data.maxScore} pts</p>
-                        <p class="text-gray-700 whitespace-pre-wrap line-clamp-3">${data.description}</p>
-                        ${infoHTML}
-                        ${actionsHTML}
+                        <div id="unit-content-${unitId}" class="hidden-section unit-content bg-white p-4">
+                            ${unitData.description ? `<div class="mb-4 p-3 bg-amber-50 rounded-lg border border-amber-200"><h5 class="font-semibold text-sm text-amber-900 mb-1"><i class="fas fa-bullseye mr-1"></i>Objetivos:</h5><p class="text-sm text-gray-700 whitespace-pre-wrap">${unitData.description}</p></div>` : ''}
+                            
+                            ${resourcesHTML ? `
+                                <div class="mb-4">
+                                    <h5 class="font-semibold text-sm text-gray-700 mb-2 uppercase tracking-wide">Apuntes:</h5>
+                                    <div class="space-y-2">${resourcesHTML}</div>
+                                </div>
+                            ` : ''}
+                            
+                            ${activitiesHTML ? `
+                                <div>
+                                    <h5 class="font-semibold text-sm text-gray-700 mb-2 uppercase tracking-wide">Tareas:</h5>
+                                    <div class="space-y-2">${activitiesHTML}</div>
+                                </div>
+                            ` : ''}
+                            
+                            ${!resourcesHTML && !activitiesHTML ? '<p class="text-gray-500 text-sm text-center py-4">Esta unidad está vacía.</p>' : ''}
+                        </div>
                     </div>`;
             }
         }
 
-        window.viewTaskDetail = async (taskId) => {
-            currentViewTaskId = taskId;
-            const taskDoc = await getDoc(doc(db, "courses", currentCourseId, "tasks", taskId));
-            const data = taskDoc.data();
+        window.toggleUnit = (unitId) => {
+            const content = document.getElementById(`unit-content-${unitId}`);
+            const icon = document.getElementById(`unit-icon-${unitId}`);
+            content.classList.toggle('hidden-section');
+            icon.classList.toggle('fa-chevron-right');
+            icon.classList.toggle('fa-chevron-down');
+        };
+
+        window.openAddResource = (unitId) => {
+            document.getElementById('resource-unit-id').value = unitId;
+            document.getElementById('resource-edit-id').value = '';
+            document.getElementById('resource-modal-title').textContent = 'Añadir Recurso/Apunte';
+            openModal('add-resource-modal');
+        };
+
+        document.getElementById('add-resource-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const unitId = document.getElementById('resource-unit-id').value;
+            const editId = document.getElementById('resource-edit-id').value;
+            const title = document.getElementById('resource-title').value;
+            const content = document.getElementById('resource-content').value;
+            const fileInput = document.getElementById('resource-file');
             
-            document.getElementById('view-task-title').textContent = data.title;
-            document.getElementById('view-task-deadline').innerHTML = `<i class="fas fa-clock mr-1"></i>Fecha de entrega: ${new Date(data.deadline).toLocaleString()} • Puntuación máxima: ${data.maxScore} pts`;
-            document.getElementById('view-task-description').textContent = data.description;
+            let fileUrl = null, fileName = null;
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const fileRef = ref(storage, `courses/${currentCourseId}/units/${unitId}/resources/${Date.now()}_${file.name}`);
+                await uploadBytes(fileRef, file);
+                fileUrl = await getDownloadURL(fileRef);
+                fileName = file.name;
+            }
             
-            // Verificar si ya entregó
-            const mySubmissionQ = query(
-                collection(db, "courses", currentCourseId, "tasks", taskId, "submissions"),
+            const resourceData = { title, content, fileUrl, fileName, updatedAt: serverTimestamp() };
+            
+            if (editId) {
+                await updateDoc(doc(db, "courses", currentCourseId, "units", unitId, "resources", editId), resourceData);
+                alert("✅ Recurso actualizado");
+            } else {
+                resourceData.createdAt = serverTimestamp();
+                resourceData.authorId = currentUser.uid;
+                resourceData.authorName = userData.name;
+                await addDoc(collection(db, "courses", currentCourseId, "units", unitId, "resources"), resourceData);
+                alert("✅ Recurso añadido");
+            }
+            e.target.reset();
+            closeModal('add-resource-modal');
+            loadUnits();
+        });
+
+        window.editResource = async (unitId, resourceId) => {
+            const rDoc = await getDoc(doc(db, "courses", currentCourseId, "units", unitId, "resources", resourceId));
+            const data = rDoc.data();
+            document.getElementById('resource-unit-id').value = unitId;
+            document.getElementById('resource-edit-id').value = resourceId;
+            document.getElementById('resource-title').value = data.title;
+            document.getElementById('resource-content').value = data.content || '';
+            document.getElementById('resource-modal-title').textContent = 'Editar Recurso';
+            openModal('add-resource-modal');
+        };
+
+        window.deleteResource = async (unitId, resourceId) => {
+            if (confirm('¿Eliminar este recurso?')) {
+                await deleteDoc(doc(db, "courses", currentCourseId, "units", unitId, "resources", resourceId));
+                loadUnits();
+            }
+        };
+
+        window.openAddActivity = (unitId) => {
+            document.getElementById('activity-unit-id').value = unitId;
+            document.getElementById('activity-edit-id').value = '';
+            document.getElementById('activity-modal-title').textContent = 'Añadir Tarea/Actividad';
+            openModal('add-activity-modal');
+        };
+
+        document.getElementById('add-activity-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const unitId = document.getElementById('activity-unit-id').value;
+            const editId = document.getElementById('activity-edit-id').value;
+            const activityData = {
+                title: document.getElementById('activity-title').value,
+                description: document.getElementById('activity-description').value,
+                deadline: document.getElementById('activity-deadline').value,
+                maxScore: parseInt(document.getElementById('activity-max-score').value) || 10,
+                updatedAt: serverTimestamp()
+            };
+            
+            const fileInput = document.getElementById('activity-file');
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const fileRef = ref(storage, `courses/${currentCourseId}/units/${unitId}/activities/${Date.now()}_${file.name}`);
+                await uploadBytes(fileRef, file);
+                activityData.fileUrl = await getDownloadURL(fileRef);
+                activityData.fileName = file.name;
+            }
+            
+            if (editId) {
+                await updateDoc(doc(db, "courses", currentCourseId, "units", unitId, "activities", editId), activityData);
+                alert("✅ Tarea actualizada");
+            } else {
+                activityData.createdAt = serverTimestamp();
+                activityData.authorId = currentUser.uid;
+                activityData.authorName = userData.name;
+                await addDoc(collection(db, "courses", currentCourseId, "units", unitId, "activities"), activityData);
+                alert("✅ Tarea creada");
+            }
+            e.target.reset();
+            closeModal('add-activity-modal');
+            loadUnits();
+        });
+
+        window.editActivity = async (unitId, activityId) => {
+            const aDoc = await getDoc(doc(db, "courses", currentCourseId, "units", unitId, "activities", activityId));
+            const data = aDoc.data();
+            document.getElementById('activity-unit-id').value = unitId;
+            document.getElementById('activity-edit-id').value = activityId;
+            document.getElementById('activity-title').value = data.title;
+            document.getElementById('activity-description').value = data.description;
+            document.getElementById('activity-deadline').value = data.deadline;
+            document.getElementById('activity-max-score').value = data.maxScore || 10;
+            document.getElementById('activity-modal-title').textContent = 'Editar Tarea';
+            openModal('add-activity-modal');
+        };
+
+        window.deleteActivity = async (unitId, activityId) => {
+            if (confirm('¿Eliminar esta tarea y todas sus entregas?')) {
+                const subsSnap = await getDocs(collection(db, "courses", currentCourseId, "units", unitId, "activities", activityId, "submissions"));
+                for (const s of subsSnap.docs) await deleteDoc(s.ref);
+                await deleteDoc(doc(db, "courses", currentCourseId, "units", unitId, "activities", activityId));
+                loadUnits();
+            }
+        };
+
+        window.editUnit = async (unitId) => {
+            const uDoc = await getDoc(doc(db, "courses", currentCourseId, "units", unitId));
+            const data = uDoc.data();
+            document.getElementById('unit-edit-id').value = unitId;
+            document.getElementById('unit-title').value = data.title;
+            document.getElementById('unit-description').value = data.description || '';
+            document.getElementById('unit-modal-title').textContent = 'Editar Unidad';
+            openModal('add-unit-modal');
+        };
+
+        window.deleteUnit = async (unitId) => {
+            if (confirm('¿Eliminar esta unidad y todo su contenido?')) {
+                const resourcesSnap = await getDocs(collection(db, "courses", currentCourseId, "units", unitId, "resources"));
+                for (const r of resourcesSnap.docs) await deleteDoc(r.ref);
+                const activitiesSnap = await getDocs(collection(db, "courses", currentCourseId, "units", unitId, "activities"));
+                for (const a of activitiesSnap.docs) {
+                    const subsSnap = await getDocs(collection(db, "courses", currentCourseId, "units", unitId, "activities", a.id, "submissions"));
+                    for (const s of subsSnap.docs) await deleteDoc(s.ref);
+                    await deleteDoc(a.ref);
+                }
+                await deleteDoc(doc(db, "courses", currentCourseId, "units", unitId));
+                loadUnits();
+            }
+        };
+
+        // ==================== VER TAREA (ALUMNO) ====================
+        window.viewActivityDetail = async (unitId, activityId) => {
+            currentViewUnitId = unitId;
+            currentViewActivityId = activityId;
+            const aDoc = await getDoc(doc(db, "courses", currentCourseId, "units", unitId, "activities", activityId));
+            const data = aDoc.data();
+            
+            document.getElementById('view-activity-title').textContent = data.title;
+            document.getElementById('view-activity-meta').innerHTML = `<i class="fas fa-clock mr-1"></i>Fecha límite: ${new Date(data.deadline).toLocaleString()} • Puntuación: ${data.maxScore} pts`;
+            document.getElementById('view-activity-description').textContent = data.description;
+            
+            const fileSection = document.getElementById('view-activity-file-section');
+            if (data.fileUrl) {
+                fileSection.innerHTML = `<div class="bg-blue-50 p-3 rounded-lg"><a href="${data.fileUrl}" target="_blank" class="text-blue-600 hover:underline font-medium"><i class="fas fa-file-download mr-2"></i>${data.fileName || 'Descargar archivo de la tarea'}</a></div>`;
+            } else {
+                fileSection.innerHTML = '';
+            }
+            
+            const mySubQ = query(
+                collection(db, "courses", currentCourseId, "units", unitId, "activities", activityId, "submissions"),
                 where("studentId", "==", currentUser.uid)
             );
-            const mySnap = await getDocs(mySubmissionQ);
-            const statusDiv = document.getElementById('view-task-submission-status');
-            const submitSection = document.getElementById('view-task-submit-section');
+            const mySnap = await getDocs(mySubQ);
+            const statusDiv = document.getElementById('view-activity-submission-status');
+            const submitSection = document.getElementById('view-activity-submit-section');
             
             if (!mySnap.empty) {
                 const sub = mySnap.docs[0].data();
-                const gradeInfo = sub.grade !== undefined ? `<p class="text-lg font-bold text-green-600 mt-2">Tu nota: ${sub.grade}${sub.maxScore ? '/' + sub.maxScore : ''}</p>` : '';
+                const gradeInfo = sub.grade !== undefined ? `<p class="text-lg font-bold text-green-600 mt-2">Tu nota: ${sub.grade}/${sub.maxScore || 10}</p>` : '';
                 const feedbackInfo = sub.feedback ? `<p class="text-sm text-gray-600 mt-2"><strong>Comentario del profesor:</strong> ${sub.feedback}</p>` : '';
                 statusDiv.className = 'mt-4 p-4 rounded-lg bg-green-50 border border-green-200';
                 statusDiv.innerHTML = `
                     <p class="font-semibold text-green-800"><i class="fas fa-check-circle mr-2"></i>Ya has entregado esta tarea</p>
                     ${sub.comment ? `<p class="text-sm text-gray-600 mt-1">Tu comentario: ${sub.comment}</p>` : ''}
-                    ${sub.fileUrl ? `<a href="${sub.fileUrl}" target="_blank" class="text-indigo-600 text-sm hover:underline mt-1 inline-block"><i class="fas fa-file mr-1"></i>Ver tu archivo</a>` : ''}
-                    ${gradeInfo}
-                    ${feedbackInfo}
+                    ${sub.fileUrl ? `<a href="${sub.fileUrl}" target="_blank" class="text-blue-600 text-sm hover:underline mt-1 inline-block"><i class="fas fa-file mr-1"></i>Ver tu archivo entregado</a>` : ''}
+                    ${gradeInfo}${feedbackInfo}
                 `;
                 submitSection.classList.add('hidden-section');
             } else {
@@ -963,79 +1159,47 @@
                 submitSection.classList.remove('hidden-section');
             }
             
-            openModal('view-task-modal');
+            openModal('view-activity-modal');
         };
 
-        document.getElementById('view-task-submit-form').addEventListener('submit', async (e) => {
+        document.getElementById('view-activity-submit-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const comment = document.getElementById('view-task-comment').value;
-            const fileInput = document.getElementById('view-task-file');
+            const comment = document.getElementById('view-activity-comment').value;
+            const fileInput = document.getElementById('view-activity-file');
             
-            let fileUrl = null;
-            let fileName = null;
+            let fileUrl = null, fileName = null;
             if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
-                const fileRef = ref(storage, `courses/${currentCourseId}/tasks/${currentViewTaskId}/${currentUser.uid}/${Date.now()}_${file.name}`);
+                const fileRef = ref(storage, `courses/${currentCourseId}/units/${currentViewUnitId}/activities/${currentViewActivityId}/${currentUser.uid}/${Date.now()}_${file.name}`);
                 await uploadBytes(fileRef, file);
                 fileUrl = await getDownloadURL(fileRef);
                 fileName = file.name;
             }
             
-            // Obtener maxScore de la tarea
-            const taskDoc = await getDoc(doc(db, "courses", currentCourseId, "tasks", currentViewTaskId));
-            const maxScore = taskDoc.data().maxScore || 10;
+            const aDoc = await getDoc(doc(db, "courses", currentCourseId, "units", currentViewUnitId, "activities", currentViewActivityId));
+            const maxScore = aDoc.data().maxScore || 10;
             
-            await addDoc(collection(db, "courses", currentCourseId, "tasks", currentViewTaskId, "submissions"), {
+            await addDoc(collection(db, "courses", currentCourseId, "units", currentViewUnitId, "activities", currentViewActivityId, "submissions"), {
                 studentId: currentUser.uid,
                 studentName: userData.name,
                 studentEmail: currentUser.email,
-                comment: comment,
-                fileUrl: fileUrl,
-                fileName: fileName,
-                maxScore: maxScore,
+                comment, fileUrl, fileName, maxScore,
                 submittedAt: serverTimestamp()
             });
             
-            closeModal('view-task-modal');
-            alert("✅ Tarea entregada correctamente");
-            loadTasks();
+            closeModal('view-activity-modal');
+            alert("✅ Tarea entregada");
+            loadUnits();
         });
 
-        window.editTask = async (taskId) => {
-            const taskDoc = await getDoc(doc(db, "courses", currentCourseId, "tasks", taskId));
-            const data = taskDoc.data();
-            
-            document.getElementById('task-edit-id').value = taskId;
-            document.getElementById('task-title').value = data.title;
-            document.getElementById('task-description').value = data.description;
-            document.getElementById('task-deadline').value = data.deadline;
-            document.getElementById('task-max-score').value = data.maxScore || 10;
-            document.getElementById('task-modal-title').textContent = 'Editar Tarea';
-            openModal('task-modal');
-        };
-
-        window.deleteTask = async (taskId) => {
-            if (confirm('¿Seguro que quieres eliminar esta tarea? Se eliminarán también todas las entregas.')) {
-                // Eliminar todas las entregas primero
-                const submissionsSnap = await getDocs(collection(db, "courses", currentCourseId, "tasks", taskId, "submissions"));
-                for (const subDoc of submissionsSnap.docs) {
-                    await deleteDoc(subDoc.ref);
-                }
-                // Eliminar la tarea
-                await deleteDoc(doc(db, "courses", currentCourseId, "tasks", taskId));
-                alert("✅ Tarea eliminada");
-                loadTasks();
-            }
-        };
-
         // ==================== ENTREGAS (PROFESOR) ====================
-        window.viewSubmissions = async (taskId, taskTitle) => {
-            document.getElementById('submissions-task-title').textContent = 'Entregas: ' + taskTitle;
+        window.viewSubmissions = async (unitId, activityId, activityTitle) => {
+            document.getElementById('submissions-activity-title').textContent = 'Entregas: ' + activityTitle;
             const container = document.getElementById('submissions-list');
             container.innerHTML = '<p class="text-gray-500 text-center py-4">Cargando...</p>';
             openModal('submissions-modal');
             
-            const q = query(collection(db, "courses", currentCourseId, "tasks", taskId, "submissions"), orderBy("submittedAt", "desc"));
+            const q = query(collection(db, "courses", currentCourseId, "units", unitId, "activities", activityId, "submissions"), orderBy("submittedAt", "desc"));
             const snapshot = await getDocs(q);
             
             if (snapshot.empty) {
@@ -1047,7 +1211,7 @@
             snapshot.docs.forEach(d => {
                 const data = d.data();
                 const date = data.submittedAt ? new Date(data.submittedAt.toDate()).toLocaleString() : '';
-                const gradeInfo = data.grade !== undefined ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-semibold">Nota: ${data.grade}${data.maxScore ? '/' + data.maxScore : ''}</span>` : '<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">Sin calificar</span>';
+                const gradeInfo = data.grade !== undefined ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-semibold">Nota: ${data.grade}/${data.maxScore || 10}</span>` : '<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">Sin calificar</span>';
                 
                 container.innerHTML += `
                     <div class="bg-gray-50 p-4 rounded-lg border">
@@ -1059,12 +1223,12 @@
                             ${gradeInfo}
                         </div>
                         ${data.comment ? `<p class="text-sm text-gray-700 mt-2 italic">"${data.comment}"</p>` : ''}
-                        ${data.fileUrl ? `<a href="${data.fileUrl}" target="_blank" class="inline-block mt-2 text-indigo-600 hover:underline text-sm"><i class="fas fa-file mr-1"></i>${data.fileName || 'Ver archivo'}</a>` : '<p class="text-xs text-gray-500 mt-2">Sin archivo adjunto</p>'}
+                        ${data.fileUrl ? `<a href="${data.fileUrl}" target="_blank" class="inline-block mt-2 text-blue-600 hover:underline text-sm"><i class="fas fa-file mr-1"></i>${data.fileName || 'Ver archivo'}</a>` : '<p class="text-xs text-gray-500 mt-2">Sin archivo adjunto</p>'}
                         <div class="mt-3 flex gap-2">
-                            <button onclick="openGradeSubmission('${taskId}', '${d.id}', '${data.studentName.replace(/'/g, "\\'")}', '${data.studentEmail}', '${(data.comment || '').replace(/'/g, "\\'")}', '${data.fileUrl || ''}', '${data.grade || ''}', '${data.feedback || ''}')" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 text-sm">
+                            <button onclick="openGradeSubmission('${unitId}', '${activityId}', '${d.id}', '${data.studentName.replace(/'/g, "\\'")}', '${data.studentEmail}', '${(data.comment || '').replace(/'/g, "\\'")}', '${data.fileUrl || ''}', '${data.grade || ''}', '${data.feedback || ''}')" class="bg-orange-600 text-white px-3 py-1.5 rounded-lg hover:bg-orange-700 text-sm">
                                 <i class="fas fa-star mr-1"></i>${data.grade !== undefined ? 'Editar nota' : 'Calificar'}
                             </button>
-                            <button onclick="deleteSubmission('${taskId}', '${d.id}')" class="bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-red-700 text-sm">
+                            <button onclick="deleteSubmission('${unitId}', '${activityId}', '${d.id}')" class="bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-red-700 text-sm">
                                 <i class="fas fa-trash mr-1"></i>Eliminar
                             </button>
                         </div>
@@ -1072,21 +1236,17 @@
             });
         };
 
-        window.openGradeSubmission = (taskId, submissionId, studentName, studentEmail, comment, fileUrl, currentGrade, currentFeedback) => {
-            document.getElementById('grade-submission-task-id').value = taskId;
-            document.getElementById('grade-submission-student-id').value = submissionId;
+        window.openGradeSubmission = (unitId, activityId, submissionId, studentName, studentEmail, comment, fileUrl, currentGrade, currentFeedback) => {
+            document.getElementById('grade-activity-id').value = activityId;
             document.getElementById('grade-submission-id').value = submissionId;
+            document.getElementById('grade-submission-modal').dataset.unitId = unitId;
             document.getElementById('grade-student-name').textContent = studentName;
             document.getElementById('grade-student-email').textContent = studentEmail;
             document.getElementById('grade-student-comment').textContent = comment ? 'Comentario del alumno: "' + comment + '"' : '';
             
             const fileLink = document.getElementById('grade-student-file');
-            if (fileUrl) {
-                fileLink.href = fileUrl;
-                fileLink.classList.remove('hidden-section');
-            } else {
-                fileLink.classList.add('hidden-section');
-            }
+            if (fileUrl) { fileLink.href = fileUrl; fileLink.classList.remove('hidden-section'); } 
+            else { fileLink.classList.add('hidden-section'); }
             
             document.getElementById('grade-value').value = currentGrade;
             document.getElementById('grade-feedback').value = currentFeedback;
@@ -1095,14 +1255,14 @@
 
         document.getElementById('grade-submission-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const taskId = document.getElementById('grade-submission-task-id').value;
+            const unitId = document.getElementById('grade-submission-modal').dataset.unitId;
+            const activityId = document.getElementById('grade-activity-id').value;
             const submissionId = document.getElementById('grade-submission-id').value;
             const grade = parseFloat(document.getElementById('grade-value').value);
             const feedback = document.getElementById('grade-feedback').value;
             
-            await updateDoc(doc(db, "courses", currentCourseId, "tasks", taskId, "submissions", submissionId), {
-                grade: grade,
-                feedback: feedback,
+            await updateDoc(doc(db, "courses", currentCourseId, "units", unitId, "activities", activityId, "submissions", submissionId), {
+                grade, feedback,
                 gradedBy: currentUser.uid,
                 gradedByName: userData.name,
                 gradedAt: serverTimestamp()
@@ -1110,19 +1270,57 @@
             
             closeModal('grade-submission-modal');
             alert("✅ Nota guardada");
-            viewSubmissions(taskId, document.getElementById('submissions-task-title').textContent.replace('Entregas: ', ''));
+            const title = document.getElementById('submissions-activity-title').textContent.replace('Entregas: ', '');
+            // Recargar submissions
+            loadUnits();
         });
 
-        window.deleteSubmission = async (taskId, submissionId) => {
-            if (confirm('¿Seguro que quieres eliminar esta entrega?')) {
-                await deleteDoc(doc(db, "courses", currentCourseId, "tasks", taskId, "submissions", submissionId));
-                alert("✅ Entrega eliminada");
-                const taskTitle = document.getElementById('submissions-task-title').textContent.replace('Entregas: ', '');
-                viewSubmissions(taskId, taskTitle);
+        window.deleteSubmission = async (unitId, activityId, submissionId) => {
+            if (confirm('¿Eliminar esta entrega?')) {
+                await deleteDoc(doc(db, "courses", currentCourseId, "units", unitId, "activities", activityId, "submissions", submissionId));
+                loadUnits();
             }
         };
 
-        // ==================== NOTAS ====================
+        // ==================== PARTICIPANTES ====================
+        async function loadParticipants() {
+            const container = document.getElementById('participants-list');
+            container.innerHTML = '';
+            
+            const courseDoc = await getDoc(doc(db, "courses", currentCourseId));
+            const courseData = courseDoc.data();
+            const students = courseData.students || [];
+            
+            // Profesor
+            container.innerHTML += `
+                <div class="flex items-center gap-3 p-3 bg-orange-50 rounded-lg border border-orange-200">
+                    <div class="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">${(courseData.teacherName || 'P').charAt(0).toUpperCase()}</div>
+                    <div class="flex-1">
+                        <p class="font-semibold">${courseData.teacherName || courseData.teacherEmail}</p>
+                        <p class="text-xs text-gray-600">${courseData.teacherEmail}</p>
+                    </div>
+                    <span class="text-xs bg-orange-200 text-orange-800 px-2 py-1 rounded-full">Profesor</span>
+                </div>`;
+            
+            if (students.length === 0) {
+                container.innerHTML += '<p class="text-gray-500 text-sm mt-4">No hay alumnos añadidos aún.</p>';
+            } else {
+                students.forEach(email => {
+                    const name = email.split('@')[0];
+                    container.innerHTML += `
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border">
+                            <div class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">${name.charAt(0).toUpperCase()}</div>
+                            <div class="flex-1">
+                                <p class="font-semibold">${name}</p>
+                                <p class="text-xs text-gray-600">${email}</p>
+                            </div>
+                            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Alumno</span>
+                        </div>`;
+                });
+            }
+        }
+
+        // ==================== CALIFICACIONES ====================
         async function loadGrades() {
             if (userData.role === 'profesor') {
                 const container = document.getElementById('grades-students-list');
@@ -1136,34 +1334,32 @@
                     return;
                 }
                 
-                // Mostrar resumen por alumno
                 for (const studentEmail of students) {
                     const gradesQ = query(collection(db, "courses", currentCourseId, "grades"), where("studentEmail", "==", studentEmail));
                     const gradesSnap = await getDocs(gradesQ);
                     
                     let gradesHTML = '';
-                    let totalGrade = 0;
-                    let count = 0;
+                    let total = 0, count = 0;
                     gradesSnap.docs.forEach(g => {
                         const gd = g.data();
-                        totalGrade += gd.grade;
+                        total += gd.grade;
                         count++;
                         gradesHTML += `<div class="flex justify-between text-sm py-1 border-b border-gray-100"><span>${gd.taskTitle || 'Evaluación'}</span><span class="font-semibold">${gd.grade}</span></div>`;
                     });
                     
-                    const average = count > 0 ? (totalGrade / count).toFixed(1) : '-';
+                    const average = count > 0 ? (total / count).toFixed(1) : '-';
                     
                     container.innerHTML += `
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <div class="flex justify-between items-center mb-2">
                                 <p class="font-semibold">${studentEmail}</p>
-                                <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-bold">Media: ${average}</span>
+                                <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-bold">Media: ${average}</span>
                             </div>
-                            ${count > 0 ? `<div class="mt-2 bg-white p-3 rounded">${gradesHTML}</div>` : '<p class="text-sm text-gray-500">Sin calificaciones aún</p>'}
+                            ${count > 0 ? `<div class="mt-2 bg-white p-3 rounded">${gradesHTML}</div>` : '<p class="text-sm text-gray-500">Sin calificaciones</p>'}
                             <div class="flex gap-2 mt-3">
-                                <input type="text" id="grade-task-title-${studentEmail}" placeholder="Nombre de la evaluación" class="px-3 py-2 border rounded-lg flex-1 text-sm">
+                                <input type="text" id="grade-task-title-${studentEmail}" placeholder="Nombre evaluación" class="px-3 py-2 border rounded-lg flex-1 text-sm">
                                 <input type="number" id="grade-value-${studentEmail}" placeholder="Nota" min="0" max="10" step="0.1" class="px-3 py-2 border rounded-lg w-24 text-sm">
-                                <button onclick="saveGrade('${studentEmail}')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm">Guardar</button>
+                                <button onclick="saveGrade('${studentEmail}')" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 text-sm">Guardar</button>
                             </div>
                         </div>`;
                 }
@@ -1189,114 +1385,33 @@
                             <div class="flex justify-between items-center">
                                 <div>
                                     <p class="font-semibold">${data.taskTitle || 'Evaluación'}</p>
-                                    <p class="text-sm text-gray-600">${data.feedback || data.comment || ''}</p>
+                                    <p class="text-sm text-gray-600">${data.feedback || ''}</p>
                                     <p class="text-xs text-gray-400">Por: ${data.gradedByName || 'Profesor'}</p>
                                 </div>
-                                <span class="text-2xl font-bold text-indigo-600">${data.grade}</span>
+                                <span class="text-2xl font-bold text-orange-600">${data.grade}</span>
                             </div>
                         </div>`;
                 });
                 
                 const average = (total / count).toFixed(1);
-                container.innerHTML = `<div class="bg-indigo-50 p-4 rounded-lg mb-4 border border-indigo-200"><p class="text-sm text-indigo-700">Nota media del curso:</p><p class="text-3xl font-bold text-indigo-900">${average}</p></div>` + container.innerHTML;
+                container.innerHTML = `<div class="bg-orange-50 p-4 rounded-lg mb-4 border border-orange-200"><p class="text-sm text-orange-700">Nota media del curso:</p><p class="text-3xl font-bold text-orange-900">${average}</p></div>` + container.innerHTML;
             }
         }
 
         window.saveGrade = async (studentEmail) => {
             const taskTitle = document.getElementById(`grade-task-title-${studentEmail}`).value;
             const grade = document.getElementById(`grade-value-${studentEmail}`).value;
-            
-            if (!grade) {
-                alert("⚠️ Introduce una nota");
-                return;
-            }
+            if (!grade) { alert("⚠️ Introduce una nota"); return; }
             
             await addDoc(collection(db, "courses", currentCourseId, "grades"), {
-                studentEmail: studentEmail,
-                taskTitle: taskTitle || 'Evaluación',
+                studentEmail, taskTitle: taskTitle || 'Evaluación',
                 grade: parseFloat(grade),
                 gradedBy: currentUser.uid,
                 gradedByName: userData.name,
                 createdAt: serverTimestamp()
             });
-            
             alert("✅ Nota guardada");
             loadGrades();
-        };
-
-        // ==================== MATERIAL ====================
-        document.getElementById('add-material-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const title = document.getElementById('material-title').value;
-            const description = document.getElementById('material-description').value;
-            const fileInput = document.getElementById('material-file');
-            
-            let fileUrl = null;
-            let fileName = null;
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const fileRef = ref(storage, `courses/${currentCourseId}/materials/${Date.now()}_${file.name}`);
-                await uploadBytes(fileRef, file);
-                fileUrl = await getDownloadURL(fileRef);
-                fileName = file.name;
-            }
-            
-            await addDoc(collection(db, "courses", currentCourseId, "materials"), {
-                title, description, fileUrl, fileName,
-                authorId: currentUser.uid,
-                authorName: userData.name,
-                createdAt: serverTimestamp()
-            });
-            
-            e.target.reset();
-            closeModal('material-modal');
-            alert("✅ Material subido");
-            loadMaterials();
-        });
-
-        async function loadMaterials() {
-            const container = document.getElementById('materials-list');
-            container.innerHTML = '';
-            
-            const q = query(collection(db, "courses", currentCourseId, "materials"), orderBy("createdAt", "desc"));
-            const snapshot = await getDocs(q);
-            
-            if (snapshot.empty) {
-                container.innerHTML = '<p class="text-gray-500 text-center py-8">No hay material aún.</p>';
-                return;
-            }
-            
-            const isProfessor = userData.role === 'profesor';
-            
-            snapshot.docs.forEach(d => {
-                const data = d.data();
-                container.innerHTML += `
-                    <div class="bg-white p-6 rounded-xl shadow-sm border">
-                        <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
-                            <h4 class="text-lg font-bold text-indigo-900 flex-1">${data.title}</h4>
-                            ${isProfessor ? `
-                                <button onclick="deleteMaterial('${d.id}', '${data.fileUrl || ''}')" class="text-red-600 hover:text-red-800 text-sm"><i class="fas fa-trash"></i></button>
-                            ` : ''}
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">Por: ${data.authorName}</p>
-                        <p class="text-gray-700 mb-4">${data.description || ''}</p>
-                        ${data.fileUrl ? `<a href="${data.fileUrl}" target="_blank" class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm"><i class="fas fa-download mr-2"></i>${data.fileName || 'Descargar'}</a>` : ''}
-                    </div>`;
-            });
-        }
-
-        window.deleteMaterial = async (materialId, fileUrl) => {
-            if (confirm('¿Seguro que quieres eliminar este material?')) {
-                if (fileUrl) {
-                    try {
-                        const fileRef = ref(storage, fileUrl);
-                        await deleteObject(fileRef);
-                    } catch (e) { console.warn('No se pudo eliminar el archivo:', e); }
-                }
-                await deleteDoc(doc(db, "courses", currentCourseId, "materials", materialId));
-                alert("✅ Material eliminado");
-                loadMaterials();
-            }
         };
 
         // ==================== MENSAJES ====================
@@ -1310,12 +1425,12 @@
                     const data = d.data();
                     if (!data.read) unread++;
                     const div = document.createElement('div');
-                    div.className = `p-3 rounded-lg cursor-pointer transition ${data.read ? 'bg-white hover:bg-gray-50' : 'bg-indigo-50 border-l-4 border-indigo-500'}`;
+                    div.className = `p-3 rounded-lg cursor-pointer transition ${data.read ? 'bg-white hover:bg-gray-50' : 'bg-orange-50 border-l-4 border-orange-500'}`;
                     div.innerHTML = `<p class="font-semibold text-sm truncate">${data.subject}</p><p class="text-xs text-gray-600 truncate">De: ${data.from}</p>`;
                     div.onclick = () => viewMessage(d.id, data);
                     container.appendChild(div);
                 });
-                const badge = document.getElementById('inbox-badge');
+                const badge = document.getElementById('inbox-badge-top');
                 if (unread > 0) { badge.textContent = unread; badge.classList.remove('hidden-section'); } 
                 else { badge.classList.add('hidden-section'); }
             });
@@ -1334,7 +1449,7 @@
         document.getElementById('compose-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const to = document.getElementById('compose-to').value;
-            if (!validateEduBaseEmail(to)) { alert("⚠️ Solo correos @edubase.es"); return; }
+            if (!validateEduBaseEmail(to)) { alert("️ Solo correos @edubase.es"); return; }
             await addDoc(collection(db, "messages"), {
                 to, from: currentUser.email,
                 subject: document.getElementById('compose-subject').value,
@@ -1358,8 +1473,8 @@
                     const div = document.createElement('div');
                     div.className = `flex ${isMe ? 'justify-end' : 'justify-start'}`;
                     div.innerHTML = `
-                        <div class="max-w-[70%] ${isMe ? 'bg-indigo-600 text-white' : 'bg-white border text-gray-800'} rounded-2xl px-4 py-2 shadow-sm">
-                            <p class="text-xs ${isMe ? 'text-indigo-200' : 'text-gray-500'} mb-1">${data.name} • ${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</p>
+                        <div class="max-w-[70%] ${isMe ? 'bg-orange-600 text-white' : 'bg-white border text-gray-800'} rounded-2xl px-4 py-2 shadow-sm">
+                            <p class="text-xs ${isMe ? 'text-orange-200' : 'text-gray-500'} mb-1">${data.name} • ${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</p>
                             <p>${data.text}</p>
                         </div>`;
                     container.appendChild(div);
