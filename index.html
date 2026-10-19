@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal EduBase - Plataforma Educativa</title>
+    <title>Portal EduBase</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        body { font-family: 'Inter', sans-serif; }
         .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
         .sudoku-cell { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 1px solid #d1d5db; cursor: pointer; transition: all 0.2s; }
         .sudoku-cell:hover { background-color: #e0e7ff; }
         .sudoku-cell.selected { background-color: #6366f1; color: white; }
         .sudoku-cell.fixed { background-color: #f3f4f6; color: #1f2937; cursor: default; }
-        .sudoku-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 0; border: 2px solid #374151; max-width: 400px; margin: 0 auto; }
+        .sudoku-grid { display: grid; grid-template-columns: repeat(9, 1fr); border: 2px solid #374151; max-width: 400px; margin: 0 auto; }
         .sudoku-grid > div:nth-child(3n) { border-right: 2px solid #374151; }
         .sudoku-grid > div:nth-child(n+19):nth-child(-n+27),
         .sudoku-grid > div:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid #374151; }
@@ -25,144 +25,118 @@
 </head>
 <body class="text-gray-800 h-screen flex flex-col overflow-hidden">
 
-    <!-- ==================== SECCIÓN DE AUTENTICACIÓN ==================== -->
+    <!-- ==================== AUTENTICACIÓN ==================== -->
     <div id="auth-section" class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-indigo-600 to-blue-800">
         <div class="glass-panel p-8 rounded-2xl shadow-2xl w-full max-w-md fade-in">
             <div class="text-center mb-6">
-                <h1 class="text-3xl font-bold text-indigo-700"><i class="fas fa-graduation-cap mr-2"></i>EduBase Portal</h1>
+                <h1 class="text-3xl font-bold text-indigo-700"><i class="fas fa-graduation-cap mr-2"></i>EduBase</h1>
                 <p class="text-gray-600 mt-2">Plataforma educativa exclusiva</p>
             </div>
 
-            <!-- Tabs Login / Solicitud -->
             <div class="flex mb-6 bg-gray-100 rounded-lg p-1">
                 <button onclick="showAuthTab('login')" id="tab-login" class="flex-1 py-2 rounded-md bg-white shadow text-indigo-700 font-semibold transition">Iniciar Sesión</button>
-                <button onclick="showAuthTab('request')" id="tab-request" class="flex-1 py-2 rounded-md text-gray-600 hover:text-indigo-700 transition">Solicitar Acceso</button>
+                <button onclick="showAuthTab('register')" id="tab-register" class="flex-1 py-2 rounded-md text-gray-600 hover:text-indigo-700 transition">Crear Cuenta</button>
             </div>
 
-            <!-- Formulario Login -->
+            <!-- LOGIN -->
             <form id="login-form" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Correo Institucional</label>
-                    <input type="email" id="login-email" required placeholder="usuario@edubase.es" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Correo</label>
+                    <input type="email" id="login-email" required placeholder="usuario@edubase.es" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-                    <input type="password" id="login-password" required placeholder="••••••••" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                    <input type="password" id="login-password" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
-                <button type="submit" id="login-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition shadow-lg shadow-indigo-500/30 flex items-center justify-center">
-                    Ingresar al Portal
+                <button type="submit" id="login-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition">
+                    Ingresar
                 </button>
-                <p id="login-error" class="text-red-600 text-sm text-center bg-red-50 p-2 rounded-lg border border-red-200 hidden-section"></p>
+                <p id="login-error" class="text-red-600 text-sm text-center bg-red-50 p-2 rounded-lg hidden-section"></p>
             </form>
 
-            <!-- Formulario de Solicitud (Envía a Cloud Function) -->
-            <form id="request-form" class="space-y-4 hidden-section">
-                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 text-sm text-blue-700 mb-2">
-                    <i class="fas fa-info-circle mr-1"></i> Solo se aceptan correos <strong>@edubase.es</strong>. Recibirás tus credenciales por correo automáticamente.
+            <!-- REGISTRO AUTOMÁTICO -->
+            <form id="register-form" class="space-y-4 hidden-section">
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 text-sm text-blue-700">
+                    <i class="fas fa-info-circle mr-1"></i> Solo correos <strong>@edubase.es</strong>. Tu cuenta se creará al instante.
                 </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
-                    <input type="text" id="req-name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Correo Institucional</label>
-                    <input type="email" id="req-email" required pattern="^[a-zA-Z0-9._%+-]+@edubase\.es$" title="Debe ser un correo institucional @edubase.es" placeholder="nombre@edubase.es" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Rol Solicitado</label>
-                    <select id="req-role" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                        <option value="alumno">Alumno</option>
-                        <option value="profesor">Profesor</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Motivo de la solicitud</label>
-                    <textarea id="req-reason" required rows="3" placeholder="Describe brevemente por qué necesitas acceso..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
-                </div>
-                
-                <button type="submit" id="request-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition shadow-lg shadow-green-500/30 flex items-center justify-center">
-                    <i class="fas fa-paper-plane mr-2"></i> Solicitar Acceso
+                <input type="text" id="reg-name" required placeholder="Nombre completo" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                <input type="email" id="reg-email" required placeholder="tucorreo@edubase.es" pattern="^[a-zA-Z0-9._%+-]+@edubase\.es$" title="Debe ser @edubase.es" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                <select id="reg-role" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <option value="alumno">Soy Alumno</option>
+                    <option value="profesor">Soy Profesor</option>
+                </select>
+                <input type="password" id="reg-password" required minlength="6" placeholder="Contraseña (mínimo 6 caracteres)" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                <textarea id="reg-reason" required rows="2" placeholder="Motivo de la solicitud..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                <button type="submit" id="reg-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition">
+                    <i class="fas fa-user-plus mr-2"></i> Crear mi cuenta
                 </button>
-                <p id="request-status" class="text-sm text-center hidden-section"></p>
+                <p id="reg-status" class="text-sm text-center hidden-section"></p>
             </form>
         </div>
     </div>
 
-    <!-- ==================== SECCIÓN PRINCIPAL DE LA APP ==================== -->
+    <!-- ==================== APP ==================== -->
     <div id="app-section" class="hidden-section flex-1 flex overflow-hidden">
-        <!-- Sidebar -->
         <aside class="w-64 bg-slate-900 text-white flex flex-col shadow-xl">
             <div class="p-6 border-b border-slate-700">
                 <h2 class="text-xl font-bold flex items-center"><i class="fas fa-graduation-cap mr-2 text-indigo-400"></i> EduBase</h2>
                 <p id="user-display-name" class="text-sm text-slate-400 mt-1 truncate">Usuario</p>
-                <span id="user-role-badge" class="inline-block mt-2 px-2 py-1 text-xs font-semibold rounded-full bg-indigo-600 text-white">Rol</span>
+                <span id="user-role-badge" class="inline-block mt-2 px-2 py-1 text-xs font-semibold rounded-full bg-indigo-600">Rol</span>
             </div>
-            
             <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
                 <button onclick="showSection('dashboard', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center bg-slate-800 text-indigo-400">
-                    <i class="fas fa-home w-6"></i> Panel Principal
+                    <i class="fas fa-home w-6"></i> Panel
                 </button>
                 <button onclick="showSection('courses', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center">
                     <i class="fas fa-book w-6"></i> Cursos
                 </button>
                 <button onclick="showSection('inbox', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center justify-between">
-                    <span class="flex items-center"><i class="fas fa-envelope w-6"></i> Bandeja de Entrada</span>
+                    <span class="flex items-center"><i class="fas fa-envelope w-6"></i> Mensajes</span>
                     <span id="inbox-badge" class="bg-red-500 text-xs px-2 py-0.5 rounded-full hidden-section">0</span>
                 </button>
                 <button onclick="showSection('chat', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center">
-                    <i class="fas fa-comments w-6"></i> Chat General
+                    <i class="fas fa-comments w-6"></i> Chat
                 </button>
                 <button onclick="showSection('games', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center">
-                    <i class="fas fa-gamepad w-6"></i> Zona de Videojuegos
+                    <i class="fas fa-gamepad w-6"></i> Juegos
                 </button>
             </nav>
-
             <div class="p-4 border-t border-slate-700">
                 <button onclick="logout()" class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition flex items-center justify-center">
-                    <i class="fas fa-sign-out-alt mr-2"></i> Cerrar Sesión
+                    <i class="fas fa-sign-out-alt mr-2"></i> Salir
                 </button>
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="flex-1 overflow-y-auto bg-gray-50 p-8 relative">
-            
-            <!-- Dashboard Section -->
+        <main class="flex-1 overflow-y-auto bg-gray-50 p-8">
+            <!-- DASHBOARD -->
             <div id="section-dashboard" class="app-section fade-in">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Panel de Control</h2>
-                
-                <!-- Profesor View -->
+                <h2 class="text-2xl font-bold mb-6">Panel de Control</h2>
                 <div id="professor-dashboard" class="hidden-section space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                            <h3 class="text-lg font-semibold mb-4 flex items-center"><i class="fas fa-plus-circle text-indigo-600 mr-2"></i> Crear Nuevo Curso</h3>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border">
+                            <h3 class="text-lg font-semibold mb-4"><i class="fas fa-plus-circle text-indigo-600 mr-2"></i>Crear Curso</h3>
                             <form id="create-course-form" class="space-y-4">
-                                <input type="text" id="course-name" placeholder="Nombre del curso" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                                <textarea id="course-desc" placeholder="Descripción del curso" required rows="3" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
-                                <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition">Crear Curso</button>
+                                <input type="text" id="course-name" placeholder="Nombre del curso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                <textarea id="course-desc" placeholder="Descripción" required rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                                <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">Crear</button>
                             </form>
                         </div>
-                        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                            <h3 class="text-lg font-semibold mb-4 flex items-center"><i class="fas fa-user-plus text-green-600 mr-2"></i> Añadir Alumno a Curso</h3>
+                        <div class="bg-white p-6 rounded-xl shadow-sm border">
+                            <h3 class="text-lg font-semibold mb-4"><i class="fas fa-user-plus text-green-600 mr-2"></i>Añadir Alumno</h3>
                             <form id="add-student-form" class="space-y-4">
-                                <select id="select-course" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <select id="select-course" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
                                     <option value="">Selecciona un curso...</option>
                                 </select>
-                                <input type="email" id="student-email" placeholder="alumno@edubase.es" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">Enviar Invitación</button>
+                                <input type="email" id="student-email" placeholder="alumno@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Añadir</button>
                             </form>
                         </div>
                     </div>
                 </div>
-
-                <!-- Alumno View -->
                 <div id="student-dashboard" class="hidden-section">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                        <h3 class="text-lg font-semibold mb-4">Mis Cursos Asignados</h3>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-4">Mis Cursos</h3>
                         <div id="student-courses-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             <p class="text-gray-500 text-sm col-span-full">No tienes cursos asignados aún.</p>
                         </div>
@@ -170,39 +144,39 @@
                 </div>
             </div>
 
-            <!-- Courses Section -->
+            <!-- CURSOS -->
             <div id="section-courses" class="app-section hidden-section fade-in">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Gestión de Cursos</h2>
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="p-4 border-b border-gray-100 flex justify-between items-center">
-                        <input type="text" id="search-courses" placeholder="Buscar curso en tiempo real..." class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none w-64">
+                <h2 class="text-2xl font-bold mb-6">Cursos</h2>
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+                    <div class="p-4 border-b">
+                        <input type="text" id="search-courses" placeholder="Buscar..." class="px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 w-64">
                     </div>
-                    <div id="all-courses-list" class="divide-y divide-gray-100"></div>
+                    <div id="all-courses-list" class="divide-y"></div>
                 </div>
             </div>
 
-            <!-- Inbox Section -->
+            <!-- MENSAJES -->
             <div id="section-inbox" class="app-section hidden-section fade-in">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Bandeja de Entrada</h2>
+                <h2 class="text-2xl font-bold mb-6">Mensajes</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-200px)]">
-                    <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col">
-                        <div class="p-4 border-b border-gray-100">
-                            <button onclick="showComposeModal()" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">
-                                <i class="fas fa-pen mr-2"></i> Nuevo Mensaje
+                    <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border flex flex-col">
+                        <div class="p-4 border-b">
+                            <button onclick="showComposeModal()" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
+                                <i class="fas fa-pen mr-2"></i>Nuevo Mensaje
                             </button>
                         </div>
                         <div id="inbox-list" class="flex-1 overflow-y-auto p-2 space-y-2"></div>
                     </div>
-                    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col">
+                    <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border p-6 flex flex-col">
                         <div id="inbox-empty-state" class="flex-1 flex items-center justify-center text-gray-400">
                             <div class="text-center">
                                 <i class="fas fa-inbox text-4xl mb-2"></i>
-                                <p>Selecciona un mensaje para leerlo</p>
+                                <p>Selecciona un mensaje</p>
                             </div>
                         </div>
                         <div id="inbox-message-view" class="hidden-section flex-1 flex flex-col">
-                            <div class="border-b border-gray-100 pb-4 mb-4">
-                                <h3 id="msg-subject" class="text-xl font-bold text-gray-800"></h3>
+                            <div class="border-b pb-4 mb-4">
+                                <h3 id="msg-subject" class="text-xl font-bold"></h3>
                                 <p class="text-sm text-gray-500 mt-1">De: <span id="msg-from" class="font-semibold text-gray-700"></span></p>
                                 <p class="text-xs text-gray-400" id="msg-date"></p>
                             </div>
@@ -212,58 +186,56 @@
                 </div>
             </div>
 
-            <!-- Chat Section -->
+            <!-- CHAT -->
             <div id="section-chat" class="app-section hidden-section fade-in flex flex-col h-[calc(100vh-150px)]">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">Chat en Tiempo Real</h2>
-                <div class="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col overflow-hidden">
+                <h2 class="text-2xl font-bold mb-4">Chat</h2>
+                <div class="flex-1 bg-white rounded-xl shadow-sm border flex flex-col overflow-hidden">
                     <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50"></div>
-                    <form id="chat-form" class="p-4 border-t border-gray-200 bg-white flex gap-2">
-                        <input type="text" id="chat-input" placeholder="Escribe un mensaje..." required class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                        <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition">
+                    <form id="chat-form" class="p-4 border-t bg-white flex gap-2">
+                        <input type="text" id="chat-input" placeholder="Escribe..." required class="flex-1 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </form>
                 </div>
             </div>
 
-            <!-- Games Section -->
+            <!-- JUEGOS -->
             <div id="section-games" class="app-section hidden-section fade-in">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Zona de Videojuegos</h2>
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-2xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">Zona de Juegos</h2>
+                <div class="bg-white p-6 rounded-xl shadow-sm border max-w-2xl mx-auto">
                     <div class="text-center mb-6">
-                        <h3 class="text-xl font-bold text-indigo-700 mb-2">Sudoku Educativo</h3>
-                        <p class="text-gray-600 text-sm mb-4">Completa la cuadrícula. Haz clic en una celda y luego en un número.</p>
+                        <h3 class="text-xl font-bold text-indigo-700 mb-2">Sudoku</h3>
                         <div class="flex justify-center gap-2 mb-4 flex-wrap" id="sudoku-numpad"></div>
-                        <button onclick="initSudoku()" class="text-sm text-indigo-600 hover:text-indigo-800 underline">Reiniciar Juego</button>
+                        <button onclick="initSudoku()" class="text-sm text-indigo-600 hover:text-indigo-800 underline">Reiniciar</button>
                     </div>
                     <div id="sudoku-board" class="sudoku-grid shadow-inner bg-white"></div>
-                    <p id="sudoku-message" class="text-center mt-4 font-semibold text-green-600 hidden-section">¡Felicidades! Has completado el Sudoku correctamente.</p>
+                    <p id="sudoku-message" class="text-center mt-4 font-semibold text-green-600 hidden-section">¡Felicidades! Sudoku completado.</p>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Modal para componer mensaje -->
+    <!-- Modal -->
     <div id="compose-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <h3 class="text-lg font-bold mb-4">Nuevo Mensaje</h3>
             <form id="compose-form" class="space-y-4">
-                <input type="email" id="compose-to" placeholder="Para: usuario@edubase.es" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                <input type="text" id="compose-subject" placeholder="Asunto" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                <textarea id="compose-body" placeholder="Mensaje..." required rows="5" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                <input type="email" id="compose-to" placeholder="Para: usuario@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                <input type="text" id="compose-subject" placeholder="Asunto" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                <textarea id="compose-body" placeholder="Mensaje..." required rows="5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
                 <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closeComposeModal()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">Enviar</button>
+                    <button type="button" onclick="closeComposeModal()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Enviar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- ==================== LÓGICA JAVASCRIPT ==================== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC-XDzZgBWRn0Rz_qJzM_-LR5edNfTjqJs",
@@ -279,34 +251,26 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        setPersistence(auth, browserLocalPersistence).catch(err => console.warn("Persistencia:", err));
-
         let currentUser = null;
         let userData = null;
         let unsubscribeChat = null;
         let unsubscribeInbox = null;
 
-        // URL de tu Cloud Function (la crearemos en el paso 2)
-        const CLOUD_FUNCTION_URL = "https://us-central1-portale-b8830.cloudfunctions.net/createUserAccount";
-
         // ==================== AUTENTICACIÓN ====================
         window.showAuthTab = (tab) => {
             document.getElementById('login-form').classList.toggle('hidden-section', tab !== 'login');
-            document.getElementById('request-form').classList.toggle('hidden-section', tab !== 'request');
-            
+            document.getElementById('register-form').classList.toggle('hidden-section', tab !== 'register');
             document.getElementById('tab-login').classList.toggle('bg-white', tab === 'login');
             document.getElementById('tab-login').classList.toggle('shadow', tab === 'login');
             document.getElementById('tab-login').classList.toggle('text-indigo-700', tab === 'login');
-            
-            document.getElementById('tab-request').classList.toggle('bg-white', tab === 'request');
-            document.getElementById('tab-request').classList.toggle('shadow', tab === 'request');
-            document.getElementById('tab-request').classList.toggle('text-indigo-700', tab === 'request');
-            
-            document.getElementById('login-error').classList.add('hidden-section');
+            document.getElementById('tab-register').classList.toggle('bg-white', tab === 'register');
+            document.getElementById('tab-register').classList.toggle('shadow', tab === 'register');
+            document.getElementById('tab-register').classList.toggle('text-indigo-700', tab === 'register');
         };
 
         const validateEduBaseEmail = (email) => email.toLowerCase().endsWith('@edubase.es');
 
+        // LOGIN
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value.trim();
@@ -317,47 +281,46 @@
             errorEl.classList.add('hidden-section');
 
             if (!validateEduBaseEmail(email)) {
-                errorEl.textContent = "⚠️ Error: Solo se permiten correos @edubase.es";
+                errorEl.textContent = "⚠️ Solo correos @edubase.es";
                 errorEl.classList.remove('hidden-section');
                 return;
             }
 
             btn.disabled = true;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Verificando...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Entrando...';
 
             try {
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
-                console.error("Error de login:", error);
-                let msg = "Error al iniciar sesión.";
-                
-                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+                console.error(error);
+                let msg = "❌ Error al iniciar sesión.";
+                if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
                     msg = "❌ Usuario o contraseña incorrectos.";
                 } else if (error.code === 'auth/network-request-failed') {
-                    msg = "🌐 Error de red. Verifica tu conexión.";
+                    msg = "🌐 Sin conexión a internet.";
                 } else {
-                    msg = "❌ Error: " + error.message;
+                    msg = "❌ " + error.message;
                 }
-                
                 errorEl.textContent = msg;
                 errorEl.classList.remove('hidden-section');
             } finally {
-                btn.innerHTML = originalText;
+                btn.innerHTML = 'Ingresar';
                 btn.disabled = false;
             }
         });
 
-        // ==================== FORMULARIO DE SOLICITUD (ENVÍA A CLOUD FUNCTION) ====================
-        document.getElementById('request-form').addEventListener('submit', async (e) => {
+        // REGISTRO AUTOMÁTICO (el usuario crea su cuenta solo)
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('request-btn');
-            const statusEl = document.getElementById('request-status');
-            
-            const name = document.getElementById('req-name').value.trim();
-            const email = document.getElementById('req-email').value.trim().toLowerCase();
-            const role = document.getElementById('req-role').value;
-            const reason = document.getElementById('req-reason').value.trim();
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim().toLowerCase();
+            const role = document.getElementById('reg-role').value;
+            const password = document.getElementById('reg-password').value;
+            const reason = document.getElementById('reg-reason').value.trim();
+            const statusEl = document.getElementById('reg-status');
+            const btn = document.getElementById('reg-btn');
+
+            statusEl.classList.add('hidden-section');
 
             if (!validateEduBaseEmail(email)) {
                 statusEl.textContent = "⚠️ El correo debe ser @edubase.es";
@@ -367,36 +330,60 @@
             }
 
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Procesando...';
-            statusEl.classList.add('hidden-section');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creando cuenta...';
 
             try {
-                const response = await fetch(CLOUD_FUNCTION_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, role, reason })
+                // 1. Crear usuario en Firebase Auth
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // 2. Guardar datos en Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    name: name,
+                    email: email,
+                    role: role,
+                    reason: reason,
+                    createdAt: serverTimestamp()
                 });
 
-                const result = await response.json();
+                // 3. También enviar notificación al admin por Formspree (opcional)
+                try {
+                    await fetch("https://formspree.io/f/meaowyvj", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                        body: JSON.stringify({
+                            _subject: "Nuevo usuario registrado en EduBase",
+                            nombre: name,
+                            email: email,
+                            rol: role,
+                            mensaje: "Motivo: " + reason
+                        })
+                    });
+                } catch (err) { console.warn("No se pudo notificar al admin:", err); }
 
-                if (response.ok) {
-                    statusEl.textContent = "✅ ¡Cuenta creada! Revisa tu correo para ver tus credenciales.";
-                    statusEl.className = "text-sm text-center text-green-600 font-semibold";
-                    statusEl.classList.remove('hidden-section');
-                    e.target.reset();
-                } else {
-                    statusEl.textContent = "❌ Error: " + (result.error || 'Error desconocido');
-                    statusEl.className = "text-sm text-center text-red-600";
-                    statusEl.classList.remove('hidden-section');
-                }
+                statusEl.textContent = "✅ ¡Cuenta creada! Iniciando sesión...";
+                statusEl.className = "text-sm text-center text-green-600 font-semibold";
+                statusEl.classList.remove('hidden-section');
+
+                // onAuthStateChanged se encargará de mostrar la app
+
             } catch (error) {
-                console.error("Error al llamar Cloud Function:", error);
-                statusEl.textContent = "❌ Error de conexión. Intenta de nuevo.";
+                console.error(error);
+                let msg = "❌ Error al crear cuenta.";
+                if (error.code === 'auth/email-already-in-use') {
+                    msg = "⚠️ Ese correo ya está registrado. Ve a 'Iniciar Sesión'.";
+                } else if (error.code === 'auth/weak-password') {
+                    msg = "⚠️ La contraseña debe tener al menos 6 caracteres.";
+                } else {
+                    msg = "❌ " + error.message;
+                }
+                statusEl.textContent = msg;
                 statusEl.className = "text-sm text-center text-red-600";
                 statusEl.classList.remove('hidden-section');
             } finally {
+                btn.innerHTML = '<i class="fas fa-user-plus mr-2"></i>Crear mi cuenta';
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Solicitar Acceso';
             }
         });
 
@@ -406,17 +393,17 @@
             if (unsubscribeInbox) unsubscribeInbox();
         };
 
-        // ==================== GESTIÓN DE ESTADO Y UI ====================
+        // ==================== ESTADO ====================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 try {
                     const q = query(collection(db, "users"), where("uid", "==", user.uid));
-                    const querySnapshot = await getDocs(q);
+                    const snapshot = await getDocs(q);
                     
-                    if (!querySnapshot.empty) {
-                        userData = querySnapshot.docs[0].data();
-                        userData.id = querySnapshot.docs[0].id;
+                    if (!snapshot.empty) {
+                        userData = snapshot.docs[0].data();
+                        userData.id = snapshot.docs[0].id;
                         
                         document.getElementById('auth-section').classList.add('hidden-section');
                         document.getElementById('app-section').classList.remove('hidden-section');
@@ -429,12 +416,12 @@
                         setupChat();
                         initSudoku();
                     } else {
-                        alert("⚠️ Tu cuenta no está configurada correctamente. Contacta al administrador.");
+                        alert("⚠️ Tu cuenta no está configurada. Contacta al administrador.");
                         await signOut(auth);
                     }
-                } catch (dbError) {
-                    console.error("Error Firestore:", dbError);
-                    alert("❌ Error al conectar con la base de datos.");
+                } catch (err) {
+                    console.error(err);
+                    alert("❌ Error de conexión: " + err.message);
                     await signOut(auth);
                 }
             } else {
@@ -452,9 +439,9 @@
             if (btnElement) btnElement.classList.add('bg-slate-800', 'text-indigo-400');
         };
 
-        // ==================== LÓGICA DE ROLES Y CURSOS ====================
+        // ==================== CURSOS ====================
         function setupDashboard() {
-            if (userData.role.toLowerCase() === 'profesor') {
+            if (userData.role === 'profesor') {
                 document.getElementById('professor-dashboard').classList.remove('hidden-section');
                 document.getElementById('student-dashboard').classList.add('hidden-section');
                 loadProfessorCourses();
@@ -476,7 +463,7 @@
                 createdAt: serverTimestamp()
             });
             e.target.reset();
-            alert("✅ Curso creado exitosamente");
+            alert("✅ Curso creado");
             loadProfessorCourses();
         });
 
@@ -485,10 +472,10 @@
             const snapshot = await getDocs(q);
             const select = document.getElementById('select-course');
             select.innerHTML = '<option value="">Selecciona un curso...</option>';
-            snapshot.docs.forEach(doc => {
+            snapshot.docs.forEach(d => {
                 const opt = document.createElement('option');
-                opt.value = doc.id;
-                opt.textContent = doc.data().name;
+                opt.value = d.id;
+                opt.textContent = d.data().name;
                 select.appendChild(opt);
             });
         }
@@ -497,30 +484,29 @@
             e.preventDefault();
             const studentEmail = document.getElementById('student-email').value.toLowerCase();
             if (!validateEduBaseEmail(studentEmail)) {
-                alert("⚠️ El correo del alumno debe ser @edubase.es");
+                alert("⚠️ El correo debe ser @edubase.es");
                 return;
             }
             await addDoc(collection(db, "messages"), {
                 to: studentEmail,
                 from: currentUser.email,
                 subject: "Invitación a Curso",
-                body: "Has sido añadido a un nuevo curso. Revisa la sección de cursos.",
+                body: "Has sido añadido a un nuevo curso.",
                 read: false,
                 createdAt: serverTimestamp()
             });
-            alert(`✅ Invitación enviada a ${studentEmail}`);
+            alert("✅ Invitación enviada");
             e.target.reset();
         });
 
         async function loadStudentCourses() {
-            const q = query(collection(db, "courses"));
-            const snapshot = await getDocs(q);
+            const snapshot = await getDocs(collection(db, "courses"));
             const container = document.getElementById('student-courses-list');
             container.innerHTML = '';
             let hasCourses = false;
-            snapshot.docs.forEach(docSnap => {
+            snapshot.docs.forEach(d => {
                 hasCourses = true;
-                const data = docSnap.data();
+                const data = d.data();
                 container.innerHTML += `
                     <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100">
                         <h4 class="font-bold text-indigo-900">${data.name}</h4>
@@ -528,7 +514,7 @@
                         <p class="text-xs text-gray-500 mt-2">Profesor: ${data.teacherEmail}</p>
                     </div>`;
             });
-            if (!hasCourses) container.innerHTML = '<p class="text-gray-500 text-sm">No tienes cursos asignados aún.</p>';
+            if (!hasCourses) container.innerHTML = '<p class="text-gray-500 text-sm col-span-full">No tienes cursos asignados aún.</p>';
         }
 
         async function loadCourses() {
@@ -537,60 +523,60 @@
             const snapshot = await getDocs(collection(db, "courses"));
             let allCourses = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
             
-            const renderCourses = (courses) => {
+            const render = (courses) => {
                 container.innerHTML = '';
                 if (courses.length === 0) {
-                    container.innerHTML = '<p class="p-4 text-gray-500 text-center">No se encontraron cursos.</p>';
+                    container.innerHTML = '<p class="p-4 text-gray-500 text-center">No hay cursos.</p>';
                     return;
                 }
                 courses.forEach(c => {
                     container.innerHTML += `
-                        <div class="p-4 hover:bg-gray-50 transition flex justify-between items-center">
+                        <div class="p-4 hover:bg-gray-50 flex justify-between items-center">
                             <div>
-                                <h4 class="font-semibold text-gray-800">${c.name}</h4>
+                                <h4 class="font-semibold">${c.name}</h4>
                                 <p class="text-sm text-gray-600">${c.description}</p>
                             </div>
-                            <span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">${c.teacherEmail}</span>
+                            <span class="text-xs bg-gray-200 px-2 py-1 rounded">${c.teacherEmail}</span>
                         </div>`;
                 });
             };
-            renderCourses(allCourses);
+            render(allCourses);
             searchInput.addEventListener('input', (e) => {
                 const term = e.target.value.toLowerCase();
-                renderCourses(allCourses.filter(c => c.name.toLowerCase().includes(term) || c.description.toLowerCase().includes(term)));
+                render(allCourses.filter(c => c.name.toLowerCase().includes(term) || c.description.toLowerCase().includes(term)));
             });
         }
 
-        // ==================== BANDEJA DE ENTRADA ====================
+        // ==================== MENSAJES ====================
         function setupInbox() {
             const q = query(collection(db, "messages"), where("to", "==", currentUser.email), orderBy("createdAt", "desc"));
             unsubscribeInbox = onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('inbox-list');
                 container.innerHTML = '';
-                let unreadCount = 0;
-                snapshot.docs.forEach(docSnap => {
-                    const data = docSnap.data();
-                    if (!data.read) unreadCount++;
+                let unread = 0;
+                snapshot.docs.forEach(d => {
+                    const data = d.data();
+                    if (!data.read) unread++;
                     const div = document.createElement('div');
                     div.className = `p-3 rounded-lg cursor-pointer transition ${data.read ? 'bg-white hover:bg-gray-50' : 'bg-indigo-50 border-l-4 border-indigo-500'}`;
                     div.innerHTML = `<p class="font-semibold text-sm truncate">${data.subject}</p><p class="text-xs text-gray-600 truncate">De: ${data.from}</p>`;
-                    div.onclick = () => viewMessage(docSnap.id, data);
+                    div.onclick = () => viewMessage(d.id, data);
                     container.appendChild(div);
                 });
                 const badge = document.getElementById('inbox-badge');
-                if (unreadCount > 0) { badge.textContent = unreadCount; badge.classList.remove('hidden-section'); } 
+                if (unread > 0) { badge.textContent = unread; badge.classList.remove('hidden-section'); } 
                 else { badge.classList.add('hidden-section'); }
             });
         }
 
-        function viewMessage(msgId, data) {
+        function viewMessage(id, data) {
             document.getElementById('inbox-empty-state').classList.add('hidden-section');
             document.getElementById('inbox-message-view').classList.remove('hidden-section');
             document.getElementById('msg-subject').textContent = data.subject;
             document.getElementById('msg-from').textContent = data.from;
             document.getElementById('msg-body').textContent = data.body;
-            document.getElementById('msg-date').textContent = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString() : 'Reciente';
-            if (!data.read) updateDoc(doc(db, "messages", msgId), { read: true });
+            document.getElementById('msg-date').textContent = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString() : '';
+            if (!data.read) updateDoc(doc(db, "messages", id), { read: true });
         }
 
         window.showComposeModal = () => document.getElementById('compose-modal').classList.remove('hidden-section');
@@ -599,29 +585,29 @@
         document.getElementById('compose-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const to = document.getElementById('compose-to').value;
-            if (!validateEduBaseEmail(to)) { alert("⚠️ Solo se puede enviar a correos @edubase.es"); return; }
+            if (!validateEduBaseEmail(to)) { alert("⚠️ Solo correos @edubase.es"); return; }
             await addDoc(collection(db, "messages"), {
-                to: to, from: currentUser.email,
+                to, from: currentUser.email,
                 subject: document.getElementById('compose-subject').value,
                 body: document.getElementById('compose-body').value,
                 read: false, createdAt: serverTimestamp()
             });
-            closeComposeModal(); e.target.reset(); alert("✅ Mensaje enviado");
+            closeComposeModal(); e.target.reset(); alert("✅ Enviado");
         });
 
-        // ==================== CHAT EN TIEMPO REAL ====================
+        // ==================== CHAT ====================
         function setupChat() {
             const q = query(collection(db, "chat_messages"), orderBy("createdAt", "asc"));
             unsubscribeChat = onSnapshot(q, (snapshot) => {
                 const container = document.getElementById('chat-messages');
                 container.innerHTML = '';
-                snapshot.docs.forEach(docSnap => {
-                    const data = docSnap.data();
+                snapshot.docs.forEach(d => {
+                    const data = d.data();
                     const isMe = data.email === currentUser.email;
                     const div = document.createElement('div');
                     div.className = `flex ${isMe ? 'justify-end' : 'justify-start'}`;
                     div.innerHTML = `
-                        <div class="max-w-[70%] ${isMe ? 'bg-indigo-600 text-white' : 'bg-white border border-gray-200 text-gray-800'} rounded-2xl px-4 py-2 shadow-sm">
+                        <div class="max-w-[70%] ${isMe ? 'bg-indigo-600 text-white' : 'bg-white border text-gray-800'} rounded-2xl px-4 py-2 shadow-sm">
                             <p class="text-xs ${isMe ? 'text-indigo-200' : 'text-gray-500'} mb-1">${data.name} • ${data.createdAt ? new Date(data.createdAt.toDate()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</p>
                             <p>${data.text}</p>
                         </div>`;
@@ -641,17 +627,17 @@
             input.value = '';
         });
 
-        // ==================== ZONA DE VIDEOJUEGOS (SUDOKU) ====================
+        // ==================== SUDOKU ====================
         const solvedSudoku = [5,3,4,6,7,8,9,1,2, 6,7,2,1,9,5,3,4,8, 1,9,8,3,4,2,5,6,7, 8,5,9,7,6,1,4,2,3, 4,2,6,8,5,3,7,9,1, 7,1,3,9,2,4,8,5,6, 9,6,1,5,3,7,2,8,4, 2,8,7,4,1,9,6,3,5, 3,4,5,2,8,6,1,7,9];
         let currentSudoku = [];
         let selectedCellIndex = -1;
 
         window.initSudoku = () => {
             currentSudoku = [...solvedSudoku];
-            let hiddenCount = 0;
-            while (hiddenCount < 40) {
+            let hidden = 0;
+            while (hidden < 40) {
                 const idx = Math.floor(Math.random() * 81);
-                if (currentSudoku[idx] !== 0) { currentSudoku[idx] = 0; hiddenCount++; }
+                if (currentSudoku[idx] !== 0) { currentSudoku[idx] = 0; hidden++; }
             }
             renderSudoku();
             document.getElementById('sudoku-message').classList.add('hidden-section');
@@ -671,23 +657,23 @@
             numpad.innerHTML = '';
             for (let i = 1; i <= 9; i++) {
                 const btn = document.createElement('button');
-                btn.className = 'w-10 h-10 rounded-lg bg-indigo-100 text-indigo-700 font-bold hover:bg-indigo-200 transition';
+                btn.className = 'w-10 h-10 rounded-lg bg-indigo-100 text-indigo-700 font-bold hover:bg-indigo-200';
                 btn.textContent = i;
-                btn.onclick = () => fillSudokuCell(i);
+                btn.onclick = () => fillCell(i);
                 numpad.appendChild(btn);
             }
             const clearBtn = document.createElement('button');
-            clearBtn.className = 'w-10 h-10 rounded-lg bg-red-100 text-red-700 font-bold hover:bg-red-200 transition';
+            clearBtn.className = 'w-10 h-10 rounded-lg bg-red-100 text-red-700 font-bold hover:bg-red-200';
             clearBtn.textContent = 'X';
-            clearBtn.onclick = () => fillSudokuCell(0);
+            clearBtn.onclick = () => fillCell(0);
             numpad.appendChild(clearBtn);
         }
 
-        function fillSudokuCell(num) {
+        function fillCell(num) {
             if (selectedCellIndex === -1) return;
             currentSudoku[selectedCellIndex] = num;
             renderSudoku();
-            if (currentSudoku.every((val, idx) => val === solvedSudoku[idx])) {
+            if (currentSudoku.every((v, i) => v === solvedSudoku[i])) {
                 document.getElementById('sudoku-message').classList.remove('hidden-section');
             }
         }
