@@ -29,7 +29,7 @@
 </head>
 <body class="text-gray-800 h-screen flex flex-col overflow-hidden">
 
-    <!-- ==================== AUTENTICACIÓN ==================== -->
+    <!-- AUTENTICACIÓN -->
     <div id="auth-section" class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-orange-500 to-amber-600">
         <div class="glass-panel p-8 rounded-2xl shadow-2xl w-full max-w-md fade-in">
             <div class="text-center mb-6">
@@ -69,7 +69,7 @@
         </div>
     </div>
 
-    <!-- ==================== APP ==================== -->
+    <!-- APP -->
     <div id="app-section" class="hidden-section flex-1 flex overflow-hidden">
         <div class="absolute top-0 left-0 right-0 bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div class="flex items-center gap-6">
@@ -228,11 +228,11 @@
         </main>
     </div>
 
-    <!-- ==================== MODALES ==================== -->
+    <!-- MODALES -->
 
-    <!-- Modal Crear Curso (CON IMAGEN DE PORTADA) -->
+    <!-- Modal Crear Curso (CON ENLACE DE IMAGEN) -->
     <div id="create-course-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-bold">Crear Nuevo Curso</h3>
                 <button onclick="closeModal('create-course-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
@@ -242,13 +242,13 @@
                 <input type="text" id="course-center" placeholder="Centro educativo (ej: IES Virgen de Covadonga)" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
                 <textarea id="course-desc" placeholder="Descripción breve" rows="2" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Imagen de portada del curso</label>
-                    <input type="file" id="course-cover-file" accept="image/*" class="w-full px-4 py-2 border rounded-lg">
-                    <p class="text-xs text-gray-500 mt-1">Opcional. Si no subes imagen, se usará un color por defecto.</p>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">URL de imagen de portada (opcional)</label>
+                    <input type="url" id="course-cover-url" placeholder="https://ejemplo.com/imagen.jpg" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                    <p class="text-xs text-gray-500 mt-1">Pega el enlace de una imagen (Google Drive, Imgur, etc.). Si lo dejas vacío, se usará un color por defecto.</p>
                 </div>
                 <div class="flex justify-end gap-3">
                     <button type="button" onclick="closeModal('create-course-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                    <button type="submit" id="create-course-btn" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Crear</button>
+                    <button type="submit" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Crear</button>
                 </div>
             </form>
         </div>
@@ -273,7 +273,7 @@
         </div>
     </div>
 
-    <!-- Modal Añadir Recurso -->
+    <!-- Modal Añadir Recurso (CON ENLACE) -->
     <div id="add-resource-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
@@ -286,18 +286,19 @@
                 <input type="text" id="resource-title" placeholder="Título del recurso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
                 <textarea id="resource-content" placeholder="Contenido del apunte..." rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Archivo adjunto (PDF, imagen, etc.)</label>
-                    <input type="file" id="resource-file" class="w-full px-4 py-2 border rounded-lg">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Enlace al recurso (Google Drive, Dropbox, web, YouTube...)</label>
+                    <input type="url" id="resource-url" placeholder="https://drive.google.com/..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                    <p class="text-xs text-gray-500 mt-1">Opcional. Pega el enlace compartido del archivo.</p>
                 </div>
                 <div class="flex justify-end gap-3">
                     <button type="button" onclick="closeModal('add-resource-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                    <button type="submit" id="resource-submit-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Guardar</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Guardar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Añadir Tarea -->
+    <!-- Modal Añadir Tarea (CON ENLACE) -->
     <div id="add-activity-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
@@ -320,18 +321,19 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Archivo de la tarea (opcional)</label>
-                    <input type="file" id="activity-file" class="w-full px-4 py-2 border rounded-lg">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Enlace a archivo de la tarea (opcional)</label>
+                    <input type="url" id="activity-url" placeholder="https://drive.google.com/..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                    <p class="text-xs text-gray-500 mt-1">Enlace al PDF, documento o vídeo de la tarea.</p>
                 </div>
                 <div class="flex justify-end gap-3">
                     <button type="button" onclick="closeModal('add-activity-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                    <button type="submit" id="activity-submit-btn" class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700">Guardar</button>
+                    <button type="submit" class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700">Guardar</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Ver Tarea (Alumno) -->
+    <!-- Modal Ver Tarea (Alumno - CON ENLACE DE ENTREGA) -->
     <div id="view-activity-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 fade-in max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-start mb-4">
@@ -351,8 +353,12 @@
                 <h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-upload mr-2"></i>Entregar tarea:</h4>
                 <form id="view-activity-submit-form" class="space-y-3">
                     <textarea id="view-activity-comment" placeholder="Comentario (opcional)..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea>
-                    <input type="file" id="view-activity-file" class="w-full px-4 py-2 border rounded-lg">
-                    <button type="submit" id="submit-activity-btn" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Enlace a tu entrega (Google Drive, Dropbox...)</label>
+                        <input type="url" id="view-activity-url" placeholder="https://drive.google.com/..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                        <p class="text-xs text-gray-500 mt-1">Sube tu archivo a Google Drive, compártelo con "cualquiera con el enlace" y pega aquí la URL.</p>
+                    </div>
+                    <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
                         <i class="fas fa-upload mr-2"></i>Entregar Tarea
                     </button>
                 </form>
@@ -386,7 +392,7 @@
                     <p class="text-sm text-gray-600" id="grade-student-email"></p>
                     <p class="text-sm text-gray-600 mt-2 italic" id="grade-student-comment"></p>
                     <a id="grade-student-file" href="#" target="_blank" class="text-blue-600 text-sm hover:underline mt-2 inline-block hidden-section">
-                        <i class="fas fa-file mr-1"></i>Ver archivo adjunto
+                        <i class="fas fa-external-link-alt mr-1"></i>Ver entrega
                     </a>
                 </div>
                 <div>
@@ -445,8 +451,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, getDoc, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp, setDoc, arrayUnion, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+        import { getFirestore, collection, addDoc, getDocs, getDoc, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC-XDzZgBWRn0Rz_qJzM_-LR5edNfTjqJs",
@@ -461,7 +466,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const storage = getStorage(app);
 
         let currentUser = null;
         let userData = null;
@@ -471,7 +475,7 @@
         let unsubscribeChat = null;
         let unsubscribeInbox = null;
 
-        // ==================== AUTENTICACIÓN ====================
+        // AUTENTICACIÓN
         window.showAuthTab = (tab) => {
             document.getElementById('login-form').classList.toggle('hidden-section', tab !== 'login');
             document.getElementById('request-form').classList.toggle('hidden-section', tab !== 'request');
@@ -494,7 +498,7 @@
 
             errorEl.classList.add('hidden-section');
             if (!validateEduBaseEmail(email)) {
-                errorEl.textContent = "️ Solo correos @edubase.es";
+                errorEl.textContent = "⚠️ Solo correos @edubase.es";
                 errorEl.classList.remove('hidden-section');
                 return;
             }
@@ -507,11 +511,11 @@
             } catch (error) {
                 let msg = "❌ Error al iniciar sesión.";
                 if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-                    msg = "❌ Usuario o contraseña incorrectos.";
+                    msg = " Usuario o contraseña incorrectos.";
                 } else if (error.code === 'auth/network-request-failed') {
-                    msg = " Sin conexión a internet.";
+                    msg = "🌐 Sin conexión a internet.";
                 } else {
-                    msg = "❌ " + error.message;
+                    msg = " " + error.message;
                 }
                 errorEl.textContent = msg;
                 errorEl.classList.remove('hidden-section');
@@ -527,7 +531,7 @@
             if (unsubscribeInbox) unsubscribeInbox();
         };
 
-        // ==================== ESTADO ====================
+        // ESTADO
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -583,7 +587,7 @@
             }
         });
 
-        // ==================== NAVEGACIÓN ====================
+        // NAVEGACIÓN
         window.showSection = (sectionId) => {
             document.querySelectorAll('.app-section').forEach(el => el.classList.add('hidden-section'));
             document.getElementById(`section-${sectionId}`).classList.remove('hidden-section');
@@ -597,57 +601,17 @@
             if (form) form.reset();
         };
 
-        // ==================== FUNCIÓN AUXILIAR: Subir archivo con manejo de errores ====================
-        async function uploadFile(file, path) {
-            try {
-                const fileRef = ref(storage, path);
-                const snapshot = await uploadBytes(fileRef, file);
-                const url = await getDownloadURL(snapshot.ref);
-                return url;
-            } catch (error) {
-                console.error("Error subiendo archivo:", error);
-                let msg = "Error al subir el archivo: ";
-                if (error.code === 'storage/unauthorized') {
-                    msg += "No tienes permisos. Verifica las reglas de Storage en Firebase.";
-                } else if (error.code === 'storage/canceled') {
-                    msg += "La subida fue cancelada.";
-                } else if (error.code === 'storage/unknown') {
-                    msg += "Error desconocido. Revisa la consola (F12).";
-                } else {
-                    msg += error.message;
-                }
-                throw new Error(msg);
-            }
-        }
-
-        // ==================== CREAR CURSO CON IMAGEN ====================
+        // CREAR CURSO CON ENLACE DE IMAGEN
         document.getElementById('create-course-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('create-course-btn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creando...';
-
             try {
                 const name = document.getElementById('course-name').value;
                 const center = document.getElementById('course-center').value;
                 const description = document.getElementById('course-desc').value;
-                const coverFile = document.getElementById('course-cover-file').files[0];
-
-                let coverImageUrl = null;
-                if (coverFile) {
-                    // Validar que sea imagen
-                    if (!coverFile.type.startsWith('image/')) {
-                        throw new Error("El archivo de portada debe ser una imagen (JPG, PNG, etc.)");
-                    }
-                    const path = `courses/${Date.now()}_covers/${coverFile.name}`;
-                    coverImageUrl = await uploadFile(coverFile, path);
-                }
+                const coverImageUrl = document.getElementById('course-cover-url').value.trim() || null;
 
                 await addDoc(collection(db, "courses"), {
-                    name,
-                    center,
-                    description,
-                    coverImageUrl,
+                    name, center, description, coverImageUrl,
                     teacherId: currentUser.uid,
                     teacherEmail: currentUser.email,
                     teacherName: userData.name,
@@ -660,15 +624,11 @@
                 alert("✅ Curso creado correctamente");
                 loadCourses();
             } catch (error) {
-                console.error(error);
                 alert("❌ Error al crear el curso: " + error.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'Crear';
             }
         });
 
-        // ==================== CARGAR CURSOS CON IMAGEN ====================
+        // CARGAR CURSOS CON IMAGEN (URL)
         async function loadCourses() {
             const containers = [
                 document.getElementById('courses-grid'),
@@ -696,7 +656,6 @@
                 const title = data.name;
                 const center = data.center ? ` - ${data.center}` : '';
                 
-                // Si hay imagen de portada, usarla; si no, usar gradiente con icono
                 const coverHTML = data.coverImageUrl 
                     ? `<div class="course-cover" style="background-image: url('${data.coverImageUrl}')"></div>`
                     : `<div class="course-cover-placeholder"><i class="fas fa-book-open text-white text-5xl opacity-80"></i></div>`;
@@ -754,7 +713,7 @@
             }
         };
 
-        // ==================== AVISOS ====================
+        // AVISOS
         document.getElementById('add-announcement-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             try {
@@ -809,12 +768,12 @@
                     await deleteDoc(doc(db, "courses", currentCourseId, "announcements", id));
                     loadAnnouncements();
                 } catch (error) {
-                    alert("❌ Error: " + error.message);
+                    alert(" Error: " + error.message);
                 }
             }
         };
 
-        // ==================== UNIDADES ====================
+        // UNIDADES
         document.getElementById('add-unit-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             try {
@@ -874,7 +833,7 @@
                                 ${rData.content ? `<p class="text-xs text-gray-600 line-clamp-2">${rData.content}</p>` : ''}
                             </div>
                             <div class="flex gap-2">
-                                ${rData.fileUrl ? `<a href="${rData.fileUrl}" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm"><i class="fas fa-download"></i></a>` : ''}
+                                ${rData.url ? `<a href="${rData.url}" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm" title="Abrir enlace"><i class="fas fa-external-link-alt"></i></a>` : ''}
                                 ${isProfessor ? `
                                     <button onclick="editResource('${unitId}', '${r.id}')" class="text-yellow-600 hover:text-yellow-800 text-sm"><i class="fas fa-edit"></i></button>
                                     <button onclick="deleteResource('${unitId}', '${r.id}')" class="text-red-600 hover:text-red-800 text-sm"><i class="fas fa-trash"></i></button>
@@ -975,7 +934,7 @@
             icon.classList.toggle('fa-chevron-down');
         };
 
-        // ==================== RECURSOS (CON MANEJO DE ERRORES) ====================
+        // RECURSOS (CON ENLACE)
         window.openAddResource = (unitId) => {
             document.getElementById('resource-unit-id').value = unitId;
             document.getElementById('resource-edit-id').value = '';
@@ -985,26 +944,14 @@
 
         document.getElementById('add-resource-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('resource-submit-btn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Subiendo...';
-
             try {
                 const unitId = document.getElementById('resource-unit-id').value;
                 const editId = document.getElementById('resource-edit-id').value;
                 const title = document.getElementById('resource-title').value;
                 const content = document.getElementById('resource-content').value;
-                const fileInput = document.getElementById('resource-file');
+                const url = document.getElementById('resource-url').value.trim() || null;
                 
-                let fileUrl = null, fileName = null;
-                if (fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    const path = `courses/${currentCourseId}/units/${unitId}/resources/${Date.now()}_${file.name}`;
-                    fileUrl = await uploadFile(file, path);
-                    fileName = file.name;
-                }
-                
-                const resourceData = { title, content, fileUrl, fileName, updatedAt: serverTimestamp() };
+                const resourceData = { title, content, url, updatedAt: serverTimestamp() };
                 
                 if (editId) {
                     await updateDoc(doc(db, "courses", currentCourseId, "units", unitId, "resources", editId), resourceData);
@@ -1020,11 +967,7 @@
                 closeModal('add-resource-modal');
                 loadUnits();
             } catch (error) {
-                console.error(error);
-                alert("❌ Error al guardar el recurso:\n\n" + error.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'Guardar';
+                alert("❌ Error: " + error.message);
             }
         });
 
@@ -1036,6 +979,7 @@
                 document.getElementById('resource-edit-id').value = resourceId;
                 document.getElementById('resource-title').value = data.title;
                 document.getElementById('resource-content').value = data.content || '';
+                document.getElementById('resource-url').value = data.url || '';
                 document.getElementById('resource-modal-title').textContent = 'Editar Recurso';
                 openModal('add-resource-modal');
             } catch (error) {
@@ -1054,7 +998,7 @@
             }
         };
 
-        // ==================== TAREAS (CON MANEJO DE ERRORES) ====================
+        // TAREAS (CON ENLACE)
         window.openAddActivity = (unitId) => {
             document.getElementById('activity-unit-id').value = unitId;
             document.getElementById('activity-edit-id').value = '';
@@ -1064,10 +1008,6 @@
 
         document.getElementById('add-activity-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('activity-submit-btn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Guardando...';
-
             try {
                 const unitId = document.getElementById('activity-unit-id').value;
                 const editId = document.getElementById('activity-edit-id').value;
@@ -1076,16 +1016,9 @@
                     description: document.getElementById('activity-description').value,
                     deadline: document.getElementById('activity-deadline').value,
                     maxScore: parseInt(document.getElementById('activity-max-score').value) || 10,
+                    url: document.getElementById('activity-url').value.trim() || null,
                     updatedAt: serverTimestamp()
                 };
-                
-                const fileInput = document.getElementById('activity-file');
-                if (fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    const path = `courses/${currentCourseId}/units/${unitId}/activities/${Date.now()}_${file.name}`;
-                    activityData.fileUrl = await uploadFile(file, path);
-                    activityData.fileName = file.name;
-                }
                 
                 if (editId) {
                     await updateDoc(doc(db, "courses", currentCourseId, "units", unitId, "activities", editId), activityData);
@@ -1101,11 +1034,7 @@
                 closeModal('add-activity-modal');
                 loadUnits();
             } catch (error) {
-                console.error(error);
-                alert("❌ Error al guardar la tarea:\n\n" + error.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'Guardar';
+                alert("❌ Error: " + error.message);
             }
         });
 
@@ -1119,6 +1048,7 @@
                 document.getElementById('activity-description').value = data.description;
                 document.getElementById('activity-deadline').value = data.deadline;
                 document.getElementById('activity-max-score').value = data.maxScore || 10;
+                document.getElementById('activity-url').value = data.url || '';
                 document.getElementById('activity-modal-title').textContent = 'Editar Tarea';
                 openModal('add-activity-modal');
             } catch (error) {
@@ -1172,7 +1102,7 @@
             }
         };
 
-        // ==================== VER TAREA (ALUMNO - CON MANEJO DE ERRORES) ====================
+        // VER TAREA (ALUMNO - CON ENLACE DE ENTREGA)
         window.viewActivityDetail = async (unitId, activityId) => {
             try {
                 currentViewUnitId = unitId;
@@ -1185,8 +1115,8 @@
                 document.getElementById('view-activity-description').textContent = data.description;
                 
                 const fileSection = document.getElementById('view-activity-file-section');
-                if (data.fileUrl) {
-                    fileSection.innerHTML = `<div class="bg-blue-50 p-3 rounded-lg"><a href="${data.fileUrl}" target="_blank" class="text-blue-600 hover:underline font-medium"><i class="fas fa-file-download mr-2"></i>${data.fileName || 'Descargar archivo de la tarea'}</a></div>`;
+                if (data.url) {
+                    fileSection.innerHTML = `<div class="bg-blue-50 p-3 rounded-lg"><a href="${data.url}" target="_blank" class="text-blue-600 hover:underline font-medium"><i class="fas fa-external-link-alt mr-2"></i>Enlace al material de la tarea</a></div>`;
                 } else {
                     fileSection.innerHTML = '';
                 }
@@ -1207,7 +1137,7 @@
                     statusDiv.innerHTML = `
                         <p class="font-semibold text-green-800"><i class="fas fa-check-circle mr-2"></i>Ya has entregado esta tarea</p>
                         ${sub.comment ? `<p class="text-sm text-gray-600 mt-1">Tu comentario: ${sub.comment}</p>` : ''}
-                        ${sub.fileUrl ? `<a href="${sub.fileUrl}" target="_blank" class="text-blue-600 text-sm hover:underline mt-1 inline-block"><i class="fas fa-file mr-1"></i>Ver tu archivo entregado</a>` : ''}
+                        ${sub.url ? `<a href="${sub.url}" target="_blank" class="text-blue-600 text-sm hover:underline mt-1 inline-block"><i class="fas fa-external-link-alt mr-1"></i>Ver tu entrega</a>` : ''}
                         ${gradeInfo}${feedbackInfo}
                     `;
                     submitSection.classList.add('hidden-section');
@@ -1226,20 +1156,13 @@
 
         document.getElementById('view-activity-submit-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const btn = document.getElementById('submit-activity-btn');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Subiendo...';
-
             try {
                 const comment = document.getElementById('view-activity-comment').value;
-                const fileInput = document.getElementById('view-activity-file');
+                const url = document.getElementById('view-activity-url').value.trim() || null;
                 
-                let fileUrl = null, fileName = null;
-                if (fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    const path = `courses/${currentCourseId}/units/${currentViewUnitId}/activities/${currentViewActivityId}/${currentUser.uid}/${Date.now()}_${file.name}`;
-                    fileUrl = await uploadFile(file, path);
-                    fileName = file.name;
+                if (!url && !comment) {
+                    alert("⚠️ Debes poner al menos un enlace o un comentario");
+                    return;
                 }
                 
                 const aDoc = await getDoc(doc(db, "courses", currentCourseId, "units", currentViewUnitId, "activities", currentViewActivityId));
@@ -1249,7 +1172,7 @@
                     studentId: currentUser.uid,
                     studentName: userData.name,
                     studentEmail: currentUser.email,
-                    comment, fileUrl, fileName, maxScore,
+                    comment, url, maxScore,
                     submittedAt: serverTimestamp()
                 });
                 
@@ -1257,15 +1180,11 @@
                 alert("✅ Tarea entregada correctamente");
                 loadUnits();
             } catch (error) {
-                console.error(error);
-                alert("❌ Error al entregar la tarea:\n\n" + error.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-upload mr-2"></i>Entregar Tarea';
+                alert("❌ Error al entregar la tarea: " + error.message);
             }
         });
 
-        // ==================== ENTREGAS (PROFESOR) ====================
+        // ENTREGAS (PROFESOR)
         window.viewSubmissions = async (unitId, activityId, activityTitle) => {
             document.getElementById('submissions-activity-title').textContent = 'Entregas: ' + activityTitle;
             const container = document.getElementById('submissions-list');
@@ -1297,9 +1216,9 @@
                                 ${gradeInfo}
                             </div>
                             ${data.comment ? `<p class="text-sm text-gray-700 mt-2 italic">"${data.comment}"</p>` : ''}
-                            ${data.fileUrl ? `<a href="${data.fileUrl}" target="_blank" class="inline-block mt-2 text-blue-600 hover:underline text-sm"><i class="fas fa-file mr-1"></i>${data.fileName || 'Ver archivo'}</a>` : '<p class="text-xs text-gray-500 mt-2">Sin archivo adjunto</p>'}
+                            ${data.url ? `<a href="${data.url}" target="_blank" class="inline-block mt-2 text-blue-600 hover:underline text-sm"><i class="fas fa-external-link-alt mr-1"></i>Ver entrega</a>` : '<p class="text-xs text-gray-500 mt-2">Sin enlace adjunto</p>'}
                             <div class="mt-3 flex gap-2">
-                                <button onclick="openGradeSubmission('${unitId}', '${activityId}', '${d.id}', '${data.studentName.replace(/'/g, "\\'")}', '${data.studentEmail}', '${(data.comment || '').replace(/'/g, "\\'")}', '${data.fileUrl || ''}', '${data.grade || ''}', '${data.feedback || ''}')" class="bg-orange-600 text-white px-3 py-1.5 rounded-lg hover:bg-orange-700 text-sm">
+                                <button onclick="openGradeSubmission('${unitId}', '${activityId}', '${d.id}', '${data.studentName.replace(/'/g, "\\'")}', '${data.studentEmail}', '${(data.comment || '').replace(/'/g, "\\'")}', '${data.url || ''}', '${data.grade || ''}', '${data.feedback || ''}')" class="bg-orange-600 text-white px-3 py-1.5 rounded-lg hover:bg-orange-700 text-sm">
                                     <i class="fas fa-star mr-1"></i>${data.grade !== undefined ? 'Editar nota' : 'Calificar'}
                                 </button>
                                 <button onclick="deleteSubmission('${unitId}', '${activityId}', '${d.id}')" class="bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-red-700 text-sm">
@@ -1313,7 +1232,7 @@
             }
         };
 
-        window.openGradeSubmission = (unitId, activityId, submissionId, studentName, studentEmail, comment, fileUrl, currentGrade, currentFeedback) => {
+        window.openGradeSubmission = (unitId, activityId, submissionId, studentName, studentEmail, comment, url, currentGrade, currentFeedback) => {
             document.getElementById('grade-activity-id').value = activityId;
             document.getElementById('grade-submission-id').value = submissionId;
             document.getElementById('grade-submission-modal').dataset.unitId = unitId;
@@ -1322,7 +1241,7 @@
             document.getElementById('grade-student-comment').textContent = comment ? 'Comentario del alumno: "' + comment + '"' : '';
             
             const fileLink = document.getElementById('grade-student-file');
-            if (fileUrl) { fileLink.href = fileUrl; fileLink.classList.remove('hidden-section'); } 
+            if (url) { fileLink.href = url; fileLink.classList.remove('hidden-section'); } 
             else { fileLink.classList.add('hidden-section'); }
             
             document.getElementById('grade-value').value = currentGrade;
@@ -1365,7 +1284,7 @@
             }
         };
 
-        // ==================== PARTICIPANTES ====================
+        // PARTICIPANTES
         async function loadParticipants() {
             const container = document.getElementById('participants-list');
             container.innerHTML = '';
@@ -1402,7 +1321,7 @@
             }
         }
 
-        // ==================== CALIFICACIONES ====================
+        // CALIFICACIONES
         async function loadGrades() {
             if (userData.role === 'profesor') {
                 const container = document.getElementById('grades-students-list');
@@ -1500,7 +1419,7 @@
             }
         };
 
-        // ==================== MENSAJES ====================
+        // MENSAJES
         function setupInbox() {
             const q = query(collection(db, "messages"), where("to", "==", currentUser.email), orderBy("createdAt", "desc"));
             unsubscribeInbox = onSnapshot(q, (snapshot) => {
@@ -1535,7 +1454,7 @@
         document.getElementById('compose-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const to = document.getElementById('compose-to').value;
-            if (!validateEduBaseEmail(to)) { alert("⚠️ Solo correos @edubase.es"); return; }
+            if (!validateEduBaseEmail(to)) { alert("️ Solo correos @edubase.es"); return; }
             try {
                 await addDoc(collection(db, "messages"), {
                     to, from: currentUser.email,
@@ -1551,7 +1470,7 @@
             }
         });
 
-        // ==================== CHAT ====================
+        // CHAT
         function setupChat() {
             const q = query(collection(db, "chat_messages"), orderBy("createdAt", "asc"));
             unsubscribeChat = onSnapshot(q, (snapshot) => {
