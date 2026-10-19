@@ -528,26 +528,63 @@
         };
 
         document.getElementById('add-student-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const courseId = currentCourseId || document.getElementById('select-course').value;
-            const studentEmail = document.getElementById('student-email').value.toLowerCase();
-            if (!courseId) { alert("⚠️ Selecciona un curso"); return; }
-            if (!validateEduBaseEmail(studentEmail)) { alert("⚠️ Correo debe ser @edubase.es"); return; }
-            try {
-                await updateDoc(doc(db, "courses", courseId), { students: require('firebase/firestore').arrayUnion ? undefined : studentEmail }); // Fallback simple
-                // Usamos una transacción o lectura+escritura simple para arrayUnion
-                const courseRef = doc(db, "courses", courseId);
-                const courseSnap = await getDoc(courseRef);
-                const students = courseSnap.data().students || [];
-                if (!students.includes(studentEmail)) {
-                    students.push(studentEmail);
-                    await updateDoc(courseRef, { students });
-                }
-                await addDoc(collection(db, "messages"), { to: studentEmail, from: currentUser.email, subject: "Invitación a Curso", body: "Has sido añadido a un curso. Revisa 'Mis Cursos'.", read: false, createdAt: serverTimestamp() });
-                e.target.reset(); closeModal('add-student-modal'); alert("✅ Alumno añadido");
-                if (currentCourseId) loadParticipants();
-            } catch (error) { alert("❌ Error: " + error.message); }
+    e.preventDefault();
+    const courseId = currentCourseId || document.getElementById('select-course').value;
+    const studentEmail = document.getElementById('student-email').value.toLowerCase().trim();
+    
+    if (!courseId) { alert("️ Selecciona un curso"); return; }
+    if (!validateEduBaseEmail(studentEmail)) { alert("⚠️ El correo debe ser @edubase.es"); return; }
+    
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true;
+    btn.textContent = 'Añadiendo...';
+    
+    try {
+        const courseRef = doc(db, "courses", courseId);
+        const courseSnap = await getDoc(courseRef);
+        
+        if (!courseSnap.exists()) {
+            alert("❌ El curso no existe");
+            return;
+        }
+        
+        const students = courseSnap.data().students || [];
+        
+        // Si ya existe, avisar pero no fallar
+        if (students.includes(studentEmail)) {
+            alert("⚠️ Este alumno ya está en el curso");
+            btn.disabled = false;
+            btn.textContent = 'Añadir';
+            return;
+        }
+        
+        // Añadir alumno al array
+        students.push(studentEmail);
+        await updateDoc(courseRef, { students });
+        
+        // Enviar mensaje de invitación
+        await addDoc(collection(db, "messages"), { 
+            to: studentEmail, 
+            from: currentUser.email, 
+            subject: "Invitación a Curso", 
+            body: `Has sido añadido al curso "${courseSnap.data().name}". Revisa la sección de cursos.`, 
+            read: false, 
+            createdAt: serverTimestamp() 
         });
+        
+        e.target.reset(); 
+        closeModal('add-student-modal'); 
+        alert("✅ Alumno añadido correctamente");
+        
+        if (currentCourseId) loadParticipants();
+    } catch (error) { 
+        console.error(error);
+        alert("❌ Error: " + error.message); 
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Añadir';
+    }
+});
 
         // AVISOS
         document.getElementById('add-announcement-form').addEventListener('submit', async (e) => {
