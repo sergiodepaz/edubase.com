@@ -25,12 +25,10 @@
                 <h1 class="text-3xl font-bold text-indigo-700"><i class="fas fa-graduation-cap mr-2"></i>EduBase</h1>
                 <p class="text-gray-600 mt-2">Plataforma educativa exclusiva</p>
             </div>
-
             <div class="flex mb-6 bg-gray-100 rounded-lg p-1">
                 <button onclick="showAuthTab('login')" id="tab-login" class="flex-1 py-2 rounded-md bg-white shadow text-indigo-700 font-semibold transition">Iniciar Sesión</button>
                 <button onclick="showAuthTab('request')" id="tab-request" class="flex-1 py-2 rounded-md text-gray-600 hover:text-indigo-700 transition">Solicitar Acceso</button>
             </div>
-
             <form id="login-form" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Correo</label>
@@ -43,7 +41,6 @@
                 <button type="submit" id="login-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition">Ingresar</button>
                 <p id="login-error" class="text-red-600 text-sm text-center bg-red-50 p-2 rounded-lg hidden-section"></p>
             </form>
-
             <form action="https://formspree.io/f/meaowyvj" method="POST" id="request-form" class="space-y-4 hidden-section">
                 <input type="hidden" name="_subject" value="Nueva Solicitud de Acceso EduBase">
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-3 text-sm text-blue-700">
@@ -98,7 +95,6 @@
             <div id="section-dashboard" class="app-section fade-in">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold">Panel de Control</h2>
-                    <!-- Botones del profesor -->
                     <div id="professor-actions" class="hidden-section flex gap-3">
                         <button onclick="openModal('create-course-modal')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center">
                             <i class="fas fa-plus-circle mr-2"></i>Crear Curso
@@ -108,21 +104,9 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Vista alumno -->
-                <div id="student-dashboard" class="hidden-section">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border">
-                        <h3 class="text-lg font-semibold mb-4">Mis Cursos</h3>
-                        <div id="student-courses-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-                    </div>
-                </div>
-
-                <!-- Vista profesor -->
-                <div id="professor-dashboard" class="hidden-section">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border">
-                        <h3 class="text-lg font-semibold mb-4">Mis Cursos</h3>
-                        <div id="professor-courses-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-                    </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border">
+                    <h3 class="text-lg font-semibold mb-4">Mis Cursos</h3>
+                    <div id="courses-list-dashboard" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
             </div>
 
@@ -138,8 +122,17 @@
                     <button onclick="showSection('courses')" class="text-indigo-600 hover:text-indigo-800 mb-2">
                         <i class="fas fa-arrow-left mr-2"></i>Volver a cursos
                     </button>
-                    <h2 id="course-detail-title" class="text-3xl font-bold"></h2>
-                    <p id="course-detail-desc" class="text-gray-600 mt-2"></p>
+                    <div class="flex justify-between items-start flex-wrap gap-2">
+                        <div>
+                            <h2 id="course-detail-title" class="text-3xl font-bold"></h2>
+                            <p id="course-detail-desc" class="text-gray-600 mt-2"></p>
+                        </div>
+                        <div id="course-actions-professor" class="hidden-section flex gap-2">
+                            <button onclick="openModal('add-student-modal')" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm">
+                                <i class="fas fa-user-plus mr-2"></i>Añadir Alumno
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="flex gap-2 mb-6 border-b border-gray-200 flex-wrap">
@@ -157,7 +150,6 @@
                     </button>
                 </div>
 
-                <!-- AVISOS -->
                 <div id="tab-announcements" class="course-tab-content">
                     <div id="professor-announcement-btn" class="hidden-section mb-4">
                         <button onclick="openModal('announcement-modal')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
@@ -167,7 +159,6 @@
                     <div id="announcements-list" class="space-y-4"></div>
                 </div>
 
-                <!-- TAREAS -->
                 <div id="tab-tasks" class="course-tab-content hidden-section">
                     <div id="professor-task-btn" class="hidden-section mb-4">
                         <button onclick="openModal('task-modal')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
@@ -177,11 +168,10 @@
                     <div id="tasks-list" class="space-y-4"></div>
                 </div>
 
-                <!-- NOTAS -->
                 <div id="tab-grades" class="course-tab-content hidden-section">
                     <div id="professor-grades-section" class="hidden-section">
                         <div class="bg-white p-6 rounded-xl shadow-sm border">
-                            <h3 class="text-lg font-semibold mb-4">Calificar Alumnos</h3>
+                            <h3 class="text-lg font-semibold mb-4">Calificaciones de Alumnos</h3>
                             <div id="grades-students-list" class="space-y-4"></div>
                         </div>
                     </div>
@@ -193,7 +183,6 @@
                     </div>
                 </div>
 
-                <!-- MATERIAL -->
                 <div id="tab-materials" class="course-tab-content hidden-section">
                     <div id="professor-material-btn" class="hidden-section mb-4">
                         <button onclick="openModal('material-modal')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
@@ -258,7 +247,7 @@
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-bold">Crear Nuevo Curso</h3>
-                <button onclick="closeModal('create-course-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+                <button onclick="closeModal('create-course-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
             <form id="create-course-form" class="space-y-4">
                 <input type="text" id="course-name" placeholder="Nombre del curso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
@@ -276,7 +265,7 @@
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-bold">Añadir Alumno a un Curso</h3>
-                <button onclick="closeModal('add-student-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+                <button onclick="closeModal('add-student-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
             <form id="add-student-form" class="space-y-4">
                 <select id="select-course" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
@@ -295,10 +284,11 @@
     <div id="announcement-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold">Nuevo Aviso</h3>
-                <button onclick="closeModal('announcement-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+                <h3 id="announcement-modal-title" class="text-lg font-bold">Nuevo Aviso</h3>
+                <button onclick="closeModal('announcement-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
             <form id="add-announcement-form" class="space-y-4">
+                <input type="hidden" id="announcement-edit-id">
                 <input type="text" id="announcement-title" placeholder="Título del aviso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
                 <textarea id="announcement-content" placeholder="Contenido del aviso..." required rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
                 <div class="flex justify-end gap-3">
@@ -313,16 +303,24 @@
     <div id="task-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold">Nueva Tarea</h3>
-                <button onclick="closeModal('task-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+                <h3 id="task-modal-title" class="text-lg font-bold">Nueva Tarea</h3>
+                <button onclick="closeModal('task-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
             <form id="add-task-form" class="space-y-4">
+                <input type="hidden" id="task-edit-id">
                 <input type="text" id="task-title" placeholder="Título de la tarea" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                <textarea id="task-description" placeholder="Descripción de la tarea..." required rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                <input type="datetime-local" id="task-deadline" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                <textarea id="task-description" placeholder="Descripción y reglas de la tarea..." required rows="5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de entrega</label>
+                    <input type="datetime-local" id="task-deadline" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Puntuación máxima (opcional)</label>
+                    <input type="number" id="task-max-score" placeholder="10" min="1" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
                 <div class="flex justify-end gap-3">
                     <button type="button" onclick="closeModal('task-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Crear Tarea</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Guardar Tarea</button>
                 </div>
             </form>
         </div>
@@ -333,7 +331,7 @@
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-bold">Subir Material</h3>
-                <button onclick="closeModal('material-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+                <button onclick="closeModal('material-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
             <form id="add-material-form" class="space-y-4">
                 <input type="text" id="material-title" placeholder="Título del material" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
@@ -347,20 +345,75 @@
         </div>
     </div>
 
-    <!-- Modal Entrega de Tarea -->
-    <div id="submit-task-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
+    <!-- Modal Vista de Tarea (Alumno) -->
+    <div id="view-task-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 fade-in max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 id="view-task-title" class="text-2xl font-bold text-indigo-900"></h3>
+                    <p id="view-task-deadline" class="text-sm text-gray-500 mt-1"></p>
+                </div>
+                <button onclick="closeModal('view-task-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="border-t pt-4">
+                <h4 class="font-semibold text-gray-700 mb-2">Descripción y reglas:</h4>
+                <p id="view-task-description" class="text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-lg"></p>
+            </div>
+            <div id="view-task-submission-status" class="mt-4 p-4 rounded-lg"></div>
+            <div id="view-task-submit-section" class="mt-4">
+                <h4 class="font-semibold text-gray-700 mb-2">Entregar tarea:</h4>
+                <form id="view-task-submit-form" class="space-y-3">
+                    <textarea id="view-task-comment" placeholder="Comentario para el profesor (opcional)..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                    <input type="file" id="view-task-file" class="w-full px-4 py-2 border rounded-lg">
+                    <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                        <i class="fas fa-upload mr-2"></i>Entregar Tarea
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Entregas (Profesor) -->
+    <div id="submissions-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl p-6 fade-in max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="submissions-task-title" class="text-xl font-bold"></h3>
+                <button onclick="closeModal('submissions-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div id="submissions-list" class="space-y-3"></div>
+        </div>
+    </div>
+
+    <!-- Modal Calificar Entrega -->
+    <div id="grade-submission-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold">Entregar Tarea</h3>
-                <button onclick="closeModal('submit-task-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+                <h3 class="text-lg font-bold">Calificar Entrega</h3>
+                <button onclick="closeModal('grade-submission-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
-            <form id="submit-task-form" class="space-y-4">
-                <input type="hidden" id="submit-task-id">
-                <textarea id="submit-task-comment" placeholder="Comentario (opcional)..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                <input type="file" id="submit-task-file" class="w-full px-4 py-2 border rounded-lg">
+            <form id="grade-submission-form" class="space-y-4">
+                <input type="hidden" id="grade-submission-task-id">
+                <input type="hidden" id="grade-submission-student-id">
+                <input type="hidden" id="grade-submission-id">
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="font-semibold" id="grade-student-name"></p>
+                    <p class="text-sm text-gray-600" id="grade-student-email"></p>
+                    <p class="text-sm text-gray-600 mt-2 italic" id="grade-student-comment"></p>
+                    <a id="grade-student-file" href="#" target="_blank" class="text-indigo-600 text-sm hover:underline hidden-section mt-2 inline-block">
+                        <i class="fas fa-file mr-1"></i>Ver archivo adjunto
+                    </a>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nota</label>
+                    <input type="number" id="grade-value" placeholder="0-10" min="0" max="10" step="0.1" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Comentario de feedback</label>
+                    <textarea id="grade-feedback" placeholder="Comentarios para el alumno..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
                 <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closeModal('submit-task-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Entregar</button>
+                    <button type="button" onclick="closeModal('grade-submission-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Guardar Nota</button>
                 </div>
             </form>
         </div>
@@ -371,7 +424,7 @@
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-bold">Nuevo Mensaje</h3>
-                <button onclick="closeModal('compose-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+                <button onclick="closeModal('compose-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button>
             </div>
             <form id="compose-form" class="space-y-4">
                 <input type="email" id="compose-to" placeholder="Para: usuario@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
@@ -388,8 +441,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, getDoc, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp, setDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+        import { getFirestore, collection, addDoc, getDocs, getDoc, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp, setDoc, arrayUnion, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC-XDzZgBWRn0Rz_qJzM_-LR5edNfTjqJs",
@@ -409,6 +462,7 @@
         let currentUser = null;
         let userData = null;
         let currentCourseId = null;
+        let currentViewTaskId = null;
         let unsubscribeChat = null;
         let unsubscribeInbox = null;
 
@@ -452,7 +506,7 @@
                 if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
                     msg = "❌ Usuario o contraseña incorrectos.";
                 } else if (error.code === 'auth/network-request-failed') {
-                    msg = "🌐 Sin conexión a internet.";
+                    msg = " Sin conexión a internet.";
                 } else {
                     msg = "❌ " + error.message;
                 }
@@ -501,15 +555,10 @@
                         document.getElementById('user-display-name').textContent = userData.name || user.email;
                         document.getElementById('user-role-badge').textContent = (userData.role || 'alumno').toUpperCase();
                         
-                        // Mostrar botones de profesor si corresponde
                         if (userData.role === 'profesor') {
                             document.getElementById('professor-actions').classList.remove('hidden-section');
-                            document.getElementById('professor-dashboard').classList.remove('hidden-section');
-                            document.getElementById('student-dashboard').classList.add('hidden-section');
                         } else {
                             document.getElementById('professor-actions').classList.add('hidden-section');
-                            document.getElementById('professor-dashboard').classList.add('hidden-section');
-                            document.getElementById('student-dashboard').classList.remove('hidden-section');
                         }
                         
                         loadCourses();
@@ -535,7 +584,6 @@
         // ==================== MODALES ====================
         window.openModal = (modalId) => {
             document.getElementById(modalId).classList.remove('hidden-section');
-            // Si es el modal de añadir alumno, cargar los cursos
             if (modalId === 'add-student-modal') {
                 loadProfessorCoursesForSelect();
             }
@@ -543,7 +591,6 @@
 
         window.closeModal = (modalId) => {
             document.getElementById(modalId).classList.add('hidden-section');
-            // Resetear formularios
             const form = document.querySelector(`#${modalId} form`);
             if (form) form.reset();
         };
@@ -596,16 +643,14 @@
             const studentEmail = document.getElementById('student-email').value.toLowerCase();
             
             if (!validateEduBaseEmail(studentEmail)) {
-                alert("⚠️ El correo debe ser @edubase.es");
+                alert("️ El correo debe ser @edubase.es");
                 return;
             }
             
-            // Añadir alumno al array students del curso
             await updateDoc(doc(db, "courses", courseId), {
                 students: arrayUnion(studentEmail)
             });
             
-            // Enviar mensaje de invitación al alumno
             await addDoc(collection(db, "messages"), {
                 to: studentEmail,
                 from: currentUser.email,
@@ -622,12 +667,10 @@
 
         async function loadCourses() {
             const container = document.getElementById('courses-grid');
-            const professorList = document.getElementById('professor-courses-list');
-            const studentList = document.getElementById('student-courses-list');
+            const dashboardList = document.getElementById('courses-list-dashboard');
             
             if (container) container.innerHTML = '';
-            if (professorList) professorList.innerHTML = '';
-            if (studentList) studentList.innerHTML = '';
+            if (dashboardList) dashboardList.innerHTML = '';
             
             let q;
             if (userData.role === 'profesor') {
@@ -641,8 +684,7 @@
             if (snapshot.empty) {
                 const emptyMsg = '<p class="text-gray-500 col-span-full text-center py-8">No hay cursos disponibles.</p>';
                 if (container) container.innerHTML = emptyMsg;
-                if (professorList) professorList.innerHTML = emptyMsg;
-                if (studentList) studentList.innerHTML = emptyMsg;
+                if (dashboardList) dashboardList.innerHTML = emptyMsg;
                 return;
             }
             
@@ -651,15 +693,15 @@
                 return `
                     <div class="bg-white p-6 rounded-xl shadow-sm border cursor-pointer hover:shadow-lg transition" onclick="openCourse('${d.id}')">
                         <h3 class="text-xl font-bold text-indigo-900 mb-2">${data.name}</h3>
-                        <p class="text-gray-600 text-sm mb-4">${data.description}</p>
-                        <p class="text-xs text-gray-500">Profesor: ${data.teacherName || data.teacherEmail}</p>
-                        <p class="text-xs text-gray-500 mt-1">${data.students ? data.students.length : 0} alumnos</p>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">${data.description}</p>
+                        <div class="flex justify-between items-center text-xs text-gray-500">
+                            <span>${userData.role === 'profesor' ? (data.students ? data.students.length : 0) + ' alumnos' : 'Profesor: ' + (data.teacherName || data.teacherEmail)}</span>
+                        </div>
                     </div>`;
             }).join('');
             
             if (container) container.innerHTML = cardsHTML;
-            if (professorList) professorList.innerHTML = cardsHTML;
-            if (studentList) studentList.innerHTML = cardsHTML;
+            if (dashboardList) dashboardList.innerHTML = cardsHTML;
         }
 
         window.openCourse = async (courseId) => {
@@ -670,19 +712,20 @@
             document.getElementById('course-detail-title').textContent = courseData.name;
             document.getElementById('course-detail-desc').textContent = courseData.description;
             
-            // Mostrar/ocultar botones de profesor según rol
             if (userData.role === 'profesor') {
                 document.getElementById('professor-announcement-btn').classList.remove('hidden-section');
                 document.getElementById('professor-task-btn').classList.remove('hidden-section');
                 document.getElementById('professor-grades-section').classList.remove('hidden-section');
                 document.getElementById('professor-material-btn').classList.remove('hidden-section');
                 document.getElementById('student-grades-section').classList.add('hidden-section');
+                document.getElementById('course-actions-professor').classList.remove('hidden-section');
             } else {
                 document.getElementById('professor-announcement-btn').classList.add('hidden-section');
                 document.getElementById('professor-task-btn').classList.add('hidden-section');
                 document.getElementById('professor-grades-section').classList.add('hidden-section');
                 document.getElementById('professor-material-btn').classList.add('hidden-section');
                 document.getElementById('student-grades-section').classList.remove('hidden-section');
+                document.getElementById('course-actions-professor').classList.add('hidden-section');
             }
             
             showSection('course-detail');
@@ -703,16 +746,26 @@
         // ==================== AVISOS ====================
         document.getElementById('add-announcement-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            await addDoc(collection(db, "courses", currentCourseId, "announcements"), {
-                title: document.getElementById('announcement-title').value,
-                content: document.getElementById('announcement-content').value,
-                authorId: currentUser.uid,
-                authorName: userData.name,
-                createdAt: serverTimestamp()
-            });
+            const editId = document.getElementById('announcement-edit-id').value;
+            const title = document.getElementById('announcement-title').value;
+            const content = document.getElementById('announcement-content').value;
+            
+            if (editId) {
+                await updateDoc(doc(db, "courses", currentCourseId, "announcements", editId), {
+                    title, content, updatedAt: serverTimestamp()
+                });
+                alert("✅ Aviso actualizado");
+            } else {
+                await addDoc(collection(db, "courses", currentCourseId, "announcements"), {
+                    title, content,
+                    authorId: currentUser.uid,
+                    authorName: userData.name,
+                    createdAt: serverTimestamp()
+                });
+                alert("✅ Aviso publicado");
+            }
             e.target.reset();
             closeModal('announcement-modal');
-            alert("✅ Aviso publicado");
             loadAnnouncements();
         });
 
@@ -731,32 +784,64 @@
             snapshot.docs.forEach(d => {
                 const data = d.data();
                 const date = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString() : '';
+                const isProfessor = userData.role === 'profesor';
                 container.innerHTML += `
                     <div class="bg-white p-6 rounded-xl shadow-sm border">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="text-lg font-bold text-indigo-900">${data.title}</h4>
-                            <span class="text-xs text-gray-500">${date}</span>
+                        <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
+                            <h4 class="text-lg font-bold text-indigo-900 flex-1">${data.title}</h4>
+                            ${isProfessor ? `
+                                <div class="flex gap-2">
+                                    <button onclick="editAnnouncement('${d.id}', '${data.title.replace(/'/g, "\\'")}', \`${data.content.replace(/`/g, '\\`').replace(/\n/g, '\\n')}\`)" class="text-blue-600 hover:text-blue-800 text-sm"><i class="fas fa-edit"></i></button>
+                                    <button onclick="deleteAnnouncement('${d.id}')" class="text-red-600 hover:text-red-800 text-sm"><i class="fas fa-trash"></i></button>
+                                </div>
+                            ` : ''}
                         </div>
-                        <p class="text-sm text-gray-500 mb-2">Por: ${data.authorName}</p>
-                        <p class="text-gray-700 whitespace-pre-wrap">${data.content}</p>
+                        <span class="text-xs text-gray-500">${date} • Por: ${data.authorName}</span>
+                        <p class="text-gray-700 whitespace-pre-wrap mt-3">${data.content}</p>
                     </div>`;
             });
         }
 
+        window.editAnnouncement = (id, title, content) => {
+            document.getElementById('announcement-edit-id').value = id;
+            document.getElementById('announcement-title').value = title;
+            document.getElementById('announcement-content').value = content;
+            document.getElementById('announcement-modal-title').textContent = 'Editar Aviso';
+            openModal('announcement-modal');
+        };
+
+        window.deleteAnnouncement = async (id) => {
+            if (confirm('¿Seguro que quieres eliminar este aviso?')) {
+                await deleteDoc(doc(db, "courses", currentCourseId, "announcements", id));
+                alert("✅ Aviso eliminado");
+                loadAnnouncements();
+            }
+        };
+
         // ==================== TAREAS ====================
         document.getElementById('add-task-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            await addDoc(collection(db, "courses", currentCourseId, "tasks"), {
+            const editId = document.getElementById('task-edit-id').value;
+            const taskData = {
                 title: document.getElementById('task-title').value,
                 description: document.getElementById('task-description').value,
                 deadline: document.getElementById('task-deadline').value,
+                maxScore: document.getElementById('task-max-score').value || 10,
                 authorId: currentUser.uid,
                 authorName: userData.name,
-                createdAt: serverTimestamp()
-            });
+            };
+            
+            if (editId) {
+                taskData.updatedAt = serverTimestamp();
+                await updateDoc(doc(db, "courses", currentCourseId, "tasks", editId), taskData);
+                alert("✅ Tarea actualizada");
+            } else {
+                taskData.createdAt = serverTimestamp();
+                await addDoc(collection(db, "courses", currentCourseId, "tasks"), taskData);
+                alert("✅ Tarea creada");
+            }
             e.target.reset();
             closeModal('task-modal');
-            alert("✅ Tarea creada");
             loadTasks();
         });
 
@@ -772,78 +857,270 @@
                 return;
             }
             
+            const isProfessor = userData.role === 'profesor';
+            
             for (const d of snapshot.docs) {
                 const data = d.data();
                 const deadline = new Date(data.deadline).toLocaleString();
-                const isProfessor = userData.role === 'profesor';
+                const isLate = new Date(data.deadline) < new Date();
                 
-                let submissionsHTML = '';
+                let actionsHTML = '';
+                let infoHTML = '';
+                
                 if (isProfessor) {
+                    // Contar entregas
                     const submissionsQ = query(collection(db, "courses", currentCourseId, "tasks", d.id, "submissions"));
                     const submissionsSnap = await getDocs(submissionsQ);
-                    if (!submissionsSnap.empty) {
-                        submissionsHTML = '<div class="mt-4 pt-4 border-t"><h5 class="font-semibold text-sm mb-2">Entregas recibidas:</h5>';
-                        submissionsSnap.docs.forEach(s => {
-                            const sub = s.data();
-                            submissionsHTML += `
-                                <div class="bg-gray-50 p-3 rounded-lg mb-2">
-                                    <p class="text-sm font-semibold">${sub.studentName} (${sub.studentEmail})</p>
-                                    <p class="text-xs text-gray-600">${sub.comment || 'Sin comentario'}</p>
-                                    ${sub.fileUrl ? `<a href="${sub.fileUrl}" target="_blank" class="text-indigo-600 text-xs hover:underline"><i class="fas fa-file mr-1"></i>Ver archivo</a>` : ''}
-                                </div>`;
-                        });
-                        submissionsHTML += '</div>';
+                    const submissionsCount = submissionsSnap.size;
+                    
+                    actionsHTML = `
+                        <div class="flex gap-2 mt-3">
+                            <button onclick="viewSubmissions('${d.id}', '${data.title.replace(/'/g, "\\'")}')" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 text-sm">
+                                <i class="fas fa-users mr-1"></i>Ver entregas (${submissionsCount})
+                            </button>
+                            <button onclick="editTask('${d.id}')" class="bg-yellow-500 text-white px-3 py-1.5 rounded-lg hover:bg-yellow-600 text-sm">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteTask('${d.id}')" class="bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-red-700 text-sm">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>`;
+                    infoHTML = `<p class="text-xs text-gray-500 mt-2">${submissionsCount} entrega(s) recibida(s)</p>`;
+                } else {
+                    // Alumno: verificar si ya entregó
+                    const mySubmissionQ = query(
+                        collection(db, "courses", currentCourseId, "tasks", d.id, "submissions"),
+                        where("studentId", "==", currentUser.uid)
+                    );
+                    const mySnap = await getDocs(mySubmissionQ);
+                    const hasSubmitted = !mySnap.empty;
+                    
+                    if (hasSubmitted) {
+                        const subData = mySnap.docs[0].data();
+                        const gradeInfo = subData.grade !== undefined ? `<span class="ml-2 bg-green-100 text-green-800 px-2 py-0.5 rounded text-xs">Nota: ${subData.grade}${subData.maxScore ? '/' + subData.maxScore : ''}</span>` : '';
+                        infoHTML = `<p class="text-xs text-green-600 mt-2"><i class="fas fa-check-circle mr-1"></i>Entregada${gradeInfo}</p>`;
                     } else {
-                        submissionsHTML = '<div class="mt-4 pt-4 border-t"><p class="text-sm text-gray-500">Aún no hay entregas.</p></div>';
+                        infoHTML = `<p class="text-xs text-orange-600 mt-2"><i class="fas fa-clock mr-1"></i>Pendiente de entregar</p>`;
                     }
+                    
+                    actionsHTML = `
+                        <button onclick="viewTaskDetail('${d.id}')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm mt-3">
+                            <i class="fas fa-eye mr-2"></i>Ver tarea y entregar
+                        </button>`;
                 }
                 
                 container.innerHTML += `
                     <div class="bg-white p-6 rounded-xl shadow-sm border">
                         <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
-                            <h4 class="text-lg font-bold text-indigo-900">${data.title}</h4>
-                            <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Entrega: ${deadline}</span>
+                            <h4 class="text-lg font-bold text-indigo-900 flex-1">${data.title}</h4>
+                            <span class="text-xs ${isLate ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'} px-2 py-1 rounded">
+                                <i class="fas fa-clock mr-1"></i>${deadline}
+                            </span>
                         </div>
-                        <p class="text-sm text-gray-500 mb-2">Por: ${data.authorName}</p>
-                        <p class="text-gray-700 whitespace-pre-wrap mb-4">${data.description}</p>
-                        ${!isProfessor ? `<button onclick="openSubmitTaskModal('${d.id}')" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm"><i class="fas fa-upload mr-2"></i>Entregar Tarea</button>` : ''}
-                        ${submissionsHTML}
+                        <p class="text-sm text-gray-500 mb-2">Por: ${data.authorName} • Puntuación: ${data.maxScore} pts</p>
+                        <p class="text-gray-700 whitespace-pre-wrap line-clamp-3">${data.description}</p>
+                        ${infoHTML}
+                        ${actionsHTML}
                     </div>`;
             }
         }
 
-        window.openSubmitTaskModal = (taskId) => {
-            document.getElementById('submit-task-id').value = taskId;
-            openModal('submit-task-modal');
-        };
-
-        document.getElementById('submit-task-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const taskId = document.getElementById('submit-task-id').value;
-            const comment = document.getElementById('submit-task-comment').value;
-            const fileInput = document.getElementById('submit-task-file');
+        window.viewTaskDetail = async (taskId) => {
+            currentViewTaskId = taskId;
+            const taskDoc = await getDoc(doc(db, "courses", currentCourseId, "tasks", taskId));
+            const data = taskDoc.data();
             
-            let fileUrl = null;
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const fileRef = ref(storage, `courses/${currentCourseId}/tasks/${taskId}/${currentUser.uid}/${file.name}`);
-                await uploadBytes(fileRef, file);
-                fileUrl = await getDownloadURL(fileRef);
+            document.getElementById('view-task-title').textContent = data.title;
+            document.getElementById('view-task-deadline').innerHTML = `<i class="fas fa-clock mr-1"></i>Fecha de entrega: ${new Date(data.deadline).toLocaleString()} • Puntuación máxima: ${data.maxScore} pts`;
+            document.getElementById('view-task-description').textContent = data.description;
+            
+            // Verificar si ya entregó
+            const mySubmissionQ = query(
+                collection(db, "courses", currentCourseId, "tasks", taskId, "submissions"),
+                where("studentId", "==", currentUser.uid)
+            );
+            const mySnap = await getDocs(mySubmissionQ);
+            const statusDiv = document.getElementById('view-task-submission-status');
+            const submitSection = document.getElementById('view-task-submit-section');
+            
+            if (!mySnap.empty) {
+                const sub = mySnap.docs[0].data();
+                const gradeInfo = sub.grade !== undefined ? `<p class="text-lg font-bold text-green-600 mt-2">Tu nota: ${sub.grade}${sub.maxScore ? '/' + sub.maxScore : ''}</p>` : '';
+                const feedbackInfo = sub.feedback ? `<p class="text-sm text-gray-600 mt-2"><strong>Comentario del profesor:</strong> ${sub.feedback}</p>` : '';
+                statusDiv.className = 'mt-4 p-4 rounded-lg bg-green-50 border border-green-200';
+                statusDiv.innerHTML = `
+                    <p class="font-semibold text-green-800"><i class="fas fa-check-circle mr-2"></i>Ya has entregado esta tarea</p>
+                    ${sub.comment ? `<p class="text-sm text-gray-600 mt-1">Tu comentario: ${sub.comment}</p>` : ''}
+                    ${sub.fileUrl ? `<a href="${sub.fileUrl}" target="_blank" class="text-indigo-600 text-sm hover:underline mt-1 inline-block"><i class="fas fa-file mr-1"></i>Ver tu archivo</a>` : ''}
+                    ${gradeInfo}
+                    ${feedbackInfo}
+                `;
+                submitSection.classList.add('hidden-section');
+            } else {
+                const isLate = new Date(data.deadline) < new Date();
+                statusDiv.className = `mt-4 p-4 rounded-lg ${isLate ? 'bg-red-50 border border-red-200' : 'bg-blue-50 border border-blue-200'}`;
+                statusDiv.innerHTML = `<p class="font-semibold ${isLate ? 'text-red-800' : 'text-blue-800'}"><i class="fas fa-info-circle mr-2"></i>${isLate ? '⚠️ La fecha de entrega ha pasado' : 'Aún no has entregado esta tarea'}</p>`;
+                submitSection.classList.remove('hidden-section');
             }
             
-            await addDoc(collection(db, "courses", currentCourseId, "tasks", taskId, "submissions"), {
+            openModal('view-task-modal');
+        };
+
+        document.getElementById('view-task-submit-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const comment = document.getElementById('view-task-comment').value;
+            const fileInput = document.getElementById('view-task-file');
+            
+            let fileUrl = null;
+            let fileName = null;
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const fileRef = ref(storage, `courses/${currentCourseId}/tasks/${currentViewTaskId}/${currentUser.uid}/${Date.now()}_${file.name}`);
+                await uploadBytes(fileRef, file);
+                fileUrl = await getDownloadURL(fileRef);
+                fileName = file.name;
+            }
+            
+            // Obtener maxScore de la tarea
+            const taskDoc = await getDoc(doc(db, "courses", currentCourseId, "tasks", currentViewTaskId));
+            const maxScore = taskDoc.data().maxScore || 10;
+            
+            await addDoc(collection(db, "courses", currentCourseId, "tasks", currentViewTaskId, "submissions"), {
                 studentId: currentUser.uid,
                 studentName: userData.name,
                 studentEmail: currentUser.email,
                 comment: comment,
                 fileUrl: fileUrl,
+                fileName: fileName,
+                maxScore: maxScore,
                 submittedAt: serverTimestamp()
             });
             
-            closeModal('submit-task-modal');
-            alert("✅ Tarea entregada");
+            closeModal('view-task-modal');
+            alert("✅ Tarea entregada correctamente");
             loadTasks();
         });
+
+        window.editTask = async (taskId) => {
+            const taskDoc = await getDoc(doc(db, "courses", currentCourseId, "tasks", taskId));
+            const data = taskDoc.data();
+            
+            document.getElementById('task-edit-id').value = taskId;
+            document.getElementById('task-title').value = data.title;
+            document.getElementById('task-description').value = data.description;
+            document.getElementById('task-deadline').value = data.deadline;
+            document.getElementById('task-max-score').value = data.maxScore || 10;
+            document.getElementById('task-modal-title').textContent = 'Editar Tarea';
+            openModal('task-modal');
+        };
+
+        window.deleteTask = async (taskId) => {
+            if (confirm('¿Seguro que quieres eliminar esta tarea? Se eliminarán también todas las entregas.')) {
+                // Eliminar todas las entregas primero
+                const submissionsSnap = await getDocs(collection(db, "courses", currentCourseId, "tasks", taskId, "submissions"));
+                for (const subDoc of submissionsSnap.docs) {
+                    await deleteDoc(subDoc.ref);
+                }
+                // Eliminar la tarea
+                await deleteDoc(doc(db, "courses", currentCourseId, "tasks", taskId));
+                alert("✅ Tarea eliminada");
+                loadTasks();
+            }
+        };
+
+        // ==================== ENTREGAS (PROFESOR) ====================
+        window.viewSubmissions = async (taskId, taskTitle) => {
+            document.getElementById('submissions-task-title').textContent = 'Entregas: ' + taskTitle;
+            const container = document.getElementById('submissions-list');
+            container.innerHTML = '<p class="text-gray-500 text-center py-4">Cargando...</p>';
+            openModal('submissions-modal');
+            
+            const q = query(collection(db, "courses", currentCourseId, "tasks", taskId, "submissions"), orderBy("submittedAt", "desc"));
+            const snapshot = await getDocs(q);
+            
+            if (snapshot.empty) {
+                container.innerHTML = '<p class="text-gray-500 text-center py-8">Aún no hay entregas.</p>';
+                return;
+            }
+            
+            container.innerHTML = '';
+            snapshot.docs.forEach(d => {
+                const data = d.data();
+                const date = data.submittedAt ? new Date(data.submittedAt.toDate()).toLocaleString() : '';
+                const gradeInfo = data.grade !== undefined ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-semibold">Nota: ${data.grade}${data.maxScore ? '/' + data.maxScore : ''}</span>` : '<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">Sin calificar</span>';
+                
+                container.innerHTML += `
+                    <div class="bg-gray-50 p-4 rounded-lg border">
+                        <div class="flex justify-between items-start flex-wrap gap-2">
+                            <div>
+                                <p class="font-semibold text-gray-900">${data.studentName}</p>
+                                <p class="text-xs text-gray-500">${data.studentEmail} • ${date}</p>
+                            </div>
+                            ${gradeInfo}
+                        </div>
+                        ${data.comment ? `<p class="text-sm text-gray-700 mt-2 italic">"${data.comment}"</p>` : ''}
+                        ${data.fileUrl ? `<a href="${data.fileUrl}" target="_blank" class="inline-block mt-2 text-indigo-600 hover:underline text-sm"><i class="fas fa-file mr-1"></i>${data.fileName || 'Ver archivo'}</a>` : '<p class="text-xs text-gray-500 mt-2">Sin archivo adjunto</p>'}
+                        <div class="mt-3 flex gap-2">
+                            <button onclick="openGradeSubmission('${taskId}', '${d.id}', '${data.studentName.replace(/'/g, "\\'")}', '${data.studentEmail}', '${(data.comment || '').replace(/'/g, "\\'")}', '${data.fileUrl || ''}', '${data.grade || ''}', '${data.feedback || ''}')" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 text-sm">
+                                <i class="fas fa-star mr-1"></i>${data.grade !== undefined ? 'Editar nota' : 'Calificar'}
+                            </button>
+                            <button onclick="deleteSubmission('${taskId}', '${d.id}')" class="bg-red-600 text-white px-3 py-1.5 rounded-lg hover:bg-red-700 text-sm">
+                                <i class="fas fa-trash mr-1"></i>Eliminar
+                            </button>
+                        </div>
+                    </div>`;
+            });
+        };
+
+        window.openGradeSubmission = (taskId, submissionId, studentName, studentEmail, comment, fileUrl, currentGrade, currentFeedback) => {
+            document.getElementById('grade-submission-task-id').value = taskId;
+            document.getElementById('grade-submission-student-id').value = submissionId;
+            document.getElementById('grade-submission-id').value = submissionId;
+            document.getElementById('grade-student-name').textContent = studentName;
+            document.getElementById('grade-student-email').textContent = studentEmail;
+            document.getElementById('grade-student-comment').textContent = comment ? 'Comentario del alumno: "' + comment + '"' : '';
+            
+            const fileLink = document.getElementById('grade-student-file');
+            if (fileUrl) {
+                fileLink.href = fileUrl;
+                fileLink.classList.remove('hidden-section');
+            } else {
+                fileLink.classList.add('hidden-section');
+            }
+            
+            document.getElementById('grade-value').value = currentGrade;
+            document.getElementById('grade-feedback').value = currentFeedback;
+            openModal('grade-submission-modal');
+        };
+
+        document.getElementById('grade-submission-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const taskId = document.getElementById('grade-submission-task-id').value;
+            const submissionId = document.getElementById('grade-submission-id').value;
+            const grade = parseFloat(document.getElementById('grade-value').value);
+            const feedback = document.getElementById('grade-feedback').value;
+            
+            await updateDoc(doc(db, "courses", currentCourseId, "tasks", taskId, "submissions", submissionId), {
+                grade: grade,
+                feedback: feedback,
+                gradedBy: currentUser.uid,
+                gradedByName: userData.name,
+                gradedAt: serverTimestamp()
+            });
+            
+            closeModal('grade-submission-modal');
+            alert("✅ Nota guardada");
+            viewSubmissions(taskId, document.getElementById('submissions-task-title').textContent.replace('Entregas: ', ''));
+        });
+
+        window.deleteSubmission = async (taskId, submissionId) => {
+            if (confirm('¿Seguro que quieres eliminar esta entrega?')) {
+                await deleteDoc(doc(db, "courses", currentCourseId, "tasks", taskId, "submissions", submissionId));
+                alert("✅ Entrega eliminada");
+                const taskTitle = document.getElementById('submissions-task-title').textContent.replace('Entregas: ', '');
+                viewSubmissions(taskId, taskTitle);
+            }
+        };
 
         // ==================== NOTAS ====================
         async function loadGrades() {
@@ -855,18 +1132,38 @@
                 const students = courseDoc.data().students || [];
                 
                 if (students.length === 0) {
-                    container.innerHTML = '<p class="text-gray-500">No hay alumnos en este curso. Añade alumnos desde el panel principal.</p>';
+                    container.innerHTML = '<p class="text-gray-500">No hay alumnos en este curso.</p>';
                     return;
                 }
                 
+                // Mostrar resumen por alumno
                 for (const studentEmail of students) {
+                    const gradesQ = query(collection(db, "courses", currentCourseId, "grades"), where("studentEmail", "==", studentEmail));
+                    const gradesSnap = await getDocs(gradesQ);
+                    
+                    let gradesHTML = '';
+                    let totalGrade = 0;
+                    let count = 0;
+                    gradesSnap.docs.forEach(g => {
+                        const gd = g.data();
+                        totalGrade += gd.grade;
+                        count++;
+                        gradesHTML += `<div class="flex justify-between text-sm py-1 border-b border-gray-100"><span>${gd.taskTitle || 'Evaluación'}</span><span class="font-semibold">${gd.grade}</span></div>`;
+                    });
+                    
+                    const average = count > 0 ? (totalGrade / count).toFixed(1) : '-';
+                    
                     container.innerHTML += `
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <p class="font-semibold mb-2">${studentEmail}</p>
-                            <div class="flex gap-2 flex-wrap">
-                                <input type="number" id="grade-${studentEmail}" placeholder="Nota (0-10)" min="0" max="10" step="0.1" class="px-3 py-2 border rounded-lg w-32">
-                                <input type="text" id="grade-comment-${studentEmail}" placeholder="Comentario" class="px-3 py-2 border rounded-lg flex-1">
-                                <button onclick="saveGrade('${studentEmail}')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Guardar</button>
+                            <div class="flex justify-between items-center mb-2">
+                                <p class="font-semibold">${studentEmail}</p>
+                                <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-bold">Media: ${average}</span>
+                            </div>
+                            ${count > 0 ? `<div class="mt-2 bg-white p-3 rounded">${gradesHTML}</div>` : '<p class="text-sm text-gray-500">Sin calificaciones aún</p>'}
+                            <div class="flex gap-2 mt-3">
+                                <input type="text" id="grade-task-title-${studentEmail}" placeholder="Nombre de la evaluación" class="px-3 py-2 border rounded-lg flex-1 text-sm">
+                                <input type="number" id="grade-value-${studentEmail}" placeholder="Nota" min="0" max="10" step="0.1" class="px-3 py-2 border rounded-lg w-24 text-sm">
+                                <button onclick="saveGrade('${studentEmail}')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm">Guardar</button>
                             </div>
                         </div>`;
                 }
@@ -882,25 +1179,32 @@
                     return;
                 }
                 
+                let total = 0, count = 0;
                 snapshot.docs.forEach(d => {
                     const data = d.data();
+                    total += data.grade;
+                    count++;
                     container.innerHTML += `
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <div class="flex justify-between items-center">
                                 <div>
                                     <p class="font-semibold">${data.taskTitle || 'Evaluación'}</p>
-                                    <p class="text-sm text-gray-600">${data.comment || ''}</p>
+                                    <p class="text-sm text-gray-600">${data.feedback || data.comment || ''}</p>
+                                    <p class="text-xs text-gray-400">Por: ${data.gradedByName || 'Profesor'}</p>
                                 </div>
                                 <span class="text-2xl font-bold text-indigo-600">${data.grade}</span>
                             </div>
                         </div>`;
                 });
+                
+                const average = (total / count).toFixed(1);
+                container.innerHTML = `<div class="bg-indigo-50 p-4 rounded-lg mb-4 border border-indigo-200"><p class="text-sm text-indigo-700">Nota media del curso:</p><p class="text-3xl font-bold text-indigo-900">${average}</p></div>` + container.innerHTML;
             }
         }
 
         window.saveGrade = async (studentEmail) => {
-            const grade = document.getElementById(`grade-${studentEmail}`).value;
-            const comment = document.getElementById(`grade-comment-${studentEmail}`).value;
+            const taskTitle = document.getElementById(`grade-task-title-${studentEmail}`).value;
+            const grade = document.getElementById(`grade-value-${studentEmail}`).value;
             
             if (!grade) {
                 alert("⚠️ Introduce una nota");
@@ -909,16 +1213,15 @@
             
             await addDoc(collection(db, "courses", currentCourseId, "grades"), {
                 studentEmail: studentEmail,
+                taskTitle: taskTitle || 'Evaluación',
                 grade: parseFloat(grade),
-                comment: comment,
                 gradedBy: currentUser.uid,
                 gradedByName: userData.name,
                 createdAt: serverTimestamp()
             });
             
             alert("✅ Nota guardada");
-            document.getElementById(`grade-${studentEmail}`).value = '';
-            document.getElementById(`grade-comment-${studentEmail}`).value = '';
+            loadGrades();
         };
 
         // ==================== MATERIAL ====================
@@ -939,10 +1242,7 @@
             }
             
             await addDoc(collection(db, "courses", currentCourseId, "materials"), {
-                title: title,
-                description: description,
-                fileUrl: fileUrl,
-                fileName: fileName,
+                title, description, fileUrl, fileName,
                 authorId: currentUser.uid,
                 authorName: userData.name,
                 createdAt: serverTimestamp()
@@ -966,17 +1266,38 @@
                 return;
             }
             
+            const isProfessor = userData.role === 'profesor';
+            
             snapshot.docs.forEach(d => {
                 const data = d.data();
                 container.innerHTML += `
                     <div class="bg-white p-6 rounded-xl shadow-sm border">
-                        <h4 class="text-lg font-bold text-indigo-900 mb-2">${data.title}</h4>
+                        <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
+                            <h4 class="text-lg font-bold text-indigo-900 flex-1">${data.title}</h4>
+                            ${isProfessor ? `
+                                <button onclick="deleteMaterial('${d.id}', '${data.fileUrl || ''}')" class="text-red-600 hover:text-red-800 text-sm"><i class="fas fa-trash"></i></button>
+                            ` : ''}
+                        </div>
                         <p class="text-sm text-gray-500 mb-2">Por: ${data.authorName}</p>
                         <p class="text-gray-700 mb-4">${data.description || ''}</p>
                         ${data.fileUrl ? `<a href="${data.fileUrl}" target="_blank" class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm"><i class="fas fa-download mr-2"></i>${data.fileName || 'Descargar'}</a>` : ''}
                     </div>`;
             });
         }
+
+        window.deleteMaterial = async (materialId, fileUrl) => {
+            if (confirm('¿Seguro que quieres eliminar este material?')) {
+                if (fileUrl) {
+                    try {
+                        const fileRef = ref(storage, fileUrl);
+                        await deleteObject(fileRef);
+                    } catch (e) { console.warn('No se pudo eliminar el archivo:', e); }
+                }
+                await deleteDoc(doc(db, "courses", currentCourseId, "materials", materialId));
+                alert("✅ Material eliminado");
+                loadMaterials();
+            }
+        };
 
         // ==================== MENSAJES ====================
         function setupInbox() {
