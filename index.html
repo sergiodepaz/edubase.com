@@ -35,7 +35,7 @@
 
             <div class="flex mb-6 bg-gray-100 rounded-lg p-1">
                 <button onclick="showAuthTab('login')" id="tab-login" class="flex-1 py-2 rounded-md bg-white shadow text-indigo-700 font-semibold transition">Iniciar Sesión</button>
-                <button onclick="showAuthTab('register')" id="tab-register" class="flex-1 py-2 rounded-md text-gray-600 hover:text-indigo-700 transition">Crear Cuenta</button>
+                <button onclick="showAuthTab('request')" id="tab-request" class="flex-1 py-2 rounded-md text-gray-600 hover:text-indigo-700 transition">Solicitar Acceso</button>
             </div>
 
             <!-- LOGIN -->
@@ -54,23 +54,23 @@
                 <p id="login-error" class="text-red-600 text-sm text-center bg-red-50 p-2 rounded-lg hidden-section"></p>
             </form>
 
-            <!-- REGISTRO AUTOMÁTICO -->
-            <form id="register-form" class="space-y-4 hidden-section">
+            <!-- SOLICITUD DE ACCESO (Formspree) -->
+            <form action="https://formspree.io/f/meaowyvj" method="POST" id="request-form" class="space-y-4 hidden-section">
+                <input type="hidden" name="_subject" value="Nueva Solicitud de Acceso EduBase">
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-3 text-sm text-blue-700">
-                    <i class="fas fa-info-circle mr-1"></i> Solo correos <strong>@edubase.es</strong>. Tu cuenta se creará al instante.
+                    <i class="fas fa-info-circle mr-1"></i> Solo correos <strong>@edubase.es</strong>. El administrador te dará tus credenciales.
                 </div>
-                <input type="text" id="reg-name" required placeholder="Nombre completo" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                <input type="email" id="reg-email" required placeholder="tucorreo@edubase.es" pattern="^[a-zA-Z0-9._%+-]+@edubase\.es$" title="Debe ser @edubase.es" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                <select id="reg-role" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                    <option value="alumno">Soy Alumno</option>
-                    <option value="profesor">Soy Profesor</option>
+                <input type="text" name="nombre" required placeholder="Nombre completo" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                <input type="email" name="email" required placeholder="tucorreo@edubase.es" pattern="^[a-zA-Z0-9._%+-]+@edubase\.es$" title="Debe ser @edubase.es" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                <select name="rol" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <option value="Alumno">Soy Alumno</option>
+                    <option value="Profesor">Soy Profesor</option>
                 </select>
-                <input type="password" id="reg-password" required minlength="6" placeholder="Contraseña (mínimo 6 caracteres)" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                <textarea id="reg-reason" required rows="2" placeholder="Motivo de la solicitud..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
-                <button type="submit" id="reg-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition">
-                    <i class="fas fa-user-plus mr-2"></i> Crear mi cuenta
+                <textarea name="mensaje" required rows="3" placeholder="Motivo de la solicitud..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition">
+                    <i class="fas fa-paper-plane mr-2"></i>Enviar Solicitud
                 </button>
-                <p id="reg-status" class="text-sm text-center hidden-section"></p>
+                <p class="text-xs text-gray-500 text-center">Recibirás tus credenciales por correo una vez aprobada tu solicitud.</p>
             </form>
         </div>
     </div>
@@ -234,8 +234,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC-XDzZgBWRn0Rz_qJzM_-LR5edNfTjqJs",
@@ -259,13 +259,13 @@
         // ==================== AUTENTICACIÓN ====================
         window.showAuthTab = (tab) => {
             document.getElementById('login-form').classList.toggle('hidden-section', tab !== 'login');
-            document.getElementById('register-form').classList.toggle('hidden-section', tab !== 'register');
+            document.getElementById('request-form').classList.toggle('hidden-section', tab !== 'request');
             document.getElementById('tab-login').classList.toggle('bg-white', tab === 'login');
             document.getElementById('tab-login').classList.toggle('shadow', tab === 'login');
             document.getElementById('tab-login').classList.toggle('text-indigo-700', tab === 'login');
-            document.getElementById('tab-register').classList.toggle('bg-white', tab === 'register');
-            document.getElementById('tab-register').classList.toggle('shadow', tab === 'register');
-            document.getElementById('tab-register').classList.toggle('text-indigo-700', tab === 'register');
+            document.getElementById('tab-request').classList.toggle('bg-white', tab === 'request');
+            document.getElementById('tab-request').classList.toggle('shadow', tab === 'request');
+            document.getElementById('tab-request').classList.toggle('text-indigo-700', tab === 'request');
         };
 
         const validateEduBaseEmail = (email) => email.toLowerCase().endsWith('@edubase.es');
@@ -309,84 +309,6 @@
             }
         });
 
-        // REGISTRO AUTOMÁTICO (el usuario crea su cuenta solo)
-        document.getElementById('register-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('reg-name').value.trim();
-            const email = document.getElementById('reg-email').value.trim().toLowerCase();
-            const role = document.getElementById('reg-role').value;
-            const password = document.getElementById('reg-password').value;
-            const reason = document.getElementById('reg-reason').value.trim();
-            const statusEl = document.getElementById('reg-status');
-            const btn = document.getElementById('reg-btn');
-
-            statusEl.classList.add('hidden-section');
-
-            if (!validateEduBaseEmail(email)) {
-                statusEl.textContent = "⚠️ El correo debe ser @edubase.es";
-                statusEl.className = "text-sm text-center text-red-600";
-                statusEl.classList.remove('hidden-section');
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creando cuenta...';
-
-            try {
-                // 1. Crear usuario en Firebase Auth
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                // 2. Guardar datos en Firestore
-                await setDoc(doc(db, "users", user.uid), {
-                    uid: user.uid,
-                    name: name,
-                    email: email,
-                    role: role,
-                    reason: reason,
-                    createdAt: serverTimestamp()
-                });
-
-                // 3. También enviar notificación al admin por Formspree (opcional)
-                try {
-                    await fetch("https://formspree.io/f/meaowyvj", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-                        body: JSON.stringify({
-                            _subject: "Nuevo usuario registrado en EduBase",
-                            nombre: name,
-                            email: email,
-                            rol: role,
-                            mensaje: "Motivo: " + reason
-                        })
-                    });
-                } catch (err) { console.warn("No se pudo notificar al admin:", err); }
-
-                statusEl.textContent = "✅ ¡Cuenta creada! Iniciando sesión...";
-                statusEl.className = "text-sm text-center text-green-600 font-semibold";
-                statusEl.classList.remove('hidden-section');
-
-                // onAuthStateChanged se encargará de mostrar la app
-
-            } catch (error) {
-                console.error(error);
-                let msg = "❌ Error al crear cuenta.";
-                if (error.code === 'auth/email-already-in-use') {
-                    msg = "⚠️ Ese correo ya está registrado. Ve a 'Iniciar Sesión'.";
-                } else if (error.code === 'auth/weak-password') {
-                    msg = "⚠️ La contraseña debe tener al menos 6 caracteres.";
-                } else {
-                    msg = "❌ " + error.message;
-                }
-                statusEl.textContent = msg;
-                statusEl.className = "text-sm text-center text-red-600";
-                statusEl.classList.remove('hidden-section');
-            } finally {
-                btn.innerHTML = '<i class="fas fa-user-plus mr-2"></i>Crear mi cuenta';
-                btn.disabled = false;
-            }
-        });
-
         window.logout = () => {
             signOut(auth);
             if (unsubscribeChat) unsubscribeChat();
@@ -416,7 +338,7 @@
                         setupChat();
                         initSudoku();
                     } else {
-                        alert("⚠️ Tu cuenta no está configurada. Contacta al administrador.");
+                        alert("⚠️ Tu cuenta no está configurada en la base de datos. Contacta al administrador.");
                         await signOut(auth);
                     }
                 } catch (err) {
