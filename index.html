@@ -94,21 +94,38 @@
 
             <!-- PERFIL -->
             <div id="section-profile" class="app-section hidden-section fade-in p-8">
-                <div class="max-w-4xl mx-auto">
-                    <h2 class="text-2xl font-bold mb-6">Área Personal</h2>
-                    <div class="bg-white rounded-lg shadow p-6">
-                        <div class="flex items-center gap-6 mb-6 flex-wrap">
-                            <div id="profile-avatar-container" class="w-24 h-24 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-3xl overflow-hidden flex-shrink-0"><span id="profile-avatar">U</span></div>
-                            <div class="flex-1 min-w-[200px]">
-                                <h3 id="profile-name" class="text-xl font-bold"></h3>
-                                <p id="profile-email" class="text-gray-600"></p>
-                                <span id="profile-role" class="inline-block mt-2 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold"></span>
-                            </div>
-                            <button onclick="openEditProfileModal()" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700"><i class="fas fa-edit mr-2"></i>Editar Perfil</button>
-                        </div>
+    <div class="max-w-4xl mx-auto">
+        <h2 class="text-2xl font-bold mb-6">Área Personal</h2>
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center gap-6 mb-6 flex-wrap">
+                <div id="profile-avatar-container" class="w-24 h-24 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-3xl overflow-hidden flex-shrink-0">
+                    <span id="profile-avatar">U</span>
+                </div>
+                <div class="flex-1 min-w-[200px]">
+                    <h3 id="profile-name" class="text-xl font-bold"></h3>
+                    <p id="profile-email" class="text-gray-600"></p>
+                    <span id="profile-role" class="inline-block mt-2 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold"></span>
+                </div>
+                <button onclick="openEditProfileModal()" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
+                    <i class="fas fa-edit mr-2"></i>Editar Perfil
+                </button>
+            </div>
+            <div class="border-t pt-6">
+                <h4 class="font-semibold mb-3">Información</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <p class="text-gray-500 text-xs">Correo electrónico</p>
+                        <p id="profile-email-info" class="font-medium"></p>
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <p class="text-gray-500 text-xs">Rol</p>
+                        <p id="profile-role-info" class="font-medium"></p>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
             <!-- CURSOS -->
             <div id="section-courses" class="app-section hidden-section fade-in p-8">
