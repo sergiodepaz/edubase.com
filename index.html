@@ -10,14 +10,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
         .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .sudoku-cell { width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem; border: 1px solid #d1d5db; cursor: pointer; transition: all 0.2s; }
-        .sudoku-cell:hover { background-color: #e0e7ff; }
-        .sudoku-cell.selected { background-color: #6366f1; color: white; }
-        .sudoku-cell.fixed { background-color: #f3f4f6; color: #1f2937; cursor: default; }
-        .sudoku-grid { display: grid; grid-template-columns: repeat(9, 1fr); border: 2px solid #374151; max-width: 400px; margin: 0 auto; }
-        .sudoku-grid > div:nth-child(3n) { border-right: 2px solid #374151; }
-        .sudoku-grid > div:nth-child(n+19):nth-child(-n+27),
-        .sudoku-grid > div:nth-child(n+46):nth-child(-n+54) { border-bottom: 2px solid #374151; }
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .hidden-section { display: none !important; }
@@ -54,7 +46,7 @@
                 <p id="login-error" class="text-red-600 text-sm text-center bg-red-50 p-2 rounded-lg hidden-section"></p>
             </form>
 
-            <!-- SOLICITUD DE ACCESO (Formspree) -->
+            <!-- SOLICITUD DE ACCESO -->
             <form action="https://formspree.io/f/meaowyvj" method="POST" id="request-form" class="space-y-4 hidden-section">
                 <input type="hidden" name="_subject" value="Nueva Solicitud de Acceso EduBase">
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-3 text-sm text-blue-700">
@@ -97,9 +89,6 @@
                 <button onclick="showSection('chat', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center">
                     <i class="fas fa-comments w-6"></i> Chat
                 </button>
-                <button onclick="showSection('games', this)" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition flex items-center">
-                    <i class="fas fa-gamepad w-6"></i> Juegos
-                </button>
             </nav>
             <div class="p-4 border-t border-slate-700">
                 <button onclick="logout()" class="w-full px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition flex items-center justify-center">
@@ -129,7 +118,7 @@
                                     <option value="">Selecciona un curso...</option>
                                 </select>
                                 <input type="email" id="student-email" placeholder="alumno@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Añadir</button>
+                                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Enviar invitación</button>
                             </form>
                         </div>
                     </div>
@@ -199,20 +188,6 @@
                     </form>
                 </div>
             </div>
-
-            <!-- JUEGOS -->
-            <div id="section-games" class="app-section hidden-section fade-in">
-                <h2 class="text-2xl font-bold mb-6">Zona de Juegos</h2>
-                <div class="bg-white p-6 rounded-xl shadow-sm border max-w-2xl mx-auto">
-                    <div class="text-center mb-6">
-                        <h3 class="text-xl font-bold text-indigo-700 mb-2">Sudoku</h3>
-                        <div class="flex justify-center gap-2 mb-4 flex-wrap" id="sudoku-numpad"></div>
-                        <button onclick="initSudoku()" class="text-sm text-indigo-600 hover:text-indigo-800 underline">Reiniciar</button>
-                    </div>
-                    <div id="sudoku-board" class="sudoku-grid shadow-inner bg-white"></div>
-                    <p id="sudoku-message" class="text-center mt-4 font-semibold text-green-600 hidden-section">¡Felicidades! Sudoku completado.</p>
-                </div>
-            </div>
         </main>
     </div>
 
@@ -235,7 +210,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, getDoc, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC-XDzZgBWRn0Rz_qJzM_-LR5edNfTjqJs",
@@ -270,7 +245,6 @@
 
         const validateEduBaseEmail = (email) => email.toLowerCase().endsWith('@edubase.es');
 
-        // LOGIN
         document.getElementById('login-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value.trim();
@@ -297,7 +271,7 @@
                 if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
                     msg = "❌ Usuario o contraseña incorrectos.";
                 } else if (error.code === 'auth/network-request-failed') {
-                    msg = "🌐 Sin conexión a internet.";
+                    msg = " Sin conexión a internet.";
                 } else {
                     msg = "❌ " + error.message;
                 }
@@ -320,23 +294,22 @@
             if (user) {
                 currentUser = user;
                 try {
-                    const q = query(collection(db, "users"), where("uid", "==", user.uid));
-                    const snapshot = await getDocs(q);
+                    // Leer el documento del usuario usando su UID como ID
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
                     
-                    if (!snapshot.empty) {
-                        userData = snapshot.docs[0].data();
-                        userData.id = snapshot.docs[0].id;
+                    if (userDoc.exists()) {
+                        userData = userDoc.data();
+                        userData.id = userDoc.id;
                         
                         document.getElementById('auth-section').classList.add('hidden-section');
                         document.getElementById('app-section').classList.remove('hidden-section');
-                        document.getElementById('user-display-name').textContent = userData.name;
-                        document.getElementById('user-role-badge').textContent = userData.role.toUpperCase();
+                        document.getElementById('user-display-name').textContent = userData.name || user.email;
+                        document.getElementById('user-role-badge').textContent = (userData.role || 'usuario').toUpperCase();
                         
                         setupDashboard();
                         loadCourses();
                         setupInbox();
                         setupChat();
-                        initSudoku();
                     } else {
                         alert("⚠️ Tu cuenta no está configurada en la base de datos. Contacta al administrador.");
                         await signOut(auth);
@@ -548,57 +521,6 @@
             });
             input.value = '';
         });
-
-        // ==================== SUDOKU ====================
-        const solvedSudoku = [5,3,4,6,7,8,9,1,2, 6,7,2,1,9,5,3,4,8, 1,9,8,3,4,2,5,6,7, 8,5,9,7,6,1,4,2,3, 4,2,6,8,5,3,7,9,1, 7,1,3,9,2,4,8,5,6, 9,6,1,5,3,7,2,8,4, 2,8,7,4,1,9,6,3,5, 3,4,5,2,8,6,1,7,9];
-        let currentSudoku = [];
-        let selectedCellIndex = -1;
-
-        window.initSudoku = () => {
-            currentSudoku = [...solvedSudoku];
-            let hidden = 0;
-            while (hidden < 40) {
-                const idx = Math.floor(Math.random() * 81);
-                if (currentSudoku[idx] !== 0) { currentSudoku[idx] = 0; hidden++; }
-            }
-            renderSudoku();
-            document.getElementById('sudoku-message').classList.add('hidden-section');
-        };
-
-        function renderSudoku() {
-            const board = document.getElementById('sudoku-board');
-            board.innerHTML = '';
-            currentSudoku.forEach((val, idx) => {
-                const cell = document.createElement('div');
-                cell.className = `sudoku-cell ${val !== 0 && solvedSudoku[idx] === val ? 'fixed' : ''} ${idx === selectedCellIndex ? 'selected' : ''}`;
-                cell.textContent = val !== 0 ? val : '';
-                cell.onclick = () => { if (solvedSudoku[idx] !== val) { selectedCellIndex = idx; renderSudoku(); } };
-                board.appendChild(cell);
-            });
-            const numpad = document.getElementById('sudoku-numpad');
-            numpad.innerHTML = '';
-            for (let i = 1; i <= 9; i++) {
-                const btn = document.createElement('button');
-                btn.className = 'w-10 h-10 rounded-lg bg-indigo-100 text-indigo-700 font-bold hover:bg-indigo-200';
-                btn.textContent = i;
-                btn.onclick = () => fillCell(i);
-                numpad.appendChild(btn);
-            }
-            const clearBtn = document.createElement('button');
-            clearBtn.className = 'w-10 h-10 rounded-lg bg-red-100 text-red-700 font-bold hover:bg-red-200';
-            clearBtn.textContent = 'X';
-            clearBtn.onclick = () => fillCell(0);
-            numpad.appendChild(clearBtn);
-        }
-
-        function fillCell(num) {
-            if (selectedCellIndex === -1) return;
-            currentSudoku[selectedCellIndex] = num;
-            renderSudoku();
-            if (currentSudoku.every((v, i) => v === solvedSudoku[i])) {
-                document.getElementById('sudoku-message').classList.remove('hidden-section');
-            }
-        }
     </script>
 </body>
 </html>
