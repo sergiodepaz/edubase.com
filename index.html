@@ -271,7 +271,7 @@
                 if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
                     msg = "❌ Usuario o contraseña incorrectos.";
                 } else if (error.code === 'auth/network-request-failed') {
-                    msg = " Sin conexión a internet.";
+                    msg = "🌐 Sin conexión a internet.";
                 } else {
                     msg = "❌ " + error.message;
                 }
@@ -289,13 +289,30 @@
             if (unsubscribeInbox) unsubscribeInbox();
         };
 
-        // ==================== ESTADO ====================
+        // ==================== ESTADO - BÚSQUEDA INTELIGENTE ====================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 try {
-                    // Leer el documento del usuario usando su UID como ID
-                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    let userDoc = await getDoc(doc(db, "users", user.uid));
+                    
+                    // Si no lo encuentra por UID como ID, buscar por campo uid
+                    if (!userDoc.exists()) {
+                        const q = query(collection(db, "users"), where("uid", "==", user.uid));
+                        const snapshot = await getDocs(q);
+                        if (!snapshot.empty) {
+                            userDoc = snapshot.docs[0];
+                        }
+                    }
+                    
+                    // Si aún no lo encuentra, buscar por email
+                    if (!userDoc.exists()) {
+                        const q = query(collection(db, "users"), where("email", "==", user.email));
+                        const snapshot = await getDocs(q);
+                        if (!snapshot.empty) {
+                            userDoc = snapshot.docs[0];
+                        }
+                    }
                     
                     if (userDoc.exists()) {
                         userData = userDoc.data();
