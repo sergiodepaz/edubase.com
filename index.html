@@ -96,21 +96,32 @@
         <main class="flex-1 overflow-y-auto bg-gray-50 p-8">
             <!-- DASHBOARD -->
             <div id="section-dashboard" class="app-section fade-in">
-                <h2 class="text-2xl font-bold mb-6">Panel de Control</h2>
-                <div id="professor-dashboard" class="hidden-section space-y-6">
-                    <div class="bg-white p-6 rounded-xl shadow-sm border">
-                        <h3 class="text-lg font-semibold mb-4"><i class="fas fa-plus-circle text-indigo-600 mr-2"></i>Crear Curso</h3>
-                        <form id="create-course-form" class="space-y-4">
-                            <input type="text" id="course-name" placeholder="Nombre del curso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                            <textarea id="course-desc" placeholder="Descripción" required rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">Crear</button>
-                        </form>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Panel de Control</h2>
+                    <!-- Botones del profesor -->
+                    <div id="professor-actions" class="hidden-section flex gap-3">
+                        <button onclick="openModal('create-course-modal')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition flex items-center">
+                            <i class="fas fa-plus-circle mr-2"></i>Crear Curso
+                        </button>
+                        <button onclick="openModal('add-student-modal')" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition flex items-center">
+                            <i class="fas fa-user-plus mr-2"></i>Añadir Alumno
+                        </button>
                     </div>
                 </div>
+
+                <!-- Vista alumno -->
                 <div id="student-dashboard" class="hidden-section">
                     <div class="bg-white p-6 rounded-xl shadow-sm border">
                         <h3 class="text-lg font-semibold mb-4">Mis Cursos</h3>
                         <div id="student-courses-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    </div>
+                </div>
+
+                <!-- Vista profesor -->
+                <div id="professor-dashboard" class="hidden-section">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border">
+                        <h3 class="text-lg font-semibold mb-4">Mis Cursos</h3>
+                        <div id="professor-courses-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                     </div>
                 </div>
             </div>
@@ -131,8 +142,7 @@
                     <p id="course-detail-desc" class="text-gray-600 mt-2"></p>
                 </div>
 
-                <!-- Tabs -->
-                <div class="flex gap-2 mb-6 border-b border-gray-200">
+                <div class="flex gap-2 mb-6 border-b border-gray-200 flex-wrap">
                     <button onclick="showCourseTab('announcements', this)" class="course-tab px-6 py-3 font-semibold text-gray-600 hover:text-indigo-600 transition tab-active">
                         <i class="fas fa-bullhorn mr-2"></i>Avisos
                     </button>
@@ -147,35 +157,30 @@
                     </button>
                 </div>
 
-                <!-- Contenido de tabs -->
+                <!-- AVISOS -->
                 <div id="tab-announcements" class="course-tab-content">
-                    <div id="professor-announcement-form" class="hidden-section mb-6 bg-white p-6 rounded-xl shadow-sm border">
-                        <h3 class="text-lg font-semibold mb-4">Nuevo Aviso</h3>
-                        <form id="add-announcement-form" class="space-y-4">
-                            <input type="text" id="announcement-title" placeholder="Título del aviso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                            <textarea id="announcement-content" placeholder="Contenido del aviso..." required rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">Publicar Aviso</button>
-                        </form>
+                    <div id="professor-announcement-btn" class="hidden-section mb-4">
+                        <button onclick="openModal('announcement-modal')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                            <i class="fas fa-plus mr-2"></i>Nuevo Aviso
+                        </button>
                     </div>
                     <div id="announcements-list" class="space-y-4"></div>
                 </div>
 
+                <!-- TAREAS -->
                 <div id="tab-tasks" class="course-tab-content hidden-section">
-                    <div id="professor-task-form" class="hidden-section mb-6 bg-white p-6 rounded-xl shadow-sm border">
-                        <h3 class="text-lg font-semibold mb-4">Nueva Tarea</h3>
-                        <form id="add-task-form" class="space-y-4">
-                            <input type="text" id="task-title" placeholder="Título de la tarea" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                            <textarea id="task-description" placeholder="Descripción de la tarea..." required rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                            <input type="datetime-local" id="task-deadline" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">Crear Tarea</button>
-                        </form>
+                    <div id="professor-task-btn" class="hidden-section mb-4">
+                        <button onclick="openModal('task-modal')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                            <i class="fas fa-plus mr-2"></i>Nueva Tarea
+                        </button>
                     </div>
                     <div id="tasks-list" class="space-y-4"></div>
                 </div>
 
+                <!-- NOTAS -->
                 <div id="tab-grades" class="course-tab-content hidden-section">
                     <div id="professor-grades-section" class="hidden-section">
-                        <div class="bg-white p-6 rounded-xl shadow-sm border mb-6">
+                        <div class="bg-white p-6 rounded-xl shadow-sm border">
                             <h3 class="text-lg font-semibold mb-4">Calificar Alumnos</h3>
                             <div id="grades-students-list" class="space-y-4"></div>
                         </div>
@@ -188,15 +193,12 @@
                     </div>
                 </div>
 
+                <!-- MATERIAL -->
                 <div id="tab-materials" class="course-tab-content hidden-section">
-                    <div id="professor-material-form" class="hidden-section mb-6 bg-white p-6 rounded-xl shadow-sm border">
-                        <h3 class="text-lg font-semibold mb-4">Subir Material</h3>
-                        <form id="add-material-form" class="space-y-4">
-                            <input type="text" id="material-title" placeholder="Título del material" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                            <textarea id="material-description" placeholder="Descripción..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                            <input type="file" id="material-file" class="w-full px-4 py-2 border rounded-lg">
-                            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700">Subir Material</button>
-                        </form>
+                    <div id="professor-material-btn" class="hidden-section mb-4">
+                        <button onclick="openModal('material-modal')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                            <i class="fas fa-plus mr-2"></i>Subir Material
+                        </button>
                     </div>
                     <div id="materials-list" class="space-y-4"></div>
                 </div>
@@ -208,7 +210,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-200px)]">
                     <div class="lg:col-span-1 bg-white rounded-xl shadow-sm border flex flex-col">
                         <div class="p-4 border-b">
-                            <button onclick="showComposeModal()" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
+                            <button onclick="openModal('compose-modal')" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
                                 <i class="fas fa-pen mr-2"></i>Nuevo Mensaje
                             </button>
                         </div>
@@ -249,17 +251,97 @@
         </main>
     </div>
 
-    <!-- Modal Mensaje -->
-    <div id="compose-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
+    <!-- ==================== MODALES ==================== -->
+
+    <!-- Modal Crear Curso -->
+    <div id="create-course-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
-            <h3 class="text-lg font-bold mb-4">Nuevo Mensaje</h3>
-            <form id="compose-form" class="space-y-4">
-                <input type="email" id="compose-to" placeholder="Para: usuario@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                <input type="text" id="compose-subject" placeholder="Asunto" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
-                <textarea id="compose-body" placeholder="Mensaje..." required rows="5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Crear Nuevo Curso</h3>
+                <button onclick="closeModal('create-course-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="create-course-form" class="space-y-4">
+                <input type="text" id="course-name" placeholder="Nombre del curso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                <textarea id="course-desc" placeholder="Descripción" required rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
                 <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closeComposeModal()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Enviar</button>
+                    <button type="button" onclick="closeModal('create-course-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Crear</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Añadir Alumno -->
+    <div id="add-student-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Añadir Alumno a un Curso</h3>
+                <button onclick="closeModal('add-student-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="add-student-form" class="space-y-4">
+                <select id="select-course" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                    <option value="">Selecciona un curso...</option>
+                </select>
+                <input type="email" id="student-email" placeholder="alumno@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeModal('add-student-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Añadir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Nuevo Aviso -->
+    <div id="announcement-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Nuevo Aviso</h3>
+                <button onclick="closeModal('announcement-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="add-announcement-form" class="space-y-4">
+                <input type="text" id="announcement-title" placeholder="Título del aviso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                <textarea id="announcement-content" placeholder="Contenido del aviso..." required rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeModal('announcement-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Publicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Tarea -->
+    <div id="task-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Nueva Tarea</h3>
+                <button onclick="closeModal('task-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="add-task-form" class="space-y-4">
+                <input type="text" id="task-title" placeholder="Título de la tarea" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                <textarea id="task-description" placeholder="Descripción de la tarea..." required rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                <input type="datetime-local" id="task-deadline" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeModal('task-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Crear Tarea</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Subir Material -->
+    <div id="material-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Subir Material</h3>
+                <button onclick="closeModal('material-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="add-material-form" class="space-y-4">
+                <input type="text" id="material-title" placeholder="Título del material" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                <textarea id="material-description" placeholder="Descripción..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                <input type="file" id="material-file" class="w-full px-4 py-2 border rounded-lg">
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeModal('material-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Subir</button>
                 </div>
             </form>
         </div>
@@ -268,14 +350,36 @@
     <!-- Modal Entrega de Tarea -->
     <div id="submit-task-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
-            <h3 class="text-lg font-bold mb-4">Entregar Tarea</h3>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Entregar Tarea</h3>
+                <button onclick="closeModal('submit-task-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+            </div>
             <form id="submit-task-form" class="space-y-4">
                 <input type="hidden" id="submit-task-id">
                 <textarea id="submit-task-comment" placeholder="Comentario (opcional)..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
                 <input type="file" id="submit-task-file" class="w-full px-4 py-2 border rounded-lg">
                 <div class="flex justify-end gap-3">
-                    <button type="button" onclick="closeSubmitTaskModal()" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="button" onclick="closeModal('submit-task-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
                     <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Entregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Nuevo Mensaje -->
+    <div id="compose-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Nuevo Mensaje</h3>
+                <button onclick="closeModal('compose-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="compose-form" class="space-y-4">
+                <input type="email" id="compose-to" placeholder="Para: usuario@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                <input type="text" id="compose-subject" placeholder="Asunto" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
+                <textarea id="compose-body" placeholder="Mensaje..." required rows="5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeModal('compose-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Enviar</button>
                 </div>
             </form>
         </div>
@@ -284,7 +388,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, getDoc, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, getDoc, query, where, onSnapshot, orderBy, updateDoc, doc, serverTimestamp, setDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
         const firebaseConfig = {
@@ -332,7 +436,7 @@
             errorEl.classList.add('hidden-section');
 
             if (!validateEduBaseEmail(email)) {
-                errorEl.textContent = "️ Solo correos @edubase.es";
+                errorEl.textContent = "⚠️ Solo correos @edubase.es";
                 errorEl.classList.remove('hidden-section');
                 return;
             }
@@ -344,7 +448,7 @@
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
                 console.error(error);
-                let msg = " Error al iniciar sesión.";
+                let msg = "❌ Error al iniciar sesión.";
                 if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
                     msg = "❌ Usuario o contraseña incorrectos.";
                 } else if (error.code === 'auth/network-request-failed') {
@@ -397,7 +501,17 @@
                         document.getElementById('user-display-name').textContent = userData.name || user.email;
                         document.getElementById('user-role-badge').textContent = (userData.role || 'alumno').toUpperCase();
                         
-                        setupDashboard();
+                        // Mostrar botones de profesor si corresponde
+                        if (userData.role === 'profesor') {
+                            document.getElementById('professor-actions').classList.remove('hidden-section');
+                            document.getElementById('professor-dashboard').classList.remove('hidden-section');
+                            document.getElementById('student-dashboard').classList.add('hidden-section');
+                        } else {
+                            document.getElementById('professor-actions').classList.add('hidden-section');
+                            document.getElementById('professor-dashboard').classList.add('hidden-section');
+                            document.getElementById('student-dashboard').classList.remove('hidden-section');
+                        }
+                        
                         loadCourses();
                         setupInbox();
                         setupChat();
@@ -407,7 +521,7 @@
                     }
                 } catch (err) {
                     console.error(err);
-                    alert(" Error de conexión: " + err.message);
+                    alert("❌ Error de conexión: " + err.message);
                     await signOut(auth);
                 }
             } else {
@@ -418,25 +532,34 @@
             }
         });
 
+        // ==================== MODALES ====================
+        window.openModal = (modalId) => {
+            document.getElementById(modalId).classList.remove('hidden-section');
+            // Si es el modal de añadir alumno, cargar los cursos
+            if (modalId === 'add-student-modal') {
+                loadProfessorCoursesForSelect();
+            }
+        };
+
+        window.closeModal = (modalId) => {
+            document.getElementById(modalId).classList.add('hidden-section');
+            // Resetear formularios
+            const form = document.querySelector(`#${modalId} form`);
+            if (form) form.reset();
+        };
+
         window.showSection = (sectionId, btnElement) => {
             document.querySelectorAll('.app-section').forEach(el => el.classList.add('hidden-section'));
             document.getElementById(`section-${sectionId}`).classList.remove('hidden-section');
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('bg-slate-800', 'text-indigo-400'));
             if (btnElement) btnElement.classList.add('bg-slate-800', 'text-indigo-400');
+            
+            if (sectionId === 'courses' || sectionId === 'dashboard') {
+                loadCourses();
+            }
         };
 
         // ==================== CURSOS ====================
-        function setupDashboard() {
-            if (userData.role === 'profesor') {
-                document.getElementById('professor-dashboard').classList.remove('hidden-section');
-                document.getElementById('student-dashboard').classList.add('hidden-section');
-            } else {
-                document.getElementById('professor-dashboard').classList.add('hidden-section');
-                document.getElementById('student-dashboard').classList.remove('hidden-section');
-                loadStudentCourses();
-            }
-        }
-
         document.getElementById('create-course-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             await addDoc(collection(db, "courses"), {
@@ -449,35 +572,62 @@
                 createdAt: serverTimestamp()
             });
             e.target.reset();
+            closeModal('create-course-modal');
             alert("✅ Curso creado");
             loadCourses();
         });
 
-        async function loadStudentCourses() {
-            const q = query(collection(db, "courses"), where("students", "array-contains", currentUser.email));
+        async function loadProfessorCoursesForSelect() {
+            const q = query(collection(db, "courses"), where("teacherId", "==", currentUser.uid));
             const snapshot = await getDocs(q);
-            const container = document.getElementById('student-courses-list');
-            container.innerHTML = '';
-            
-            if (snapshot.empty) {
-                container.innerHTML = '<p class="text-gray-500 text-sm col-span-full">No tienes cursos asignados aún.</p>';
-                return;
-            }
-            
+            const select = document.getElementById('select-course');
+            select.innerHTML = '<option value="">Selecciona un curso...</option>';
             snapshot.docs.forEach(d => {
-                const data = d.data();
-                container.innerHTML += `
-                    <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100 cursor-pointer hover:bg-indigo-100 transition" onclick="openCourse('${d.id}')">
-                        <h4 class="font-bold text-indigo-900">${data.name}</h4>
-                        <p class="text-sm text-indigo-700 mt-1">${data.description}</p>
-                        <p class="text-xs text-gray-500 mt-2">Profesor: ${data.teacherName || data.teacherEmail}</p>
-                    </div>`;
+                const opt = document.createElement('option');
+                opt.value = d.id;
+                opt.textContent = d.data().name;
+                select.appendChild(opt);
             });
         }
 
+        document.getElementById('add-student-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const courseId = document.getElementById('select-course').value;
+            const studentEmail = document.getElementById('student-email').value.toLowerCase();
+            
+            if (!validateEduBaseEmail(studentEmail)) {
+                alert("⚠️ El correo debe ser @edubase.es");
+                return;
+            }
+            
+            // Añadir alumno al array students del curso
+            await updateDoc(doc(db, "courses", courseId), {
+                students: arrayUnion(studentEmail)
+            });
+            
+            // Enviar mensaje de invitación al alumno
+            await addDoc(collection(db, "messages"), {
+                to: studentEmail,
+                from: currentUser.email,
+                subject: "Invitación a Curso",
+                body: `Has sido añadido al curso. Revisa la sección de cursos.`,
+                read: false,
+                createdAt: serverTimestamp()
+            });
+            
+            e.target.reset();
+            closeModal('add-student-modal');
+            alert("✅ Alumno añadido al curso");
+        });
+
         async function loadCourses() {
             const container = document.getElementById('courses-grid');
-            container.innerHTML = '';
+            const professorList = document.getElementById('professor-courses-list');
+            const studentList = document.getElementById('student-courses-list');
+            
+            if (container) container.innerHTML = '';
+            if (professorList) professorList.innerHTML = '';
+            if (studentList) studentList.innerHTML = '';
             
             let q;
             if (userData.role === 'profesor') {
@@ -489,20 +639,27 @@
             const snapshot = await getDocs(q);
             
             if (snapshot.empty) {
-                container.innerHTML = '<p class="text-gray-500 col-span-full text-center">No hay cursos disponibles.</p>';
+                const emptyMsg = '<p class="text-gray-500 col-span-full text-center py-8">No hay cursos disponibles.</p>';
+                if (container) container.innerHTML = emptyMsg;
+                if (professorList) professorList.innerHTML = emptyMsg;
+                if (studentList) studentList.innerHTML = emptyMsg;
                 return;
             }
             
-            snapshot.docs.forEach(d => {
+            const cardsHTML = snapshot.docs.map(d => {
                 const data = d.data();
-                container.innerHTML += `
+                return `
                     <div class="bg-white p-6 rounded-xl shadow-sm border cursor-pointer hover:shadow-lg transition" onclick="openCourse('${d.id}')">
                         <h3 class="text-xl font-bold text-indigo-900 mb-2">${data.name}</h3>
                         <p class="text-gray-600 text-sm mb-4">${data.description}</p>
                         <p class="text-xs text-gray-500">Profesor: ${data.teacherName || data.teacherEmail}</p>
                         <p class="text-xs text-gray-500 mt-1">${data.students ? data.students.length : 0} alumnos</p>
                     </div>`;
-            });
+            }).join('');
+            
+            if (container) container.innerHTML = cardsHTML;
+            if (professorList) professorList.innerHTML = cardsHTML;
+            if (studentList) studentList.innerHTML = cardsHTML;
         }
 
         window.openCourse = async (courseId) => {
@@ -513,18 +670,18 @@
             document.getElementById('course-detail-title').textContent = courseData.name;
             document.getElementById('course-detail-desc').textContent = courseData.description;
             
-            // Mostrar formularios según rol
+            // Mostrar/ocultar botones de profesor según rol
             if (userData.role === 'profesor') {
-                document.getElementById('professor-announcement-form').classList.remove('hidden-section');
-                document.getElementById('professor-task-form').classList.remove('hidden-section');
+                document.getElementById('professor-announcement-btn').classList.remove('hidden-section');
+                document.getElementById('professor-task-btn').classList.remove('hidden-section');
                 document.getElementById('professor-grades-section').classList.remove('hidden-section');
-                document.getElementById('professor-material-form').classList.remove('hidden-section');
+                document.getElementById('professor-material-btn').classList.remove('hidden-section');
                 document.getElementById('student-grades-section').classList.add('hidden-section');
             } else {
-                document.getElementById('professor-announcement-form').classList.add('hidden-section');
-                document.getElementById('professor-task-form').classList.add('hidden-section');
+                document.getElementById('professor-announcement-btn').classList.add('hidden-section');
+                document.getElementById('professor-task-btn').classList.add('hidden-section');
                 document.getElementById('professor-grades-section').classList.add('hidden-section');
-                document.getElementById('professor-material-form').classList.add('hidden-section');
+                document.getElementById('professor-material-btn').classList.add('hidden-section');
                 document.getElementById('student-grades-section').classList.remove('hidden-section');
             }
             
@@ -554,6 +711,7 @@
                 createdAt: serverTimestamp()
             });
             e.target.reset();
+            closeModal('announcement-modal');
             alert("✅ Aviso publicado");
             loadAnnouncements();
         });
@@ -597,6 +755,7 @@
                 createdAt: serverTimestamp()
             });
             e.target.reset();
+            closeModal('task-modal');
             alert("✅ Tarea creada");
             loadTasks();
         });
@@ -623,23 +782,25 @@
                     const submissionsQ = query(collection(db, "courses", currentCourseId, "tasks", d.id, "submissions"));
                     const submissionsSnap = await getDocs(submissionsQ);
                     if (!submissionsSnap.empty) {
-                        submissionsHTML = '<div class="mt-4 pt-4 border-t"><h5 class="font-semibold text-sm mb-2">Entregas:</h5>';
+                        submissionsHTML = '<div class="mt-4 pt-4 border-t"><h5 class="font-semibold text-sm mb-2">Entregas recibidas:</h5>';
                         submissionsSnap.docs.forEach(s => {
                             const sub = s.data();
                             submissionsHTML += `
                                 <div class="bg-gray-50 p-3 rounded-lg mb-2">
-                                    <p class="text-sm font-semibold">${sub.studentName}</p>
+                                    <p class="text-sm font-semibold">${sub.studentName} (${sub.studentEmail})</p>
                                     <p class="text-xs text-gray-600">${sub.comment || 'Sin comentario'}</p>
                                     ${sub.fileUrl ? `<a href="${sub.fileUrl}" target="_blank" class="text-indigo-600 text-xs hover:underline"><i class="fas fa-file mr-1"></i>Ver archivo</a>` : ''}
                                 </div>`;
                         });
                         submissionsHTML += '</div>';
+                    } else {
+                        submissionsHTML = '<div class="mt-4 pt-4 border-t"><p class="text-sm text-gray-500">Aún no hay entregas.</p></div>';
                     }
                 }
                 
                 container.innerHTML += `
                     <div class="bg-white p-6 rounded-xl shadow-sm border">
-                        <div class="flex justify-between items-start mb-2">
+                        <div class="flex justify-between items-start mb-2 flex-wrap gap-2">
                             <h4 class="text-lg font-bold text-indigo-900">${data.title}</h4>
                             <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Entrega: ${deadline}</span>
                         </div>
@@ -653,12 +814,7 @@
 
         window.openSubmitTaskModal = (taskId) => {
             document.getElementById('submit-task-id').value = taskId;
-            document.getElementById('submit-task-modal').classList.remove('hidden-section');
-        };
-
-        window.closeSubmitTaskModal = () => {
-            document.getElementById('submit-task-modal').classList.add('hidden-section');
-            document.getElementById('submit-task-form').reset();
+            openModal('submit-task-modal');
         };
 
         document.getElementById('submit-task-form').addEventListener('submit', async (e) => {
@@ -684,7 +840,7 @@
                 submittedAt: serverTimestamp()
             });
             
-            closeSubmitTaskModal();
+            closeModal('submit-task-modal');
             alert("✅ Tarea entregada");
             loadTasks();
         });
@@ -699,7 +855,7 @@
                 const students = courseDoc.data().students || [];
                 
                 if (students.length === 0) {
-                    container.innerHTML = '<p class="text-gray-500">No hay alumnos en este curso.</p>';
+                    container.innerHTML = '<p class="text-gray-500">No hay alumnos en este curso. Añade alumnos desde el panel principal.</p>';
                     return;
                 }
                 
@@ -707,7 +863,7 @@
                     container.innerHTML += `
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <p class="font-semibold mb-2">${studentEmail}</p>
-                            <div class="flex gap-2">
+                            <div class="flex gap-2 flex-wrap">
                                 <input type="number" id="grade-${studentEmail}" placeholder="Nota (0-10)" min="0" max="10" step="0.1" class="px-3 py-2 border rounded-lg w-32">
                                 <input type="text" id="grade-comment-${studentEmail}" placeholder="Comentario" class="px-3 py-2 border rounded-lg flex-1">
                                 <button onclick="saveGrade('${studentEmail}')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">Guardar</button>
@@ -793,6 +949,7 @@
             });
             
             e.target.reset();
+            closeModal('material-modal');
             alert("✅ Material subido");
             loadMaterials();
         });
@@ -853,20 +1010,19 @@
             if (!data.read) updateDoc(doc(db, "messages", id), { read: true });
         }
 
-        window.showComposeModal = () => document.getElementById('compose-modal').classList.remove('hidden-section');
-        window.closeComposeModal = () => document.getElementById('compose-modal').classList.add('hidden-section');
-
         document.getElementById('compose-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const to = document.getElementById('compose-to').value;
-            if (!validateEduBaseEmail(to)) { alert("️ Solo correos @edubase.es"); return; }
+            if (!validateEduBaseEmail(to)) { alert("⚠️ Solo correos @edubase.es"); return; }
             await addDoc(collection(db, "messages"), {
                 to, from: currentUser.email,
                 subject: document.getElementById('compose-subject').value,
                 body: document.getElementById('compose-body').value,
                 read: false, createdAt: serverTimestamp()
             });
-            closeComposeModal(); e.target.reset(); alert("✅ Enviado");
+            closeModal('compose-modal');
+            e.target.reset();
+            alert("✅ Enviado");
         });
 
         // ==================== CHAT ====================
