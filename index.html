@@ -32,76 +32,136 @@
         .preview-img { max-width: 100%; max-height: 150px; border-radius: 8px; margin-top: 8px; }
         .file-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; border-radius: 12px; transition: all 0.2s; cursor: pointer; text-decoration: none; }
         .file-link:hover { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); transform: translateX(4px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15); }
+        
+        /* Estilos WhatsApp */
+        .chat-contact { transition: all 0.2s; cursor: pointer; }
+        .chat-contact:hover { background: #f1f5f9; }
+        .chat-contact.active { background: #dbeafe; border-left: 3px solid #2563eb; }
+        .chat-bubble-me { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 18px 18px 4px 18px; max-width: 70%; margin-left: auto; }
+        .chat-bubble-other { background: white; border: 1px solid #e2e8f0; color: #1e293b; border-radius: 18px 18px 18px 4px; max-width: 70%; }
+        .chat-bg { background-color: #f0f4f8; background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23cbd5e1' fill-opacity='0.2'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
     </style>
 </head>
 <body class="text-gray-800 h-screen flex flex-col overflow-hidden">
 
     <!-- AUTENTICACIÓN -->
-    <div id="auth-section" class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-blue-600 to-indigo-700">
-        <div class="glass-panel p-8 rounded-2xl shadow-2xl w-full max-w-md fade-in">
-            <div class="text-center mb-6">
-                <h1 class="text-3xl font-bold text-blue-700"><i class="fas fa-graduation-cap mr-2"></i>EduBase</h1>
-                <p class="text-gray-600 mt-2">Aulas Virtuales</p>
+    <div id="auth-section" class="h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+            <div class="absolute bottom-20 right-20 w-96 h-96 bg-purple-300 rounded-full blur-3xl"></div>
+        </div>
+        <div class="glass-panel p-8 rounded-3xl shadow-2xl w-full max-w-md fade-in relative z-10 border border-white/20">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl mb-4 shadow-lg">
+                    <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                </div>
+                <h1 class="text-3xl font-extrabold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">EduBase</h1>
+                <p class="text-slate-600 mt-2 text-sm">Plataforma educativa moderna</p>
             </div>
-            <div class="flex mb-6 bg-gray-100 rounded-lg p-1">
-                <button onclick="showAuthTab('login')" id="tab-login" class="flex-1 py-2 rounded-md bg-white shadow text-blue-700 font-semibold transition">Iniciar Sesión</button>
-                <button onclick="showAuthTab('request')" id="tab-request" class="flex-1 py-2 rounded-md text-gray-600 hover:text-blue-700 transition">Solicitar Acceso</button>
+            <div class="flex mb-6 bg-slate-100 rounded-xl p-1">
+                <button onclick="showAuthTab('login')" id="tab-login" class="flex-1 py-2.5 rounded-lg bg-white shadow-sm text-blue-700 font-semibold transition text-sm">Iniciar Sesión</button>
+                <button onclick="showAuthTab('request')" id="tab-request" class="flex-1 py-2.5 rounded-lg text-slate-600 hover:text-blue-700 transition text-sm">Solicitar Acceso</button>
             </div>
             <form id="login-form" class="space-y-4">
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Correo</label><input type="email" id="login-email" required placeholder="usuario@edubase.es" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label><input type="password" id="login-password" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></div>
-                <button type="submit" id="login-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition">Ingresar</button>
-                <p id="login-error" class="text-red-600 text-sm text-center bg-red-50 p-2 rounded-lg hidden-section"></p>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Correo</label>
+                    <input type="email" id="login-email" required placeholder="usuario@edubase.es" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Contraseña</label>
+                    <input type="password" id="login-password" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                </div>
+                <button type="submit" id="login-btn" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition">Ingresar</button>
+                <p id="login-error" class="text-red-600 text-sm text-center bg-red-50 p-3 rounded-xl hidden-section"></p>
             </form>
             <form action="https://formspree.io/f/meaowyvj" method="POST" id="request-form" class="space-y-4 hidden-section">
                 <input type="hidden" name="_subject" value="Nueva Solicitud de Acceso EduBase">
-                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 text-sm text-blue-700"><i class="fas fa-info-circle mr-1"></i> Solo correos <strong>@edubase.es</strong></div>
-                <input type="text" name="nombre" required placeholder="Nombre completo" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="email" name="email" required placeholder="tucorreo@edubase.es" pattern="^[a-zA-Z0-9._%+-]+@edubase\.es$" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
-                <select name="rol" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"><option value="Alumno">Soy Alumno</option><option value="Profesor">Soy Profesor</option></select>
-                <textarea name="mensaje" required rows="3" placeholder="Motivo..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition">Enviar Solicitud</button>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-lg text-sm text-blue-700"><i class="fas fa-info-circle mr-1"></i> Solo correos <strong>@edubase.es</strong></div>
+                <input type="text" name="nombre" required placeholder="Nombre completo" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="email" name="email" required placeholder="tucorreo@edubase.es" pattern="^[a-zA-Z0-9._%+-]+@edubase\.es$" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                <select name="rol" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><option value="Alumno">Soy Alumno</option><option value="Profesor">Soy Profesor</option></select>
+                <textarea name="mensaje" required rows="3" placeholder="Motivo..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition">Enviar Solicitud</button>
             </form>
         </div>
     </div>
 
-    <!-- APP -->
-    <div id="app-section" class="hidden-section flex-1 flex overflow-hidden">
-        <aside class="w-64 sidebar-gradient text-white flex flex-col shadow-2xl flex-shrink-0" style="background: linear-gradient(180deg, #1e3a8a 0%, #312e81 100%);">
+    <!-- APP PRINCIPAL -->
+    <div id="app-section" class="hidden-section h-screen flex">
+        <!-- SIDEBAR -->
+        <aside class="w-64 text-white flex flex-col shadow-2xl flex-shrink-0" style="background: linear-gradient(180deg, #1e3a8a 0%, #312e81 100%);">
             <div class="p-6 border-b border-white/10">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur"><i class="fas fa-graduation-cap text-white"></i></div>
-                    <div><h1 class="font-bold text-lg">EduBase</h1><p class="text-xs text-blue-200">Plataforma Educativa</p></div>
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur">
+                        <i class="fas fa-graduation-cap text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg">EduBase</h1>
+                        <p class="text-xs text-blue-200">Plataforma Educativa</p>
+                    </div>
                 </div>
             </div>
-            <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-                <button onclick="showSection('dashboard')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 bg-white/15 text-white"><i class="fas fa-home w-5"></i><span class="font-medium">Inicio</span></button>
-                <button onclick="showSection('courses')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100"><i class="fas fa-book-open w-5"></i><span class="font-medium">Mis Cursos</span></button>
-                <button onclick="showSection('inbox')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100"><i class="fas fa-envelope w-5"></i><span class="font-medium flex-1">Mensajes</span><span id="inbox-badge" class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full hidden-section">0</span></button>
-                <button onclick="showSection('chat')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100"><i class="fas fa-comments w-5"></i><span class="font-medium">Chat</span></button>
-                <button onclick="showSection('profile')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100"><i class="fas fa-user w-5"></i><span class="font-medium">Mi Perfil</span></button>
+            <nav class="flex-1 p-4 space-y-1 overflow-y-auto scrollbar-thin">
+                <button onclick="showSection('dashboard')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 bg-white/15 text-white">
+                    <i class="fas fa-home w-5"></i> <span class="font-medium">Inicio</span>
+                </button>
+                <button onclick="showSection('courses')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100">
+                    <i class="fas fa-book-open w-5"></i> <span class="font-medium">Mis Cursos</span>
+                </button>
+                <button onclick="showSection('chat')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100">
+                    <i class="fas fa-comments w-5"></i> <span class="font-medium flex-1">Mensajes</span>
+                    <span id="chat-badge" class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full hidden-section">0</span>
+                </button>
+                <button onclick="showSection('inbox')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100">
+                    <i class="fas fa-envelope w-5"></i> <span class="font-medium flex-1">Bandeja</span>
+                    <span id="inbox-badge" class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full hidden-section">0</span>
+                </button>
+                <button onclick="showSection('profile')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100">
+                    <i class="fas fa-user w-5"></i> <span class="font-medium">Mi Perfil</span>
+                </button>
             </nav>
             <div class="p-4 border-t border-white/10">
                 <div class="flex items-center gap-3 mb-3 px-2">
                     <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold overflow-hidden flex-shrink-0"><span id="sidebar-avatar-text">U</span></div>
-                    <div class="flex-1 min-w-0"><p id="sidebar-name" class="font-semibold text-sm truncate">Usuario</p><p id="sidebar-role" class="text-xs text-blue-200 truncate">Rol</p></div>
+                    <div class="flex-1 min-w-0">
+                        <p id="sidebar-name" class="font-semibold text-sm truncate">Usuario</p>
+                        <p id="sidebar-role" class="text-xs text-blue-200 truncate">Rol</p>
+                    </div>
                 </div>
-                <button onclick="logout()" class="w-full px-4 py-2.5 bg-red-500/20 hover:bg-red-500/30 text-red-100 rounded-xl transition flex items-center justify-center gap-2 text-sm font-medium"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+                <button onclick="logout()" class="w-full px-4 py-2.5 bg-red-500/20 hover:bg-red-500/30 text-red-100 rounded-xl transition flex items-center justify-center gap-2 text-sm font-medium">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
             </div>
         </aside>
 
+        <!-- CONTENIDO -->
         <main class="flex-1 flex flex-col overflow-hidden bg-slate-50">
+            <!-- HEADER -->
             <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between flex-shrink-0">
-                <div><h2 id="page-title" class="text-2xl font-bold text-slate-800">Inicio</h2><p id="page-subtitle" class="text-sm text-slate-500 mt-0.5">Bienvenido a tu espacio educativo</p></div>
-                <div class="flex items-center gap-3"><button onclick="openModal('compose-modal')" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition flex items-center gap-2 text-sm font-medium"><i class="fas fa-pen"></i> Nuevo mensaje</button></div>
+                <div>
+                    <h2 id="page-title" class="text-2xl font-bold text-slate-800">Inicio</h2>
+                    <p id="page-subtitle" class="text-sm text-slate-500 mt-0.5">Bienvenido a tu espacio educativo</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="openModal('compose-modal')" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition flex items-center gap-2 text-sm font-medium">
+                        <i class="fas fa-pen"></i> Nuevo mensaje
+                    </button>
+                </div>
             </header>
 
-            <div class="flex-1 overflow-y-auto p-8">
+            <!-- CONTENIDO SCROLLEABLE -->
+            <div class="flex-1 overflow-y-auto scrollbar-thin p-8">
+                
                 <!-- DASHBOARD -->
                 <div id="section-dashboard" class="app-section fade-in">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-xl font-bold text-slate-800">Mis Cursos</h3>
-                        <button id="dashboard-create-course-btn" onclick="openModal('create-course-modal')" class="hidden-section bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:bg-blue-700 transition"><i class="fas fa-plus"></i> Crear Curso</button>
+                        <button id="dashboard-create-course-btn" onclick="openModal('create-course-modal')" class="hidden-section bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:shadow-xl transition">
+                            <i class="fas fa-plus"></i> Crear Curso
+                        </button>
                     </div>
                     <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </div>
@@ -112,19 +172,31 @@
                         <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
                             <div class="h-32 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 relative">
                                 <div class="absolute -bottom-12 left-8">
-                                    <div id="profile-avatar-container" class="w-24 h-24 rounded-2xl bg-white p-1 shadow-xl">
+                                    <div class="w-24 h-24 rounded-2xl bg-white p-1 shadow-xl">
                                         <div id="profile-avatar-inner" class="w-full h-full rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-3xl overflow-hidden"><span id="profile-avatar">U</span></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="pt-16 px-8 pb-8">
                                 <div class="flex justify-between items-start mb-6">
-                                    <div><h3 id="profile-name" class="text-2xl font-bold text-slate-800"></h3><p id="profile-email" class="text-slate-500 mt-1"></p><span id="profile-role" class="inline-block mt-3 px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold"></span></div>
-                                    <button onclick="openEditProfileModal()" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:bg-blue-700 transition"><i class="fas fa-edit"></i> Editar Perfil</button>
+                                    <div>
+                                        <h3 id="profile-name" class="text-2xl font-bold text-slate-800"></h3>
+                                        <p id="profile-email" class="text-slate-500 mt-1"></p>
+                                        <span id="profile-role" class="inline-block mt-3 px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold"></span>
+                                    </div>
+                                    <button onclick="openEditProfileModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:shadow-xl transition">
+                                        <i class="fas fa-edit"></i> Editar Perfil
+                                    </button>
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100"><p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Correo electrónico</p><p id="profile-email-info" class="font-semibold text-slate-800"></p></div>
-                                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100"><p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Rol en la plataforma</p><p id="profile-role-info" class="font-semibold text-slate-800"></p></div>
+                                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Correo electrónico</p>
+                                        <p id="profile-email-info" class="font-semibold text-slate-800"></p>
+                                    </div>
+                                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Rol en la plataforma</p>
+                                        <p id="profile-role-info" class="font-semibold text-slate-800"></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -135,19 +207,25 @@
                 <div id="section-courses" class="app-section hidden-section fade-in">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-xl font-bold text-slate-800">Todos mis cursos</h3>
-                        <button id="courses-create-course-btn" onclick="openModal('create-course-modal')" class="hidden-section bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:bg-blue-700 transition"><i class="fas fa-plus"></i> Crear Curso</button>
+                        <button id="courses-create-course-btn" onclick="openModal('create-course-modal')" class="hidden-section bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:shadow-xl transition">
+                            <i class="fas fa-plus"></i> Crear Curso
+                        </button>
                     </div>
                     <div id="courses-list-page" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </div>
 
                 <!-- DETALLE CURSO -->
                 <div id="section-course-detail" class="app-section hidden-section fade-in">
-                    <button onclick="showSection('courses')" class="text-blue-600 hover:text-blue-800 mb-4 text-sm font-medium flex items-center gap-2"><i class="fas fa-arrow-left"></i> Volver a cursos</button>
+                    <button onclick="showSection('courses')" class="text-blue-600 hover:text-blue-800 mb-4 text-sm font-medium flex items-center gap-2">
+                        <i class="fas fa-arrow-left"></i> Volver a cursos
+                    </button>
                     <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 mb-6">
                         <h1 id="course-detail-title" class="text-3xl font-bold text-slate-800 mb-2"></h1>
                         <p id="course-detail-teacher" class="text-slate-500"></p>
                         <div id="course-actions-professor" class="hidden-section flex gap-3 mt-6">
-                            <button onclick="openAddStudentToCourse()" class="bg-green-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:bg-green-700 transition"><i class="fas fa-user-plus"></i> Añadir Alumno</button>
+                            <button onclick="openAddStudentToCourse()" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:shadow-xl transition">
+                                <i class="fas fa-user-plus"></i> Añadir Alumno
+                            </button>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-6">
@@ -159,8 +237,12 @@
                     </div>
                     <div id="tab-course" class="course-tab-content">
                         <div id="professor-course-actions" class="hidden-section mb-6 flex gap-3">
-                            <button onclick="openModal('add-unit-modal')" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:bg-blue-700 transition"><i class="fas fa-folder-plus"></i> Nueva Unidad</button>
-                            <button onclick="openModal('add-announcement-modal')" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:bg-indigo-700 transition"><i class="fas fa-bullhorn"></i> Nuevo Aviso</button>
+                            <button onclick="openModal('add-unit-modal')" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:shadow-xl transition">
+                                <i class="fas fa-folder-plus"></i> Nueva Unidad
+                            </button>
+                            <button onclick="openModal('add-announcement-modal')" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:shadow-xl transition">
+                                <i class="fas fa-bullhorn"></i> Nuevo Aviso
+                            </button>
                         </div>
                         <div id="announcements-section" class="mb-6"></div>
                         <div id="units-list" class="space-y-4"></div>
@@ -169,105 +251,280 @@
                         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                             <div class="flex justify-between items-center mb-6">
                                 <h3 class="text-lg font-bold text-slate-800">Participantes del curso</h3>
-                                <button id="add-student-tab-btn" onclick="openAddStudentToCourse()" class="hidden-section bg-green-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:bg-green-700 transition"><i class="fas fa-user-plus"></i> Añadir Alumno</button>
+                                <button id="add-student-tab-btn" onclick="openAddStudentToCourse()" class="hidden-section bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:shadow-xl transition">
+                                    <i class="fas fa-user-plus"></i> Añadir Alumno
+                                </button>
                             </div>
                             <div id="participants-list" class="space-y-3"></div>
                         </div>
                     </div>
                     <div id="tab-grades" class="course-tab-content hidden-section">
-                        <div id="professor-grades-view" class="hidden-section"><div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6"><h3 class="text-lg font-bold text-slate-800 mb-6">Calificaciones de Alumnos</h3><div id="grades-students-list" class="space-y-4"></div></div></div>
-                        <div id="student-grades-view" class="hidden-section"><div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6"><h3 class="text-lg font-bold text-slate-800 mb-6">Mis Calificaciones</h3><div id="student-grades-list" class="space-y-4"></div></div></div>
+                        <div id="professor-grades-view" class="hidden-section">
+                            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                                <h3 class="text-lg font-bold text-slate-800 mb-6">Calificaciones de Alumnos</h3>
+                                <div id="grades-students-list" class="space-y-4"></div>
+                            </div>
+                        </div>
+                        <div id="student-grades-view" class="hidden-section">
+                            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                                <h3 class="text-lg font-bold text-slate-800 mb-6">Mis Calificaciones</h3>
+                                <div id="student-grades-list" class="space-y-4"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- MENSAJES -->
+                <!-- MENSAJES (BANDEJA) -->
                 <div id="section-inbox" class="app-section hidden-section fade-in">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-180px)]">
                         <div class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-                            <div class="p-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-indigo-50"><button onclick="openModal('compose-modal')" class="w-full bg-blue-600 text-white py-2.5 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold hover:bg-blue-700 transition"><i class="fas fa-pen"></i> Nuevo Mensaje</button></div>
-                            <div id="inbox-list" class="flex-1 overflow-y-auto p-2 space-y-1"></div>
+                            <div class="p-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-indigo-50">
+                                <button onclick="openModal('compose-modal')" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2.5 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold shadow-lg hover:shadow-xl transition">
+                                    <i class="fas fa-pen"></i> Nuevo Mensaje
+                                </button>
+                            </div>
+                            <div id="inbox-list" class="flex-1 overflow-y-auto scrollbar-thin p-2 space-y-1"></div>
                         </div>
                         <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex flex-col">
-                            <div id="inbox-empty-state" class="flex-1 flex items-center justify-center text-slate-400"><div class="text-center"><div class="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4"><i class="fas fa-inbox text-3xl"></i></div><p class="font-medium">Selecciona un mensaje</p></div></div>
+                            <div id="inbox-empty-state" class="flex-1 flex items-center justify-center text-slate-400">
+                                <div class="text-center">
+                                    <div class="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                        <i class="fas fa-inbox text-3xl"></i>
+                                    </div>
+                                    <p class="font-medium">Selecciona un mensaje</p>
+                                </div>
+                            </div>
                             <div id="inbox-message-view" class="hidden-section flex-1 flex flex-col">
-                                <div class="border-b border-slate-100 pb-4 mb-4"><h3 id="msg-subject" class="text-xl font-bold text-slate-800"></h3><p class="text-sm text-slate-500 mt-2">De: <span id="msg-from" class="font-semibold text-slate-700"></span></p><p class="text-xs text-slate-400 mt-1" id="msg-date"></p></div>
+                                <div class="border-b border-slate-100 pb-4 mb-4">
+                                    <h3 id="msg-subject" class="text-xl font-bold text-slate-800"></h3>
+                                    <p class="text-sm text-slate-500 mt-2">De: <span id="msg-from" class="font-semibold text-slate-700"></span></p>
+                                    <p class="text-xs text-slate-400 mt-1" id="msg-date"></p>
+                                </div>
                                 <p id="msg-body" class="text-slate-700 flex-1 whitespace-pre-wrap leading-relaxed"></p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- CHAT -->
+                <!-- CHAT PRIVADO (ESTILO WHATSAPP) -->
                 <div id="section-chat" class="app-section hidden-section fade-in h-[calc(100vh-180px)] flex flex-col">
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-indigo-50"><h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fas fa-comments text-blue-600"></i> Chat General</h3></div>
-                        <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-3 bg-slate-50"></div>
-                        <form id="chat-form" class="p-4 border-t border-slate-100 bg-white flex gap-2"><input type="text" id="chat-input" placeholder="Escribe un mensaje..." required class="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition"><i class="fas fa-paper-plane"></i></button></form>
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex-1 flex overflow-hidden">
+                        <!-- Lista de conversaciones -->
+                        <div class="w-80 border-r border-slate-200 flex flex-col bg-white">
+                            <div class="p-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-indigo-50">
+                                <h3 class="font-bold text-slate-800 flex items-center gap-2 mb-3">
+                                    <i class="fas fa-comments text-blue-600"></i> Conversaciones
+                                </h3>
+                                <button onclick="openModal('new-chat-modal')" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold shadow hover:shadow-lg transition">
+                                    <i class="fas fa-plus"></i> Nueva conversación
+                                </button>
+                            </div>
+                            <div id="chat-contacts-list" class="flex-1 overflow-y-auto scrollbar-thin">
+                                <div class="text-center py-8 text-slate-400">
+                                    <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                                    <p class="text-sm">Cargando...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Área de chat -->
+                        <div class="flex-1 flex flex-col">
+                            <div id="chat-empty-state" class="flex-1 flex items-center justify-center chat-bg">
+                                <div class="text-center text-slate-400">
+                                    <div class="w-24 h-24 bg-white/80 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                                        <i class="fas fa-comments text-4xl text-blue-300"></i>
+                                    </div>
+                                    <p class="font-medium text-slate-600">Selecciona una conversación</p>
+                                    <p class="text-sm mt-1">O inicia una nueva</p>
+                                </div>
+                            </div>
+
+                            <div id="chat-active-state" class="hidden-section flex-1 flex flex-col">
+                                <!-- Header del chat -->
+                                <div class="p-4 border-b border-slate-100 bg-white flex items-center gap-3">
+                                    <div id="chat-header-avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold flex-shrink-0">U</div>
+                                    <div class="flex-1 min-w-0">
+                                        <p id="chat-header-name" class="font-bold text-slate-800 truncate">Usuario</p>
+                                        <p id="chat-header-email" class="text-xs text-slate-500 truncate">email@edubase.es</p>
+                                    </div>
+                                </div>
+
+                                <!-- Mensajes -->
+                                <div id="chat-messages" class="flex-1 overflow-y-auto scrollbar-thin p-6 chat-bg space-y-3"></div>
+
+                                <!-- Input -->
+                                <form id="chat-form" class="p-4 border-t border-slate-100 bg-white flex gap-2">
+                                    <input type="text" id="chat-input" placeholder="Escribe un mensaje..." required class="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition">
+                                    <button type="submit" class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold shadow hover:shadow-lg transition">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </main>
     </div>
 
-    <!-- MODALES -->
-    <div id="edit-profile-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
+    <!-- MODAL NUEVA CONVERSACIÓN -->
+    <div id="new-chat-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 fade-in">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-800">Editar Perfil</h3><button onclick="closeModal('edit-profile-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
-            <form id="edit-profile-form" class="space-y-4">
-                <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Nombre</label><input type="text" id="edit-profile-name" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></div>
-                <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Foto de perfil</label><input type="url" id="edit-profile-photo" placeholder="https://..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2"><label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium"><i class="fas fa-cloud-upload-alt"></i> Subir imagen<input type="file" id="edit-profile-file" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(this)"></label><div id="profile-photo-preview"></div></div>
-                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('edit-profile-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Guardar</button></div>
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-slate-800">Nueva Conversación</h3>
+                <button onclick="closeModal('new-chat-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="new-chat-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Correo del usuario</label>
+                    <input type="email" id="new-chat-email" placeholder="usuario@edubase.es" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                    <p class="text-xs text-slate-500 mt-1">Busca a un usuario por su correo @edubase.es</p>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('new-chat-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">Iniciar Chat</button>
+                </div>
             </form>
         </div>
     </div>
 
+    <!-- MODAL EDITAR PERFIL -->
+    <div id="edit-profile-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-slate-800">Editar Perfil</h3>
+                <button onclick="closeModal('edit-profile-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="edit-profile-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Nombre</label>
+                    <input type="text" id="edit-profile-name" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Foto de perfil</label>
+                    <input type="url" id="edit-profile-photo" placeholder="https://..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2">
+                    <label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium">
+                        <i class="fas fa-cloud-upload-alt"></i> Subir imagen
+                        <input type="file" id="edit-profile-file" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(this)">
+                    </label>
+                    <div id="profile-photo-preview"></div>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('edit-profile-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL CREAR CURSO -->
     <div id="create-course-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 fade-in">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-800">Crear Nuevo Curso</h3><button onclick="closeModal('create-course-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-slate-800">Crear Nuevo Curso</h3>
+                <button onclick="closeModal('create-course-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
             <form id="create-course-form" class="space-y-4">
                 <input type="text" id="course-name" placeholder="Nombre del curso" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
                 <input type="text" id="course-center" placeholder="Centro educativo" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
                 <textarea id="course-desc" placeholder="Descripción breve" rows="2" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Imagen de portada</label><input type="url" id="course-cover-url" placeholder="https://..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2"><label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium"><i class="fas fa-cloud-upload-alt"></i> Subir imagen<input type="file" id="course-cover-file" accept="image/*" class="hidden" onchange="handleCoverUpload(this)"></label><div id="cover-preview"></div></div>
-                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('create-course-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Crear</button></div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Imagen de portada</label>
+                    <input type="url" id="course-cover-url" placeholder="https://..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2">
+                    <label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium">
+                        <i class="fas fa-cloud-upload-alt"></i> Subir imagen
+                        <input type="file" id="course-cover-file" accept="image/*" class="hidden" onchange="handleCoverUpload(this)">
+                    </label>
+                    <div id="cover-preview"></div>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('create-course-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">Crear</button>
+                </div>
             </form>
         </div>
     </div>
 
+    <!-- MODAL AÑADIR ALUMNO -->
     <div id="add-student-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 fade-in">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-800">Añadir Alumno</h3><button onclick="closeModal('add-student-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-slate-800">Añadir Alumno</h3>
+                <button onclick="closeModal('add-student-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
             <form id="add-student-form" class="space-y-4">
-                <div id="select-course-container"><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Curso</label><select id="select-course" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><option value="">Selecciona un curso...</option></select></div>
-                <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Correo del alumno</label><input type="email" id="student-email" placeholder="alumno@edubase.es" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></div>
-                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('add-student-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-green-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:bg-green-700 transition">Añadir</button></div>
+                <div id="select-course-container">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Curso</label>
+                    <select id="select-course" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><option value="">Selecciona un curso...</option></select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Correo del alumno</label>
+                    <input type="email" id="student-email" placeholder="alumno@edubase.es" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('add-student-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">Añadir</button>
+                </div>
             </form>
         </div>
     </div>
 
+    <!-- MODAL UNIDAD -->
     <div id="add-unit-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 fade-in">
-            <div class="flex justify-between items-center mb-6"><h3 id="unit-modal-title" class="text-xl font-bold text-slate-800">Nueva Unidad</h3><button onclick="closeModal('add-unit-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
-            <form id="add-unit-form" class="space-y-4"><input type="hidden" id="unit-edit-id"><input type="text" id="unit-title" placeholder="Título (ej: UT0 - Introducción)" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><textarea id="unit-description" placeholder="Descripción / Objetivos..." rows="4" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea><div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('add-unit-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Guardar</button></div></form>
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="unit-modal-title" class="text-xl font-bold text-slate-800">Nueva Unidad</h3>
+                <button onclick="closeModal('add-unit-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="add-unit-form" class="space-y-4">
+                <input type="hidden" id="unit-edit-id">
+                <input type="text" id="unit-title" placeholder="Título (ej: UT0 - Introducción)" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea id="unit-description" placeholder="Descripción / Objetivos..." rows="4" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('add-unit-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">Guardar</button>
+                </div>
+            </form>
         </div>
     </div>
 
+    <!-- MODAL RECURSO -->
     <div id="add-resource-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 fade-in">
-            <div class="flex justify-between items-center mb-6"><h3 id="resource-modal-title" class="text-xl font-bold text-slate-800">Nuevo Recurso</h3><button onclick="closeModal('add-resource-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="resource-modal-title" class="text-xl font-bold text-slate-800">Nuevo Recurso</h3>
+                <button onclick="closeModal('add-resource-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
             <form id="add-resource-form" class="space-y-4">
                 <input type="hidden" id="resource-unit-id"><input type="hidden" id="resource-edit-id">
                 <input type="text" id="resource-title" placeholder="Título" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
                 <textarea id="resource-content" placeholder="Contenido..." rows="3" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Archivo</label><input type="url" id="resource-url" placeholder="https://... (opcional)" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2"><input type="hidden" id="resource-filename"><label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium"><i class="fas fa-cloud-upload-alt"></i> Subir archivo<input type="file" id="resource-file" class="hidden" onchange="handleResourceUpload(this)"></label><div id="resource-file-preview"></div></div>
-                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('add-resource-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Guardar</button></div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Archivo</label>
+                    <input type="url" id="resource-url" placeholder="https://... (opcional)" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2">
+                    <input type="hidden" id="resource-filename">
+                    <label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium">
+                        <i class="fas fa-cloud-upload-alt"></i> Subir archivo
+                        <input type="file" id="resource-file" class="hidden" onchange="handleResourceUpload(this)">
+                    </label>
+                    <div id="resource-file-preview"></div>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('add-resource-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">Guardar</button>
+                </div>
             </form>
         </div>
     </div>
 
+    <!-- MODAL TAREA -->
     <div id="add-activity-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 fade-in">
-            <div class="flex justify-between items-center mb-6"><h3 id="activity-modal-title" class="text-xl font-bold text-slate-800">Nueva Tarea</h3><button onclick="closeModal('add-activity-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="activity-modal-title" class="text-xl font-bold text-slate-800">Nueva Tarea</h3>
+                <button onclick="closeModal('add-activity-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
             <form id="add-activity-form" class="space-y-4">
                 <input type="hidden" id="activity-unit-id"><input type="hidden" id="activity-edit-id">
                 <input type="text" id="activity-title" placeholder="Título" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
@@ -276,19 +533,38 @@
                     <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Fecha límite</label><input type="datetime-local" id="activity-deadline" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></div>
                     <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Puntuación</label><input type="number" id="activity-max-score" value="10" min="1" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></div>
                 </div>
-                <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Archivo de la tarea</label><input type="url" id="activity-url" placeholder="https://... (opcional)" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2"><input type="hidden" id="activity-filename"><label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium"><i class="fas fa-cloud-upload-alt"></i> Subir archivo<input type="file" id="activity-file" class="hidden" onchange="handleActivityUpload(this)"></label><div id="activity-file-preview"></div></div>
-                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('add-activity-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-pink-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:bg-pink-700 transition">Guardar</button></div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Archivo de la tarea</label>
+                    <input type="url" id="activity-url" placeholder="https://... (opcional)" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2">
+                    <input type="hidden" id="activity-filename">
+                    <label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium">
+                        <i class="fas fa-cloud-upload-alt"></i> Subir archivo
+                        <input type="file" id="activity-file" class="hidden" onchange="handleActivityUpload(this)">
+                    </label>
+                    <div id="activity-file-preview"></div>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('add-activity-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-pink-500 to-rose-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">Guardar</button>
+                </div>
             </form>
         </div>
     </div>
 
+    <!-- MODAL VER TAREA -->
     <div id="view-activity-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-8 fade-in max-h-[90vh] overflow-y-auto">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-8 fade-in max-h-[90vh] overflow-y-auto scrollbar-thin">
             <div class="flex justify-between items-start mb-6">
-                <div><h3 id="view-activity-title" class="text-2xl font-bold text-slate-800"></h3><p id="view-activity-meta" class="text-sm text-slate-500 mt-2"></p></div>
+                <div>
+                    <h3 id="view-activity-title" class="text-2xl font-bold text-slate-800"></h3>
+                    <p id="view-activity-meta" class="text-sm text-slate-500 mt-2"></p>
+                </div>
                 <button onclick="closeModal('view-activity-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
             </div>
-            <div class="bg-slate-50 rounded-2xl p-6 mb-6"><h4 class="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wide"><i class="fas fa-clipboard-list mr-2 text-blue-600"></i>Enunciado</h4><div id="view-activity-description" class="text-slate-700 whitespace-pre-wrap leading-relaxed"></div></div>
+            <div class="bg-slate-50 rounded-2xl p-6 mb-6">
+                <h4 class="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wide"><i class="fas fa-clipboard-list mr-2 text-blue-600"></i>Enunciado</h4>
+                <div id="view-activity-description" class="text-slate-700 whitespace-pre-wrap leading-relaxed"></div>
+            </div>
             <div id="view-activity-file-section" class="mb-6"></div>
             <div id="view-activity-submission-status" class="mb-6 p-4 rounded-2xl"></div>
             <div id="view-activity-submit-section" class="hidden-section">
@@ -296,45 +572,92 @@
                     <h4 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fas fa-upload text-blue-600"></i> Entregar tarea</h4>
                     <form id="view-activity-submit-form" class="space-y-3">
                         <textarea id="view-activity-comment" placeholder="Comentario (opcional)..." rows="2" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                        <div><input type="url" id="view-activity-url" placeholder="https://... (opcional)" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2"><input type="hidden" id="submission-filename"><label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium bg-white"><i class="fas fa-cloud-upload-alt"></i> Subir archivo<input type="file" id="view-activity-file" class="hidden" onchange="handleSubmissionUpload(this)"></label><div id="submission-file-preview"></div></div>
-                        <button type="submit" class="w-full bg-green-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:bg-green-700 transition"><i class="fas fa-paper-plane mr-2"></i>Entregar Tarea</button>
+                        <div>
+                            <input type="url" id="view-activity-url" placeholder="https://... (opcional)" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2">
+                            <input type="hidden" id="submission-filename">
+                            <label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium bg-white">
+                                <i class="fas fa-cloud-upload-alt"></i> Subir archivo
+                                <input type="file" id="view-activity-file" class="hidden" onchange="handleSubmissionUpload(this)">
+                            </label>
+                            <div id="submission-file-preview"></div>
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition"><i class="fas fa-paper-plane mr-2"></i>Entregar Tarea</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- MODAL ENTREGAS -->
     <div id="submissions-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl p-8 fade-in max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6"><h3 id="submissions-activity-title" class="text-xl font-bold text-slate-800"></h3><button onclick="closeModal('submissions-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl p-8 fade-in max-h-[90vh] overflow-y-auto scrollbar-thin">
+            <div class="flex justify-between items-center mb-6">
+                <h3 id="submissions-activity-title" class="text-xl font-bold text-slate-800"></h3>
+                <button onclick="closeModal('submissions-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
             <div id="submissions-list" class="space-y-3"></div>
         </div>
     </div>
 
+    <!-- MODAL CALIFICAR -->
     <div id="grade-submission-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 fade-in">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-800">Calificar Entrega</h3><button onclick="closeModal('grade-submission-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-slate-800">Calificar Entrega</h3>
+                <button onclick="closeModal('grade-submission-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
             <form id="grade-submission-form" class="space-y-4">
                 <input type="hidden" id="grade-activity-id"><input type="hidden" id="grade-submission-id">
-                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100"><p class="font-bold text-slate-800" id="grade-student-name"></p><p class="text-sm text-slate-500" id="grade-student-email"></p><p class="text-sm text-slate-600 mt-3 italic" id="grade-student-comment"></p><a id="grade-student-file" href="#" target="_blank" class="mt-3 hidden-section"></a></div>
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
+                    <p class="font-bold text-slate-800" id="grade-student-name"></p>
+                    <p class="text-sm text-slate-500" id="grade-student-email"></p>
+                    <p class="text-sm text-slate-600 mt-3 italic" id="grade-student-comment"></p>
+                    <a id="grade-student-file" href="#" target="_blank" class="mt-3 hidden-section"></a>
+                </div>
                 <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Nota (0-10)</label><input type="number" id="grade-value" min="0" max="10" step="0.1" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></div>
                 <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Feedback</label><textarea id="grade-feedback" rows="3" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea></div>
-                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('grade-submission-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Guardar</button></div>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('grade-submission-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">Guardar</button>
+                </div>
             </form>
         </div>
     </div>
 
+    <!-- MODAL AVISO -->
     <div id="add-announcement-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 fade-in">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-800">Nuevo Aviso</h3><button onclick="closeModal('add-announcement-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
-            <form id="add-announcement-form" class="space-y-4"><input type="text" id="announcement-title" placeholder="Título" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><textarea id="announcement-content" placeholder="Contenido..." required rows="4" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea><div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('add-announcement-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-indigo-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:bg-indigo-700 transition">Publicar</button></div></form>
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-slate-800">Nuevo Aviso</h3>
+                <button onclick="closeModal('add-announcement-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="add-announcement-form" class="space-y-4">
+                <input type="text" id="announcement-title" placeholder="Título" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea id="announcement-content" placeholder="Contenido..." required rows="4" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('add-announcement-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">Publicar</button>
+                </div>
+            </form>
         </div>
     </div>
 
+    <!-- MODAL MENSAJE (BANDEJA) -->
     <div id="compose-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 fade-in">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-800">Nuevo Mensaje</h3><button onclick="closeModal('compose-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
-            <form id="compose-form" class="space-y-4"><input type="email" id="compose-to" placeholder="Para: usuario@edubase.es" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><input type="text" id="compose-subject" placeholder="Asunto" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><textarea id="compose-body" placeholder="Mensaje..." required rows="5" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea><div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('compose-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Enviar</button></div></form>
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-slate-800">Nuevo Mensaje</h3>
+                <button onclick="closeModal('compose-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="compose-form" class="space-y-4">
+                <input type="email" id="compose-to" placeholder="Para: usuario@edubase.es" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="compose-subject" placeholder="Asunto" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea id="compose-body" placeholder="Mensaje..." required rows="5" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <div class="flex gap-3 pt-2">
+                    <button type="button" onclick="closeModal('compose-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button>
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition">Enviar</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -369,7 +692,6 @@
             throw new Error(data.error?.message || 'Error al subir imagen');
         }
 
-        // MODIFICADO: Ahora devuelve el enlace directo de descarga
         async function uploadToGoFile(file) {
             const serversRes = await fetch('https://api.gofile.io/servers');
             const serversData = await serversRes.json();
@@ -383,10 +705,7 @@
                 body: formData
             });
             const data = await response.json();
-            if (data.status === 'ok') {
-                // Usar downloadLink en lugar de downloadPage para descarga directa
-                return data.data.downloadLink || data.data.downloadPage;
-            }
+            if (data.status === 'ok') return data.data.downloadLink || data.data.downloadPage;
             throw new Error(data.message || 'Error al subir archivo');
         }
 
@@ -430,8 +749,10 @@
         let currentCourseId = null;
         let currentViewActivityId = null;
         let currentViewUnitId = null;
+        let currentChatId = null;
         let unsubscribeChat = null;
         let unsubscribeInbox = null;
+        let unsubscribeChatList = null;
 
         function renderAvatar(containerId, user) {
             const container = document.getElementById(containerId);
@@ -467,10 +788,10 @@
             document.getElementById('login-form').classList.toggle('hidden-section', tab !== 'login');
             document.getElementById('request-form').classList.toggle('hidden-section', tab !== 'request');
             document.getElementById('tab-login').classList.toggle('bg-white', tab === 'login');
-            document.getElementById('tab-login').classList.toggle('shadow', tab === 'login');
+            document.getElementById('tab-login').classList.toggle('shadow-sm', tab === 'login');
             document.getElementById('tab-login').classList.toggle('text-blue-700', tab === 'login');
             document.getElementById('tab-request').classList.toggle('bg-white', tab === 'request');
-            document.getElementById('tab-request').classList.toggle('shadow', tab === 'request');
+            document.getElementById('tab-request').classList.toggle('shadow-sm', tab === 'request');
             document.getElementById('tab-request').classList.toggle('text-blue-700', tab === 'request');
         };
 
@@ -495,7 +816,12 @@
             } finally { btn.innerHTML = 'Ingresar'; btn.disabled = false; }
         });
 
-        window.logout = () => { signOut(auth); if (unsubscribeChat) unsubscribeChat(); if (unsubscribeInbox) unsubscribeInbox(); };
+        window.logout = () => { 
+            signOut(auth); 
+            if (unsubscribeChat) unsubscribeChat(); 
+            if (unsubscribeInbox) unsubscribeInbox();
+            if (unsubscribeChatList) unsubscribeChatList();
+        };
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -513,7 +839,10 @@
                         document.getElementById('auth-section').classList.add('hidden-section');
                         document.getElementById('app-section').classList.remove('hidden-section');
                         updateProfileUI();
-                        loadCourses(); setupInbox(); setupChat(); showSection('dashboard');
+                        loadCourses(); 
+                        setupInbox(); 
+                        setupChatList();
+                        showSection('dashboard');
                     } else { alert("⚠️ Error cuenta."); await signOut(auth); }
                 } catch (err) { alert("❌ Error: " + err.message); await signOut(auth); }
             } else {
@@ -528,12 +857,20 @@
             const section = document.getElementById(`section-${sectionId}`);
             if (section) section.classList.remove('hidden-section');
             if (sectionId === 'courses' || sectionId === 'dashboard') loadCourses();
-            const titles = { dashboard: ['Inicio', 'Bienvenido a tu espacio educativo'], profile: ['Mi Perfil', 'Gestiona tu información personal'], courses: ['Mis Cursos', 'Todos tus cursos'], 'course-detail': ['Curso', 'Contenido del curso'], inbox: ['Mensajes', 'Tu bandeja de entrada'], chat: ['Chat', 'Conversación en tiempo real'] };
+            if (sectionId === 'chat') loadChatContacts();
+            const titles = { 
+                dashboard: ['Inicio', 'Bienvenido a tu espacio educativo'], 
+                profile: ['Mi Perfil', 'Gestiona tu información personal'], 
+                courses: ['Mis Cursos', 'Todos tus cursos'], 
+                'course-detail': ['Curso', 'Contenido del curso'], 
+                inbox: ['Bandeja de Entrada', 'Mensajes recibidos'], 
+                chat: ['Mensajes', 'Conversaciones privadas'] 
+            };
             const t = titles[sectionId] || ['', ''];
             const pt = document.getElementById('page-title'); const ps = document.getElementById('page-subtitle');
             if (pt) pt.textContent = t[0]; if (ps) ps.textContent = t[1];
             document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('bg-white/15', 'text-white'); btn.classList.add('text-blue-100'); });
-            const navMap = { dashboard: 0, courses: 1, inbox: 2, chat: 3, profile: 4 };
+            const navMap = { dashboard: 0, courses: 1, chat: 2, inbox: 3, profile: 4 };
             const navBtns = document.querySelectorAll('.nav-btn');
             if (navBtns[navMap[sectionId]]) { navBtns[navMap[sectionId]].classList.add('bg-white/15', 'text-white'); navBtns[navMap[sectionId]].classList.remove('text-blue-100'); }
         };
@@ -547,6 +884,228 @@
             if (select) select.parentElement.classList.remove('hidden-section');
             ['profile-photo-preview','cover-preview','resource-file-preview','activity-file-preview','submission-file-preview'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
         };
+
+        // ==================== CHAT PRIVADO (ESTILO WHATSAPP) ====================
+        
+        // Generar ID único para conversación entre 2 usuarios
+        function getChatId(uid1, uid2) {
+            return [uid1, uid2].sort().join('_');
+        }
+
+        // Cargar lista de conversaciones del usuario
+        function setupChatList() {
+            if (unsubscribeChatList) unsubscribeChatList();
+            const q = query(collection(db, "conversations"), where("participants", "array-contains", currentUser.uid));
+            unsubscribeChatList = onSnapshot(q, (snapshot) => {
+                const container = document.getElementById('chat-contacts-list');
+                if (!container) return;
+                
+                if (snapshot.empty) {
+                    container.innerHTML = '<div class="text-center py-8 text-slate-400"><i class="fas fa-comments text-4xl mb-3 opacity-30"></i><p class="text-sm">Sin conversaciones</p><p class="text-xs mt-1">Inicia una nueva</p></div>';
+                    return;
+                }
+
+                let unreadTotal = 0;
+                let html = '';
+                
+                snapshot.docs.forEach(d => {
+                    const data = d.data();
+                    const otherUid = data.participants.find(p => p !== currentUser.uid);
+                    const unread = data.unread?.[currentUser.uid] || 0;
+                    unreadTotal += unread;
+                    
+                    html += `
+                        <div class="chat-contact p-4 border-b border-slate-100 ${currentChatId === d.id ? 'active' : ''}" onclick="openChat('${d.id}', '${otherUid}')">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold flex-shrink-0 overflow-hidden">
+                                    ${data.otherUserPhoto ? `<img src="${data.otherUserPhoto}" class="w-full h-full object-cover">` : `<span>${(data.otherUserName || 'U').charAt(0).toUpperCase()}</span>`}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-center">
+                                        <p class="font-semibold text-slate-800 truncate">${data.otherUserName || 'Usuario'}</p>
+                                        ${data.lastMessageAt ? `<span class="text-xs text-slate-400">${formatTime(data.lastMessageAt)}</span>` : ''}
+                                    </div>
+                                    <div class="flex justify-between items-center mt-0.5">
+                                        <p class="text-xs text-slate-500 truncate">${data.lastMessage || 'Sin mensajes'}</p>
+                                        ${unread > 0 ? `<span class="bg-blue-600 text-white text-xs px-2 py-0.5 rounded-full ml-2">${unread}</span>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+                // Actualizar badge
+                const badge = document.getElementById('chat-badge');
+                if (badge) {
+                    if (unreadTotal > 0) { badge.textContent = unreadTotal; badge.classList.remove('hidden-section'); }
+                    else { badge.classList.add('hidden-section'); }
+                }
+            });
+        }
+
+        function formatTime(timestamp) {
+            if (!timestamp) return '';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            if (diff < 86400000) return date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+            if (diff < 604800000) return date.toLocaleDateString([], {weekday: 'short'});
+            return date.toLocaleDateString([], {day: '2-digit', month: '2-digit'});
+        }
+
+        // Abrir conversación específica
+        window.openChat = async (chatId, otherUid) => {
+            currentChatId = chatId;
+            
+            // Obtener datos del otro usuario
+            const otherDoc = await getDoc(doc(db, "users", otherUid));
+            const otherData = otherDoc.exists() ? otherDoc.data() : { name: 'Usuario', email: '' };
+            
+            // Actualizar header
+            document.getElementById('chat-header-name').textContent = otherData.name || 'Usuario';
+            document.getElementById('chat-header-email').textContent = otherData.email || '';
+            const avatarEl = document.getElementById('chat-header-avatar');
+            if (otherData.photoUrl) {
+                avatarEl.innerHTML = `<img src="${otherData.photoUrl}" class="w-full h-full object-cover">`;
+            } else {
+                avatarEl.innerHTML = `<span>${(otherData.name || 'U').charAt(0).toUpperCase()}</span>`;
+            }
+            
+            // Mostrar área de chat
+            document.getElementById('chat-empty-state').classList.add('hidden-section');
+            document.getElementById('chat-active-state').classList.remove('hidden-section');
+            
+            // Marcar como leídos
+            await updateDoc(doc(db, "conversations", chatId), {
+                [`unread.${currentUser.uid}`]: 0
+            });
+            
+            // Recargar lista para actualizar badges
+            loadChatContacts();
+            
+            // Cargar mensajes
+            loadChatMessages(chatId);
+        };
+
+        function loadChatMessages(chatId) {
+            if (unsubscribeChat) unsubscribeChat();
+            const q = query(collection(db, "conversations", chatId, "messages"), orderBy("createdAt", "asc"));
+            unsubscribeChat = onSnapshot(q, (snapshot) => {
+                const container = document.getElementById('chat-messages');
+                if (!container) return;
+                container.innerHTML = '';
+                
+                snapshot.docs.forEach(d => {
+                    const data = d.data();
+                    const isMe = data.senderId === currentUser.uid;
+                    const time = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : '';
+                    
+                    const bubble = document.createElement('div');
+                    bubble.className = `flex ${isMe ? 'justify-end' : 'justify-start'}`;
+                    bubble.innerHTML = `
+                        <div class="${isMe ? 'chat-bubble-me' : 'chat-bubble-other'} px-4 py-2.5 shadow-sm">
+                            <p class="text-sm leading-relaxed">${data.text}</p>
+                            <p class="text-xs ${isMe ? 'text-blue-100' : 'text-slate-400'} mt-1 text-right">${time}</p>
+                        </div>
+                    `;
+                    container.appendChild(bubble);
+                });
+                
+                container.scrollTop = container.scrollHeight;
+            });
+        }
+
+        // Enviar mensaje
+        document.getElementById('chat-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text || !currentChatId) return;
+            
+            try {
+                // Obtener datos de la conversación para saber quién es el otro
+                const chatDoc = await getDoc(doc(db, "conversations", currentChatId));
+                const chatData = chatDoc.data();
+                const otherUid = chatData.participants.find(p => p !== currentUser.uid);
+                
+                // Añadir mensaje
+                await addDoc(collection(db, "conversations", currentChatId, "messages"), {
+                    text: text,
+                    senderId: currentUser.uid,
+                    senderName: userData.name,
+                    createdAt: serverTimestamp()
+                });
+                
+                // Actualizar último mensaje y contador de no leídos del otro
+                await updateDoc(doc(db, "conversations", currentChatId), {
+                    lastMessage: text,
+                    lastMessageAt: serverTimestamp(),
+                    [`unread.${otherUid}`]: (chatData.unread?.[otherUid] || 0) + 1
+                });
+                
+                input.value = '';
+            } catch (error) {
+                alert(" Error al enviar: " + error.message);
+            }
+        });
+
+        // Iniciar nueva conversación
+        document.getElementById('new-chat-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('new-chat-email').value.trim().toLowerCase();
+            
+            if (!validateEduBaseEmail(email)) {
+                alert("⚠️ Solo correos @edubase.es");
+                return;
+            }
+            
+            if (email === currentUser.email) {
+                alert("⚠️ No puedes chatear contigo mismo");
+                return;
+            }
+            
+            try {
+                // Buscar usuario por email
+                const userSnap = await getDocs(query(collection(db, "users"), where("email", "==", email)));
+                if (userSnap.empty) {
+                    alert("❌ No existe ningún usuario con ese correo");
+                    return;
+                }
+                
+                const otherUser = userSnap.docs[0].data();
+                const otherUid = otherUser.uid;
+                const chatId = getChatId(currentUser.uid, otherUid);
+                
+                // Verificar si ya existe la conversación
+                const chatDoc = await getDoc(doc(db, "conversations", chatId));
+                
+                if (!chatDoc.exists()) {
+                    // Crear nueva conversación
+                    await setDoc(doc(db, "conversations", chatId), {
+                        participants: [currentUser.uid, otherUid],
+                        lastMessage: null,
+                        lastMessageAt: null,
+                        unread: { [currentUser.uid]: 0, [otherUid]: 0 },
+                        createdAt: serverTimestamp()
+                    });
+                }
+                
+                closeModal('new-chat-modal');
+                openChat(chatId, otherUid);
+                loadChatContacts();
+            } catch (error) {
+                alert("❌ Error: " + error.message);
+            }
+        });
+
+        function loadChatContacts() {
+            // La lista se actualiza automáticamente por onSnapshot en setupChatList
+        }
+
+        // ==================== RESTO DE FUNCIONALIDADES ====================
 
         window.openEditProfileModal = () => {
             document.getElementById('edit-profile-name').value = userData.name || '';
@@ -780,7 +1339,6 @@
             document.getElementById('view-activity-title').textContent = d.title;
             document.getElementById('view-activity-meta').innerHTML = `<i class="fas fa-clock mr-1"></i>${new Date(d.deadline).toLocaleString()} • <span class="font-semibold">${d.maxScore} pts</span>`;
             document.getElementById('view-activity-description').textContent = d.description;
-            // MODIFICADO: Enlace directo de descarga
             document.getElementById('view-activity-file-section').innerHTML = d.url ? `<a href="${d.url}" target="_blank" class="file-link"><i class="fas fa-file-pdf text-blue-600 text-2xl"></i><div class="flex-1"><p class="font-semibold text-blue-700">${d.filename || 'Archivo de la tarea'}</p><p class="text-xs text-slate-500">Clic para abrir/descargar directamente</p></div><i class="fas fa-download text-blue-600"></i></a>` : '';
             
             const mySub = await getDocs(query(collection(db, "courses", currentCourseId, "units", uid, "activities", aid, "submissions"), where("studentId", "==", currentUser.uid)));
@@ -912,19 +1470,6 @@
             e.preventDefault(); const to = document.getElementById('compose-to').value;
             if (!validateEduBaseEmail(to)) { alert("⚠️ Solo @edubase.es"); return; }
             try { await addDoc(collection(db, "messages"), { to, from: currentUser.email, subject: document.getElementById('compose-subject').value, body: document.getElementById('compose-body').value, read: false, createdAt: serverTimestamp() }); closeModal('compose-modal'); e.target.reset(); alert("✅ Enviado"); } catch(e){alert("Error");}
-        });
-
-        function setupChat() {
-            unsubscribeChat = onSnapshot(query(collection(db, "chat_messages"), orderBy("createdAt", "asc")), (snap) => {
-                const c = document.getElementById('chat-messages'); c.innerHTML = '';
-                snap.docs.forEach(d => { const data = d.data(); const isMe = data.email === currentUser.email; const div = document.createElement('div'); div.className = `flex ${isMe?'justify-end':'justify-start'}`; div.innerHTML = `<div class="max-w-[70%] ${isMe?'bg-gradient-to-br from-blue-500 to-indigo-600 text-white':'bg-white border border-slate-200 text-slate-800'} rounded-2xl px-4 py-3 shadow-sm"><p class="text-xs ${isMe?'text-blue-100':'text-slate-500'} mb-1 font-medium">${data.name} • ${data.createdAt?new Date(data.createdAt.toDate()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}</p><p>${data.text}</p></div>`; c.appendChild(div); });
-                c.scrollTop = c.scrollHeight;
-            });
-        }
-
-        document.getElementById('chat-form').addEventListener('submit', async (e) => {
-            e.preventDefault(); const inp = document.getElementById('chat-input'); if (!inp.value.trim()) return;
-            try { await addDoc(collection(db, "chat_messages"), { text: inp.value.trim(), email: currentUser.email, name: userData.name, createdAt: serverTimestamp() }); inp.value = ''; } catch(e){alert("Error");}
         });
     </script>
 </body>
