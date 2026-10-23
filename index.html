@@ -9,179 +9,99 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         * { font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: #f8fafc; }
-        .glass { background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); }
-        .sidebar-gradient { background: linear-gradient(180deg, #1e3a8a 0%, #312e81 100%); }
-        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -12px rgba(59, 130, 246, 0.25); }
-        .btn-primary { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); transition: all 0.2s; }
-        .btn-primary:hover { background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); transform: translateY(-1px); box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4); }
-        .fade-in { animation: fadeIn 0.4s ease-out; }
+        body { background: #f0f4f8; }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .hidden-section { display: none !important; }
-        .stat-card { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); }
-        .unit-card { border-left: 4px solid #3b82f6; }
-        .resource-tag { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); }
-        .task-tag { background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); }
-        .scrollbar-thin::-webkit-scrollbar { width: 6px; }
-        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-        .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        .modal-backdrop { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); }
-        .file-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; border-radius: 12px; transition: all 0.2s; }
-        .file-link:hover { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); transform: translateX(4px); }
-        .upload-zone { border: 2px dashed #93c5fd; background: #eff6ff; transition: all 0.2s; }
-        .upload-zone:hover { border-color: #3b82f6; background: #dbeafe; }
+        .tab-active { color: #1e40af; border-bottom: 2px solid #1e40af; }
+        .moodle-card { background: white; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+        .moodle-card-header { padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; user-select: none; }
+        .moodle-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+        .moodle-icon-unit { background: #dbeafe; color: #1e40af; border: 2px solid #3b82f6; }
+        .moodle-icon-resource { background: #e0e7ff; color: #3730a3; }
+        .moodle-icon-activity { background: #fce7f3; color: #be185d; }
+        .resource-item, .activity-item { transition: all 0.2s; }
+        .resource-item:hover { background-color: #f8fafc; transform: translateX(4px); }
+        .activity-item:hover { background-color: #eff6ff; transform: translateX(4px); }
+        .course-cover { height: 140px; background-size: cover; background-position: center; }
+        .course-cover-placeholder { height: 140px; background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); display: flex; align-items: center; justify-content: center; }
+        .upload-btn { background: #dbeafe; color: #1e40af; border: 2px dashed #93c5fd; }
+        .upload-btn:hover { background: #bfdbfe; }
+        .upload-btn.uploading { background: #fef3c7; color: #92400e; border-color: #fbbf24; cursor: wait; }
+        .preview-img { max-width: 100%; max-height: 150px; border-radius: 8px; margin-top: 8px; }
+        .file-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; border-radius: 12px; transition: all 0.2s; cursor: pointer; text-decoration: none; }
+        .file-link:hover { background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); transform: translateX(4px); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15); }
     </style>
 </head>
-<body class="text-slate-800 h-screen overflow-hidden">
+<body class="text-gray-800 h-screen flex flex-col overflow-hidden">
 
     <!-- AUTENTICACIÓN -->
-    <div id="auth-section" class="h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
-            <div class="absolute bottom-20 right-20 w-96 h-96 bg-purple-300 rounded-full blur-3xl"></div>
-        </div>
-        <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-md fade-in relative z-10 border border-white/20">
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl mb-4 shadow-lg">
-                    <i class="fas fa-graduation-cap text-white text-2xl"></i>
-                </div>
-                <h1 class="text-3xl font-extrabold bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">EduBase</h1>
-                <p class="text-slate-600 mt-2 text-sm">Plataforma educativa moderna</p>
+    <div id="auth-section" class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-blue-600 to-indigo-700">
+        <div class="glass-panel p-8 rounded-2xl shadow-2xl w-full max-w-md fade-in">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-bold text-blue-700"><i class="fas fa-graduation-cap mr-2"></i>EduBase</h1>
+                <p class="text-gray-600 mt-2">Aulas Virtuales</p>
             </div>
-            <div class="flex mb-6 bg-slate-100 rounded-xl p-1">
-                <button onclick="showAuthTab('login')" id="tab-login" class="flex-1 py-2.5 rounded-lg bg-white shadow-sm text-blue-700 font-semibold transition text-sm">Iniciar Sesión</button>
-                <button onclick="showAuthTab('request')" id="tab-request" class="flex-1 py-2.5 rounded-lg text-slate-600 hover:text-blue-700 transition text-sm">Solicitar Acceso</button>
+            <div class="flex mb-6 bg-gray-100 rounded-lg p-1">
+                <button onclick="showAuthTab('login')" id="tab-login" class="flex-1 py-2 rounded-md bg-white shadow text-blue-700 font-semibold transition">Iniciar Sesión</button>
+                <button onclick="showAuthTab('request')" id="tab-request" class="flex-1 py-2 rounded-md text-gray-600 hover:text-blue-700 transition">Solicitar Acceso</button>
             </div>
             <form id="login-form" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Correo</label>
-                    <input type="email" id="login-email" required placeholder="usuario@edubase.es" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Contraseña</label>
-                    <input type="password" id="login-password" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
-                </div>
-                <button type="submit" id="login-btn" class="w-full btn-primary text-white font-semibold py-3 rounded-xl shadow-lg">Ingresar</button>
-                <p id="login-error" class="text-red-600 text-sm text-center bg-red-50 p-3 rounded-xl hidden-section"></p>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Correo</label><input type="email" id="login-email" required placeholder="usuario@edubase.es" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label><input type="password" id="login-password" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></div>
+                <button type="submit" id="login-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition">Ingresar</button>
+                <p id="login-error" class="text-red-600 text-sm text-center bg-red-50 p-2 rounded-lg hidden-section"></p>
             </form>
             <form action="https://formspree.io/f/meaowyvj" method="POST" id="request-form" class="space-y-4 hidden-section">
                 <input type="hidden" name="_subject" value="Nueva Solicitud de Acceso EduBase">
-                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-lg text-sm text-blue-700"><i class="fas fa-info-circle mr-1"></i> Solo correos <strong>@edubase.es</strong></div>
-                <input type="text" name="nombre" required placeholder="Nombre completo" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
-                <input type="email" name="email" required placeholder="tucorreo@edubase.es" pattern="^[a-zA-Z0-9._%+-]+@edubase\.es$" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
-                <select name="rol" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><option value="Alumno">Soy Alumno</option><option value="Profesor">Soy Profesor</option></select>
-                <textarea name="mensaje" required rows="3" placeholder="Motivo..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition">Enviar Solicitud</button>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-3 text-sm text-blue-700"><i class="fas fa-info-circle mr-1"></i> Solo correos <strong>@edubase.es</strong></div>
+                <input type="text" name="nombre" required placeholder="Nombre completo" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="email" name="email" required placeholder="tucorreo@edubase.es" pattern="^[a-zA-Z0-9._%+-]+@edubase\.es$" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                <select name="rol" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"><option value="Alumno">Soy Alumno</option><option value="Profesor">Soy Profesor</option></select>
+                <textarea name="mensaje" required rows="3" placeholder="Motivo..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition">Enviar Solicitud</button>
             </form>
         </div>
     </div>
 
-    <!-- APP PRINCIPAL -->
-    <div id="app-section" class="hidden-section h-screen flex">
-        <!-- SIDEBAR -->
-        <aside class="w-64 sidebar-gradient text-white flex flex-col shadow-2xl flex-shrink-0">
+    <!-- APP -->
+    <div id="app-section" class="hidden-section flex-1 flex overflow-hidden">
+        <aside class="w-64 sidebar-gradient text-white flex flex-col shadow-2xl flex-shrink-0" style="background: linear-gradient(180deg, #1e3a8a 0%, #312e81 100%);">
             <div class="p-6 border-b border-white/10">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur">
-                        <i class="fas fa-graduation-cap text-white"></i>
-                    </div>
-                    <div>
-                        <h1 class="font-bold text-lg">EduBase</h1>
-                        <p class="text-xs text-blue-200">Plataforma Educativa</p>
-                    </div>
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur"><i class="fas fa-graduation-cap text-white"></i></div>
+                    <div><h1 class="font-bold text-lg">EduBase</h1><p class="text-xs text-blue-200">Plataforma Educativa</p></div>
                 </div>
             </div>
-            <nav class="flex-1 p-4 space-y-1 overflow-y-auto scrollbar-thin">
-                <button onclick="showSection('dashboard')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 bg-white/15 text-white">
-                    <i class="fas fa-home w-5"></i> <span class="font-medium">Inicio</span>
-                </button>
-                <button onclick="showSection('courses')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100">
-                    <i class="fas fa-book-open w-5"></i> <span class="font-medium">Mis Cursos</span>
-                </button>
-                <button onclick="showSection('inbox')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100">
-                    <i class="fas fa-envelope w-5"></i> <span class="font-medium flex-1">Mensajes</span>
-                    <span id="inbox-badge" class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full hidden-section">0</span>
-                </button>
-                <button onclick="showSection('chat')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100">
-                    <i class="fas fa-comments w-5"></i> <span class="font-medium">Chat</span>
-                </button>
-                <button onclick="showSection('profile')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100">
-                    <i class="fas fa-user w-5"></i> <span class="font-medium">Mi Perfil</span>
-                </button>
+            <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+                <button onclick="showSection('dashboard')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 bg-white/15 text-white"><i class="fas fa-home w-5"></i><span class="font-medium">Inicio</span></button>
+                <button onclick="showSection('courses')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100"><i class="fas fa-book-open w-5"></i><span class="font-medium">Mis Cursos</span></button>
+                <button onclick="showSection('inbox')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100"><i class="fas fa-envelope w-5"></i><span class="font-medium flex-1">Mensajes</span><span id="inbox-badge" class="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full hidden-section">0</span></button>
+                <button onclick="showSection('chat')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100"><i class="fas fa-comments w-5"></i><span class="font-medium">Chat</span></button>
+                <button onclick="showSection('profile')" class="nav-btn w-full text-left px-4 py-3 rounded-xl hover:bg-white/10 transition flex items-center gap-3 text-blue-100"><i class="fas fa-user w-5"></i><span class="font-medium">Mi Perfil</span></button>
             </nav>
             <div class="p-4 border-t border-white/10">
                 <div class="flex items-center gap-3 mb-3 px-2">
                     <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold overflow-hidden flex-shrink-0"><span id="sidebar-avatar-text">U</span></div>
-                    <div class="flex-1 min-w-0">
-                        <p id="sidebar-name" class="font-semibold text-sm truncate">Usuario</p>
-                        <p id="sidebar-role" class="text-xs text-blue-200 truncate">Rol</p>
-                    </div>
+                    <div class="flex-1 min-w-0"><p id="sidebar-name" class="font-semibold text-sm truncate">Usuario</p><p id="sidebar-role" class="text-xs text-blue-200 truncate">Rol</p></div>
                 </div>
-                <button onclick="logout()" class="w-full px-4 py-2.5 bg-red-500/20 hover:bg-red-500/30 text-red-100 rounded-xl transition flex items-center justify-center gap-2 text-sm font-medium">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                </button>
+                <button onclick="logout()" class="w-full px-4 py-2.5 bg-red-500/20 hover:bg-red-500/30 text-red-100 rounded-xl transition flex items-center justify-center gap-2 text-sm font-medium"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
             </div>
         </aside>
 
-        <!-- CONTENIDO -->
         <main class="flex-1 flex flex-col overflow-hidden bg-slate-50">
-            <!-- HEADER -->
             <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between flex-shrink-0">
-                <div>
-                    <h2 id="page-title" class="text-2xl font-bold text-slate-800">Inicio</h2>
-                    <p id="page-subtitle" class="text-sm text-slate-500 mt-0.5">Bienvenido a tu espacio educativo</p>
-                </div>
-                <div class="flex items-center gap-3">
-                    <button onclick="openModal('compose-modal')" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition flex items-center gap-2 text-sm font-medium">
-                        <i class="fas fa-pen"></i> Nuevo mensaje
-                    </button>
-                </div>
+                <div><h2 id="page-title" class="text-2xl font-bold text-slate-800">Inicio</h2><p id="page-subtitle" class="text-sm text-slate-500 mt-0.5">Bienvenido a tu espacio educativo</p></div>
+                <div class="flex items-center gap-3"><button onclick="openModal('compose-modal')" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition flex items-center gap-2 text-sm font-medium"><i class="fas fa-pen"></i> Nuevo mensaje</button></div>
             </header>
 
-            <!-- CONTENIDO SCROLLEABLE -->
-            <div class="flex-1 overflow-y-auto scrollbar-thin p-8">
-                
+            <div class="flex-1 overflow-y-auto p-8">
                 <!-- DASHBOARD -->
                 <div id="section-dashboard" class="app-section fade-in">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div class="stat-card rounded-2xl p-6 border border-blue-100">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
-                                    <i class="fas fa-book-open text-white text-xl"></i>
-                                </div>
-                                <span class="text-xs font-semibold text-blue-700 bg-blue-100 px-3 py-1 rounded-full">ACTIVO</span>
-                            </div>
-                            <p class="text-sm text-slate-600 mb-1">Mis Cursos</p>
-                            <p id="stat-courses" class="text-3xl font-bold text-slate-800">0</p>
-                        </div>
-                        <div class="stat-card rounded-2xl p-6 border border-indigo-100" style="background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                                    <i class="fas fa-tasks text-white text-xl"></i>
-                                </div>
-                                <span class="text-xs font-semibold text-indigo-700 bg-indigo-100 px-3 py-1 rounded-full">PENDIENTE</span>
-                            </div>
-                            <p class="text-sm text-slate-600 mb-1">Tareas activas</p>
-                            <p class="text-3xl font-bold text-slate-800">-</p>
-                        </div>
-                        <div class="stat-card rounded-2xl p-6 border border-purple-100" style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30">
-                                    <i class="fas fa-star text-white text-xl"></i>
-                                </div>
-                                <span class="text-xs font-semibold text-purple-700 bg-purple-100 px-3 py-1 rounded-full">PROMEDIO</span>
-                            </div>
-                            <p class="text-sm text-slate-600 mb-1">Nota media</p>
-                            <p class="text-3xl font-bold text-slate-800">-</p>
-                        </div>
-                    </div>
-
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-xl font-bold text-slate-800">Mis Cursos</h3>
-                        <button id="dashboard-create-course-btn" onclick="openModal('create-course-modal')" class="hidden-section btn-primary text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg">
-                            <i class="fas fa-plus"></i> Crear Curso
-                        </button>
+                        <button id="dashboard-create-course-btn" onclick="openModal('create-course-modal')" class="hidden-section bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:bg-blue-700 transition"><i class="fas fa-plus"></i> Crear Curso</button>
                     </div>
                     <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </div>
@@ -193,32 +113,18 @@
                             <div class="h-32 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 relative">
                                 <div class="absolute -bottom-12 left-8">
                                     <div id="profile-avatar-container" class="w-24 h-24 rounded-2xl bg-white p-1 shadow-xl">
-                                        <div id="profile-avatar-inner" class="w-full h-full rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-3xl overflow-hidden">
-                                            <span id="profile-avatar">U</span>
-                                        </div>
+                                        <div id="profile-avatar-inner" class="w-full h-full rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-3xl overflow-hidden"><span id="profile-avatar">U</span></div>
                                     </div>
                                 </div>
                             </div>
                             <div class="pt-16 px-8 pb-8">
                                 <div class="flex justify-between items-start mb-6">
-                                    <div>
-                                        <h3 id="profile-name" class="text-2xl font-bold text-slate-800"></h3>
-                                        <p id="profile-email" class="text-slate-500 mt-1"></p>
-                                        <span id="profile-role" class="inline-block mt-3 px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold"></span>
-                                    </div>
-                                    <button onclick="openEditProfileModal()" class="btn-primary text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg">
-                                        <i class="fas fa-edit"></i> Editar Perfil
-                                    </button>
+                                    <div><h3 id="profile-name" class="text-2xl font-bold text-slate-800"></h3><p id="profile-email" class="text-slate-500 mt-1"></p><span id="profile-role" class="inline-block mt-3 px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold"></span></div>
+                                    <button onclick="openEditProfileModal()" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:bg-blue-700 transition"><i class="fas fa-edit"></i> Editar Perfil</button>
                                 </div>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Correo electrónico</p>
-                                        <p id="profile-email-info" class="font-semibold text-slate-800"></p>
-                                    </div>
-                                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                                        <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Rol en la plataforma</p>
-                                        <p id="profile-role-info" class="font-semibold text-slate-800"></p>
-                                    </div>
+                                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100"><p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Correo electrónico</p><p id="profile-email-info" class="font-semibold text-slate-800"></p></div>
+                                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100"><p class="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Rol en la plataforma</p><p id="profile-role-info" class="font-semibold text-slate-800"></p></div>
                                 </div>
                             </div>
                         </div>
@@ -229,28 +135,21 @@
                 <div id="section-courses" class="app-section hidden-section fade-in">
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-xl font-bold text-slate-800">Todos mis cursos</h3>
-                        <button id="courses-create-course-btn" onclick="openModal('create-course-modal')" class="hidden-section btn-primary text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg">
-                            <i class="fas fa-plus"></i> Crear Curso
-                        </button>
+                        <button id="courses-create-course-btn" onclick="openModal('create-course-modal')" class="hidden-section bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:bg-blue-700 transition"><i class="fas fa-plus"></i> Crear Curso</button>
                     </div>
                     <div id="courses-list-page" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </div>
 
                 <!-- DETALLE CURSO -->
                 <div id="section-course-detail" class="app-section hidden-section fade-in">
-                    <button onclick="showSection('courses')" class="text-blue-600 hover:text-blue-800 mb-4 text-sm font-medium flex items-center gap-2">
-                        <i class="fas fa-arrow-left"></i> Volver a cursos
-                    </button>
+                    <button onclick="showSection('courses')" class="text-blue-600 hover:text-blue-800 mb-4 text-sm font-medium flex items-center gap-2"><i class="fas fa-arrow-left"></i> Volver a cursos</button>
                     <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 mb-6">
                         <h1 id="course-detail-title" class="text-3xl font-bold text-slate-800 mb-2"></h1>
                         <p id="course-detail-teacher" class="text-slate-500"></p>
                         <div id="course-actions-professor" class="hidden-section flex gap-3 mt-6">
-                            <button onclick="openAddStudentToCourse()" class="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:shadow-xl transition">
-                                <i class="fas fa-user-plus"></i> Añadir Alumno
-                            </button>
+                            <button onclick="openAddStudentToCourse()" class="bg-green-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:bg-green-700 transition"><i class="fas fa-user-plus"></i> Añadir Alumno</button>
                         </div>
                     </div>
-
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-6">
                         <div class="flex border-b border-slate-200">
                             <button onclick="showCourseTab('course', this)" class="course-tab px-6 py-4 text-sm font-semibold text-blue-700 border-b-2 border-blue-600">Contenido</button>
@@ -258,45 +157,26 @@
                             <button onclick="showCourseTab('grades', this)" class="course-tab px-6 py-4 text-sm font-semibold text-slate-500 hover:text-slate-700">Calificaciones</button>
                         </div>
                     </div>
-
                     <div id="tab-course" class="course-tab-content">
                         <div id="professor-course-actions" class="hidden-section mb-6 flex gap-3">
-                            <button onclick="openModal('add-unit-modal')" class="btn-primary text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg">
-                                <i class="fas fa-folder-plus"></i> Nueva Unidad
-                            </button>
-                            <button onclick="openModal('add-announcement-modal')" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg">
-                                <i class="fas fa-bullhorn"></i> Nuevo Aviso
-                            </button>
+                            <button onclick="openModal('add-unit-modal')" class="bg-blue-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:bg-blue-700 transition"><i class="fas fa-folder-plus"></i> Nueva Unidad</button>
+                            <button onclick="openModal('add-announcement-modal')" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:bg-indigo-700 transition"><i class="fas fa-bullhorn"></i> Nuevo Aviso</button>
                         </div>
                         <div id="announcements-section" class="mb-6"></div>
                         <div id="units-list" class="space-y-4"></div>
                     </div>
-
                     <div id="tab-participants" class="course-tab-content hidden-section">
                         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
                             <div class="flex justify-between items-center mb-6">
                                 <h3 class="text-lg font-bold text-slate-800">Participantes del curso</h3>
-                                <button id="add-student-tab-btn" onclick="openAddStudentToCourse()" class="hidden-section bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg">
-                                    <i class="fas fa-user-plus"></i> Añadir Alumno
-                                </button>
+                                <button id="add-student-tab-btn" onclick="openAddStudentToCourse()" class="hidden-section bg-green-600 text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-semibold shadow-lg hover:bg-green-700 transition"><i class="fas fa-user-plus"></i> Añadir Alumno</button>
                             </div>
                             <div id="participants-list" class="space-y-3"></div>
                         </div>
                     </div>
-
                     <div id="tab-grades" class="course-tab-content hidden-section">
-                        <div id="professor-grades-view" class="hidden-section">
-                            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                                <h3 class="text-lg font-bold text-slate-800 mb-6">Calificaciones de Alumnos</h3>
-                                <div id="grades-students-list" class="space-y-4"></div>
-                            </div>
-                        </div>
-                        <div id="student-grades-view" class="hidden-section">
-                            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-                                <h3 class="text-lg font-bold text-slate-800 mb-6">Mis Calificaciones</h3>
-                                <div id="student-grades-list" class="space-y-4"></div>
-                            </div>
-                        </div>
+                        <div id="professor-grades-view" class="hidden-section"><div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6"><h3 class="text-lg font-bold text-slate-800 mb-6">Calificaciones de Alumnos</h3><div id="grades-students-list" class="space-y-4"></div></div></div>
+                        <div id="student-grades-view" class="hidden-section"><div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6"><h3 class="text-lg font-bold text-slate-800 mb-6">Mis Calificaciones</h3><div id="student-grades-list" class="space-y-4"></div></div></div>
                     </div>
                 </div>
 
@@ -304,28 +184,13 @@
                 <div id="section-inbox" class="app-section hidden-section fade-in">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-180px)]">
                         <div class="lg:col-span-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-                            <div class="p-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-indigo-50">
-                                <button onclick="openModal('compose-modal')" class="w-full btn-primary text-white py-2.5 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold">
-                                    <i class="fas fa-pen"></i> Nuevo Mensaje
-                                </button>
-                            </div>
-                            <div id="inbox-list" class="flex-1 overflow-y-auto scrollbar-thin p-2 space-y-1"></div>
+                            <div class="p-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-indigo-50"><button onclick="openModal('compose-modal')" class="w-full bg-blue-600 text-white py-2.5 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold hover:bg-blue-700 transition"><i class="fas fa-pen"></i> Nuevo Mensaje</button></div>
+                            <div id="inbox-list" class="flex-1 overflow-y-auto p-2 space-y-1"></div>
                         </div>
                         <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex flex-col">
-                            <div id="inbox-empty-state" class="flex-1 flex items-center justify-center text-slate-400">
-                                <div class="text-center">
-                                    <div class="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                        <i class="fas fa-inbox text-3xl"></i>
-                                    </div>
-                                    <p class="font-medium">Selecciona un mensaje</p>
-                                </div>
-                            </div>
+                            <div id="inbox-empty-state" class="flex-1 flex items-center justify-center text-slate-400"><div class="text-center"><div class="w-20 h-20 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4"><i class="fas fa-inbox text-3xl"></i></div><p class="font-medium">Selecciona un mensaje</p></div></div>
                             <div id="inbox-message-view" class="hidden-section flex-1 flex flex-col">
-                                <div class="border-b border-slate-100 pb-4 mb-4">
-                                    <h3 id="msg-subject" class="text-xl font-bold text-slate-800"></h3>
-                                    <p class="text-sm text-slate-500 mt-2">De: <span id="msg-from" class="font-semibold text-slate-700"></span></p>
-                                    <p class="text-xs text-slate-400 mt-1" id="msg-date"></p>
-                                </div>
+                                <div class="border-b border-slate-100 pb-4 mb-4"><h3 id="msg-subject" class="text-xl font-bold text-slate-800"></h3><p class="text-sm text-slate-500 mt-2">De: <span id="msg-from" class="font-semibold text-slate-700"></span></p><p class="text-xs text-slate-400 mt-1" id="msg-date"></p></div>
                                 <p id="msg-body" class="text-slate-700 flex-1 whitespace-pre-wrap leading-relaxed"></p>
                             </div>
                         </div>
@@ -335,135 +200,72 @@
                 <!-- CHAT -->
                 <div id="section-chat" class="app-section hidden-section fade-in h-[calc(100vh-180px)] flex flex-col">
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col overflow-hidden">
-                        <div class="p-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-indigo-50">
-                            <h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fas fa-comments text-blue-600"></i> Chat General</h3>
-                        </div>
-                        <div id="chat-messages" class="flex-1 overflow-y-auto scrollbar-thin p-6 space-y-3 bg-slate-50"></div>
-                        <form id="chat-form" class="p-4 border-t border-slate-100 bg-white flex gap-2">
-                            <input type="text" id="chat-input" placeholder="Escribe un mensaje..." required class="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition">
-                            <button type="submit" class="btn-primary text-white px-6 py-3 rounded-xl font-semibold"><i class="fas fa-paper-plane"></i></button>
-                        </form>
+                        <div class="p-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-indigo-50"><h3 class="font-bold text-slate-800 flex items-center gap-2"><i class="fas fa-comments text-blue-600"></i> Chat General</h3></div>
+                        <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-3 bg-slate-50"></div>
+                        <form id="chat-form" class="p-4 border-t border-slate-100 bg-white flex gap-2"><input type="text" id="chat-input" placeholder="Escribe un mensaje..." required class="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition"><i class="fas fa-paper-plane"></i></button></form>
                     </div>
                 </div>
-
             </div>
         </main>
     </div>
 
-    <!-- MODAL EDITAR PERFIL -->
-    <div id="edit-profile-modal" class="fixed inset-0 modal-backdrop hidden-section flex items-center justify-center z-50 p-4">
+    <!-- MODALES -->
+    <div id="edit-profile-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 fade-in">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-slate-800">Editar Perfil</h3>
-                <button onclick="closeModal('edit-profile-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
-            </div>
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-800">Editar Perfil</h3><button onclick="closeModal('edit-profile-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
             <form id="edit-profile-form" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Nombre</label>
-                    <input type="text" id="edit-profile-name" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Foto de perfil</label>
-                    <input type="url" id="edit-profile-photo" placeholder="https://..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2">
-                    <label class="upload-zone px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium text-blue-700">
-                        <i class="fas fa-cloud-upload-alt"></i> Subir imagen
-                        <input type="file" id="edit-profile-file" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(this)">
-                    </label>
-                    <div id="profile-photo-preview"></div>
-                </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="closeModal('edit-profile-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button>
-                    <button type="submit" class="flex-1 btn-primary text-white px-4 py-3 rounded-xl font-semibold">Guardar</button>
-                </div>
+                <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Nombre</label><input type="text" id="edit-profile-name" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></div>
+                <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Foto de perfil</label><input type="url" id="edit-profile-photo" placeholder="https://..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2"><label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium"><i class="fas fa-cloud-upload-alt"></i> Subir imagen<input type="file" id="edit-profile-file" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(this)"></label><div id="profile-photo-preview"></div></div>
+                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('edit-profile-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Guardar</button></div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL CREAR CURSO -->
-    <div id="create-course-modal" class="fixed inset-0 modal-backdrop hidden-section flex items-center justify-center z-50 p-4">
+    <div id="create-course-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 fade-in">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-slate-800">Crear Nuevo Curso</h3>
-                <button onclick="closeModal('create-course-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
-            </div>
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-800">Crear Nuevo Curso</h3><button onclick="closeModal('create-course-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
             <form id="create-course-form" class="space-y-4">
                 <input type="text" id="course-name" placeholder="Nombre del curso" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
                 <input type="text" id="course-center" placeholder="Centro educativo" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
                 <textarea id="course-desc" placeholder="Descripción breve" rows="2" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Imagen de portada</label>
-                    <input type="url" id="course-cover-url" placeholder="https://..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2">
-                    <label class="upload-zone px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium text-blue-700">
-                        <i class="fas fa-cloud-upload-alt"></i> Subir imagen
-                        <input type="file" id="course-cover-file" accept="image/*" class="hidden" onchange="handleCoverUpload(this)">
-                    </label>
-                    <div id="cover-preview"></div>
-                </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="closeModal('create-course-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button>
-                    <button type="submit" class="flex-1 btn-primary text-white px-4 py-3 rounded-xl font-semibold">Crear</button>
-                </div>
+                <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Imagen de portada</label><input type="url" id="course-cover-url" placeholder="https://..." class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2"><label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium"><i class="fas fa-cloud-upload-alt"></i> Subir imagen<input type="file" id="course-cover-file" accept="image/*" class="hidden" onchange="handleCoverUpload(this)"></label><div id="cover-preview"></div></div>
+                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('create-course-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Crear</button></div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL AÑADIR ALUMNO -->
-    <div id="add-student-modal" class="fixed inset-0 modal-backdrop hidden-section flex items-center justify-center z-50 p-4">
+    <div id="add-student-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 fade-in">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-slate-800">Añadir Alumno</h3>
-                <button onclick="closeModal('add-student-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
-            </div>
+            <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-800">Añadir Alumno</h3><button onclick="closeModal('add-student-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
             <form id="add-student-form" class="space-y-4">
-                <div id="select-course-container">
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Curso</label>
-                    <select id="select-course" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><option value="">Selecciona un curso...</option></select>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Correo del alumno</label>
-                    <input type="email" id="student-email" placeholder="alumno@edubase.es" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div class="flex gap-3 pt-2">
-                    <button type="button" onclick="closeModal('add-student-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button>
-                    <button type="submit" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg">Añadir</button>
-                </div>
+                <div id="select-course-container"><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Curso</label><select id="select-course" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><option value="">Selecciona un curso...</option></select></div>
+                <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Correo del alumno</label><input type="email" id="student-email" placeholder="alumno@edubase.es" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></div>
+                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('add-student-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-green-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:bg-green-700 transition">Añadir</button></div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL UNIDAD -->
-    <div id="add-unit-modal" class="fixed inset-0 modal-backdrop hidden-section flex items-center justify-center z-50 p-4">
+    <div id="add-unit-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 fade-in">
             <div class="flex justify-between items-center mb-6"><h3 id="unit-modal-title" class="text-xl font-bold text-slate-800">Nueva Unidad</h3><button onclick="closeModal('add-unit-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
-            <form id="add-unit-form" class="space-y-4"><input type="hidden" id="unit-edit-id"><input type="text" id="unit-title" placeholder="Título (ej: UT0 - Introducción)" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><textarea id="unit-description" placeholder="Descripción / Objetivos..." rows="4" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea><div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('add-unit-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 btn-primary text-white px-4 py-3 rounded-xl font-semibold">Guardar</button></div></form>
+            <form id="add-unit-form" class="space-y-4"><input type="hidden" id="unit-edit-id"><input type="text" id="unit-title" placeholder="Título (ej: UT0 - Introducción)" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><textarea id="unit-description" placeholder="Descripción / Objetivos..." rows="4" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea><div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('add-unit-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Guardar</button></div></form>
         </div>
     </div>
 
-    <!-- MODAL RECURSO -->
-    <div id="add-resource-modal" class="fixed inset-0 modal-backdrop hidden-section flex items-center justify-center z-50 p-4">
+    <div id="add-resource-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 fade-in">
             <div class="flex justify-between items-center mb-6"><h3 id="resource-modal-title" class="text-xl font-bold text-slate-800">Nuevo Recurso</h3><button onclick="closeModal('add-resource-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
             <form id="add-resource-form" class="space-y-4">
                 <input type="hidden" id="resource-unit-id"><input type="hidden" id="resource-edit-id">
                 <input type="text" id="resource-title" placeholder="Título" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500">
                 <textarea id="resource-content" placeholder="Contenido..." rows="3" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Archivo</label>
-                    <input type="url" id="resource-url" placeholder="https://... (opcional)" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2">
-                    <input type="hidden" id="resource-filename">
-                    <label class="upload-zone px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium text-blue-700">
-                        <i class="fas fa-cloud-upload-alt"></i> Subir archivo
-                        <input type="file" id="resource-file" class="hidden" onchange="handleResourceUpload(this)">
-                    </label>
-                    <div id="resource-file-preview"></div>
-                </div>
-                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('add-resource-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 btn-primary text-white px-4 py-3 rounded-xl font-semibold">Guardar</button></div>
+                <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Archivo</label><input type="url" id="resource-url" placeholder="https://... (opcional)" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2"><input type="hidden" id="resource-filename"><label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium"><i class="fas fa-cloud-upload-alt"></i> Subir archivo<input type="file" id="resource-file" class="hidden" onchange="handleResourceUpload(this)"></label><div id="resource-file-preview"></div></div>
+                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('add-resource-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Guardar</button></div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL TAREA -->
-    <div id="add-activity-modal" class="fixed inset-0 modal-backdrop hidden-section flex items-center justify-center z-50 p-4">
+    <div id="add-activity-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 fade-in">
             <div class="flex justify-between items-center mb-6"><h3 id="activity-modal-title" class="text-xl font-bold text-slate-800">Nueva Tarea</h3><button onclick="closeModal('add-activity-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
             <form id="add-activity-form" class="space-y-4">
@@ -474,35 +276,19 @@
                     <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Fecha límite</label><input type="datetime-local" id="activity-deadline" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></div>
                     <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Puntuación</label><input type="number" id="activity-max-score" value="10" min="1" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></div>
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Archivo de la tarea</label>
-                    <input type="url" id="activity-url" placeholder="https://... (opcional)" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2">
-                    <input type="hidden" id="activity-filename">
-                    <label class="upload-zone px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium text-blue-700">
-                        <i class="fas fa-cloud-upload-alt"></i> Subir archivo
-                        <input type="file" id="activity-file" class="hidden" onchange="handleActivityUpload(this)">
-                    </label>
-                    <div id="activity-file-preview"></div>
-                </div>
-                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('add-activity-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-gradient-to-r from-pink-500 to-rose-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg">Guardar</button></div>
+                <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Archivo de la tarea</label><input type="url" id="activity-url" placeholder="https://... (opcional)" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2"><input type="hidden" id="activity-filename"><label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium"><i class="fas fa-cloud-upload-alt"></i> Subir archivo<input type="file" id="activity-file" class="hidden" onchange="handleActivityUpload(this)"></label><div id="activity-file-preview"></div></div>
+                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('add-activity-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-pink-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:bg-pink-700 transition">Guardar</button></div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL VER TAREA -->
-    <div id="view-activity-modal" class="fixed inset-0 modal-backdrop hidden-section flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-8 fade-in max-h-[90vh] overflow-y-auto scrollbar-thin">
+    <div id="view-activity-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-8 fade-in max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-start mb-6">
-                <div>
-                    <h3 id="view-activity-title" class="text-2xl font-bold text-slate-800"></h3>
-                    <p id="view-activity-meta" class="text-sm text-slate-500 mt-2"></p>
-                </div>
+                <div><h3 id="view-activity-title" class="text-2xl font-bold text-slate-800"></h3><p id="view-activity-meta" class="text-sm text-slate-500 mt-2"></p></div>
                 <button onclick="closeModal('view-activity-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button>
             </div>
-            <div class="bg-slate-50 rounded-2xl p-6 mb-6">
-                <h4 class="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wide"><i class="fas fa-clipboard-list mr-2 text-blue-600"></i>Enunciado</h4>
-                <div id="view-activity-description" class="text-slate-700 whitespace-pre-wrap leading-relaxed"></div>
-            </div>
+            <div class="bg-slate-50 rounded-2xl p-6 mb-6"><h4 class="font-bold text-slate-700 mb-3 text-sm uppercase tracking-wide"><i class="fas fa-clipboard-list mr-2 text-blue-600"></i>Enunciado</h4><div id="view-activity-description" class="text-slate-700 whitespace-pre-wrap leading-relaxed"></div></div>
             <div id="view-activity-file-section" class="mb-6"></div>
             <div id="view-activity-submission-status" class="mb-6 p-4 rounded-2xl"></div>
             <div id="view-activity-submit-section" class="hidden-section">
@@ -510,62 +296,45 @@
                     <h4 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fas fa-upload text-blue-600"></i> Entregar tarea</h4>
                     <form id="view-activity-submit-form" class="space-y-3">
                         <textarea id="view-activity-comment" placeholder="Comentario (opcional)..." rows="2" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea>
-                        <div>
-                            <input type="url" id="view-activity-url" placeholder="https://... (opcional)" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2">
-                            <input type="hidden" id="submission-filename">
-                            <label class="upload-zone px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium text-blue-700 bg-white">
-                                <i class="fas fa-cloud-upload-alt"></i> Subir archivo
-                                <input type="file" id="view-activity-file" class="hidden" onchange="handleSubmissionUpload(this)">
-                            </label>
-                            <div id="submission-file-preview"></div>
-                        </div>
-                        <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition"><i class="fas fa-paper-plane mr-2"></i>Entregar Tarea</button>
+                        <div><input type="url" id="view-activity-url" placeholder="https://... (opcional)" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 mb-2"><input type="hidden" id="submission-filename"><label class="upload-btn px-4 py-3 rounded-xl cursor-pointer flex items-center justify-center gap-2 text-sm font-medium bg-white"><i class="fas fa-cloud-upload-alt"></i> Subir archivo<input type="file" id="view-activity-file" class="hidden" onchange="handleSubmissionUpload(this)"></label><div id="submission-file-preview"></div></div>
+                        <button type="submit" class="w-full bg-green-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:bg-green-700 transition"><i class="fas fa-paper-plane mr-2"></i>Entregar Tarea</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL ENTREGAS -->
-    <div id="submissions-modal" class="fixed inset-0 modal-backdrop hidden-section flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl p-8 fade-in max-h-[90vh] overflow-y-auto scrollbar-thin">
+    <div id="submissions-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-3xl p-8 fade-in max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6"><h3 id="submissions-activity-title" class="text-xl font-bold text-slate-800"></h3><button onclick="closeModal('submissions-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
             <div id="submissions-list" class="space-y-3"></div>
         </div>
     </div>
 
-    <!-- MODAL CALIFICAR -->
-    <div id="grade-submission-modal" class="fixed inset-0 modal-backdrop hidden-section flex items-center justify-center z-50 p-4">
+    <div id="grade-submission-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 fade-in">
             <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-800">Calificar Entrega</h3><button onclick="closeModal('grade-submission-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
             <form id="grade-submission-form" class="space-y-4">
                 <input type="hidden" id="grade-activity-id"><input type="hidden" id="grade-submission-id">
-                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                    <p class="font-bold text-slate-800" id="grade-student-name"></p>
-                    <p class="text-sm text-slate-500" id="grade-student-email"></p>
-                    <p class="text-sm text-slate-600 mt-3 italic" id="grade-student-comment"></p>
-                    <a id="grade-student-file" href="#" target="_blank" class="mt-3 hidden-section"></a>
-                </div>
+                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100"><p class="font-bold text-slate-800" id="grade-student-name"></p><p class="text-sm text-slate-500" id="grade-student-email"></p><p class="text-sm text-slate-600 mt-3 italic" id="grade-student-comment"></p><a id="grade-student-file" href="#" target="_blank" class="mt-3 hidden-section"></a></div>
                 <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Nota (0-10)</label><input type="number" id="grade-value" min="0" max="10" step="0.1" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></div>
                 <div><label class="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Feedback</label><textarea id="grade-feedback" rows="3" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea></div>
-                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('grade-submission-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 btn-primary text-white px-4 py-3 rounded-xl font-semibold">Guardar</button></div>
+                <div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('grade-submission-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Guardar</button></div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL AVISO -->
-    <div id="add-announcement-modal" class="fixed inset-0 modal-backdrop hidden-section flex items-center justify-center z-50 p-4">
+    <div id="add-announcement-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 fade-in">
             <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-800">Nuevo Aviso</h3><button onclick="closeModal('add-announcement-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
-            <form id="add-announcement-form" class="space-y-4"><input type="text" id="announcement-title" placeholder="Título" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><textarea id="announcement-content" placeholder="Contenido..." required rows="4" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea><div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('add-announcement-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg">Publicar</button></div></form>
+            <form id="add-announcement-form" class="space-y-4"><input type="text" id="announcement-title" placeholder="Título" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><textarea id="announcement-content" placeholder="Contenido..." required rows="4" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea><div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('add-announcement-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-indigo-600 text-white px-4 py-3 rounded-xl font-semibold shadow-lg hover:bg-indigo-700 transition">Publicar</button></div></form>
         </div>
     </div>
 
-    <!-- MODAL MENSAJE -->
-    <div id="compose-modal" class="fixed inset-0 modal-backdrop hidden-section flex items-center justify-center z-50 p-4">
+    <div id="compose-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-8 fade-in">
             <div class="flex justify-between items-center mb-6"><h3 class="text-xl font-bold text-slate-800">Nuevo Mensaje</h3><button onclick="closeModal('compose-modal')" class="text-slate-400 hover:text-slate-700 w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-times"></i></button></div>
-            <form id="compose-form" class="space-y-4"><input type="email" id="compose-to" placeholder="Para: usuario@edubase.es" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><input type="text" id="compose-subject" placeholder="Asunto" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><textarea id="compose-body" placeholder="Mensaje..." required rows="5" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea><div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('compose-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 btn-primary text-white px-4 py-3 rounded-xl font-semibold">Enviar</button></div></form>
+            <form id="compose-form" class="space-y-4"><input type="email" id="compose-to" placeholder="Para: usuario@edubase.es" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><input type="text" id="compose-subject" placeholder="Asunto" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"><textarea id="compose-body" placeholder="Mensaje..." required rows="5" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"></textarea><div class="flex gap-3 pt-2"><button type="button" onclick="closeModal('compose-modal')" class="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition">Cancelar</button><button type="submit" class="flex-1 bg-blue-600 text-white px-4 py-3 rounded-xl font-semibold hover:bg-blue-700 transition">Enviar</button></div></form>
         </div>
     </div>
 
@@ -588,7 +357,7 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        const IMGBB_KEY = 'eac216e6e7c2fe97ee6052a4aad4b804';
+        const IMGBB_KEY = 'OggAHvfsaUE879GvcEYuEDp2v2UPLxEv';
         const GOFILE_KEY = 'cP2Cik2szrubEJwP6kW2Q0cJLb8HH70f';
 
         async function uploadToImgBB(file) {
@@ -600,6 +369,7 @@
             throw new Error(data.error?.message || 'Error al subir imagen');
         }
 
+        // MODIFICADO: Ahora devuelve el enlace directo de descarga
         async function uploadToGoFile(file) {
             const serversRes = await fetch('https://api.gofile.io/servers');
             const serversData = await serversRes.json();
@@ -613,7 +383,10 @@
                 body: formData
             });
             const data = await response.json();
-            if (data.status === 'ok') return data.data.downloadPage;
+            if (data.status === 'ok') {
+                // Usar downloadLink en lugar de downloadPage para descarga directa
+                return data.data.downloadLink || data.data.downloadPage;
+            }
             throw new Error(data.message || 'Error al subir archivo');
         }
 
@@ -681,10 +454,8 @@
             if (el('profile-email-info')) el('profile-email-info').textContent = currentUser.email;
             if (el('profile-role')) el('profile-role').textContent = userData.role === 'profesor' ? 'PROFESOR' : 'ALUMNO';
             if (el('profile-role-info')) el('profile-role-info').textContent = userData.role === 'profesor' ? 'Profesor' : 'Alumno';
-            
             renderAvatar('sidebar-avatar', userData);
             renderAvatar('profile-avatar-inner', userData);
-
             const isProf = userData.role === 'profesor';
             const dashBtn = el('dashboard-create-course-btn');
             const coursesBtn = el('courses-create-course-btn');
@@ -696,10 +467,10 @@
             document.getElementById('login-form').classList.toggle('hidden-section', tab !== 'login');
             document.getElementById('request-form').classList.toggle('hidden-section', tab !== 'request');
             document.getElementById('tab-login').classList.toggle('bg-white', tab === 'login');
-            document.getElementById('tab-login').classList.toggle('shadow-sm', tab === 'login');
+            document.getElementById('tab-login').classList.toggle('shadow', tab === 'login');
             document.getElementById('tab-login').classList.toggle('text-blue-700', tab === 'login');
             document.getElementById('tab-request').classList.toggle('bg-white', tab === 'request');
-            document.getElementById('tab-request').classList.toggle('shadow-sm', tab === 'request');
+            document.getElementById('tab-request').classList.toggle('shadow', tab === 'request');
             document.getElementById('tab-request').classList.toggle('text-blue-700', tab === 'request');
         };
 
@@ -717,7 +488,7 @@
             try { await signInWithEmailAndPassword(auth, email, password); } 
             catch (error) {
                 let msg = "❌ Error.";
-                if (error.code && (error.code.includes('invalid-credential') || error.code.includes('user-not-found') || error.code.includes('wrong-password'))) msg = "❌ Usuario o contraseña incorrectos.";
+                if (error.code && (error.code.includes('invalid-credential') || error.code.includes('user-not-found') || error.code.includes('wrong-password'))) msg = " Usuario o contraseña incorrectos.";
                 else if (error.code === 'auth/network-request-failed') msg = "🌐 Sin conexión.";
                 else msg = "❌ " + (error.message || 'Error desconocido');
                 errorEl.textContent = msg; errorEl.classList.remove('hidden-section');
@@ -757,12 +528,10 @@
             const section = document.getElementById(`section-${sectionId}`);
             if (section) section.classList.remove('hidden-section');
             if (sectionId === 'courses' || sectionId === 'dashboard') loadCourses();
-            
             const titles = { dashboard: ['Inicio', 'Bienvenido a tu espacio educativo'], profile: ['Mi Perfil', 'Gestiona tu información personal'], courses: ['Mis Cursos', 'Todos tus cursos'], 'course-detail': ['Curso', 'Contenido del curso'], inbox: ['Mensajes', 'Tu bandeja de entrada'], chat: ['Chat', 'Conversación en tiempo real'] };
             const t = titles[sectionId] || ['', ''];
             const pt = document.getElementById('page-title'); const ps = document.getElementById('page-subtitle');
             if (pt) pt.textContent = t[0]; if (ps) ps.textContent = t[1];
-            
             document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.remove('bg-white/15', 'text-white'); btn.classList.add('text-blue-100'); });
             const navMap = { dashboard: 0, courses: 1, inbox: 2, chat: 3, profile: 4 };
             const navBtns = document.querySelectorAll('.nav-btn');
@@ -818,13 +587,11 @@
             containers.forEach(c => { if (c) c.innerHTML = ''; });
             let q = userData.role === 'profesor' ? query(collection(db, "courses"), where("teacherId", "==", currentUser.uid)) : query(collection(db, "courses"), where("students", "array-contains", currentUser.email));
             const snapshot = await getDocs(q);
-            const statEl = document.getElementById('stat-courses');
-            if (statEl) statEl.textContent = snapshot.size;
             if (snapshot.empty) { const msg = '<div class="col-span-full text-center py-16 text-slate-400"><i class="fas fa-book-open text-5xl mb-4 opacity-30"></i><p class="font-medium">No hay cursos disponibles</p></div>'; containers.forEach(c => { if (c) c.innerHTML = msg; }); return; }
             const cardsHTML = snapshot.docs.map(d => {
                 const data = d.data();
                 const coverHTML = data.coverImageUrl ? `<div class="course-cover rounded-t-2xl" style="background-image: url('${data.coverImageUrl}')"></div>` : `<div class="course-cover-placeholder rounded-t-2xl"><i class="fas fa-book-open text-white text-5xl opacity-60"></i></div>`;
-                return `<div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden cursor-pointer card-hover" onclick="openCourse('${d.id}')">${coverHTML}<div class="p-6"><h3 class="font-bold text-slate-800 mb-2 line-clamp-2 text-lg">${data.name}${data.center ? '<span class="text-slate-400 font-normal text-sm block mt-1">'+data.center+'</span>' : ''}</h3><div class="flex items-center justify-between mt-4"><span class="text-xs text-slate-500 font-medium">${userData.role === 'profesor' ? '<i class="fas fa-users mr-1"></i>'+(data.students?.length || 0)+' alumnos' : '<i class="fas fa-chalkboard-teacher mr-1"></i>'+(data.teacherName||data.teacherEmail)}</span><i class="fas fa-arrow-right text-blue-500"></i></div></div></div>`;
+                return `<div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden cursor-pointer hover:shadow-lg transition" onclick="openCourse('${d.id}')">${coverHTML}<div class="p-6"><h3 class="font-bold text-slate-800 mb-2 line-clamp-2 text-lg">${data.name}${data.center ? '<span class="text-slate-400 font-normal text-sm block mt-1">'+data.center+'</span>' : ''}</h3><div class="flex items-center justify-between mt-4"><span class="text-xs text-slate-500 font-medium">${userData.role === 'profesor' ? '<i class="fas fa-users mr-1"></i>'+(data.students?.length || 0)+' alumnos' : '<i class="fas fa-chalkboard-teacher mr-1"></i>'+(data.teacherName||data.teacherEmail)}</span><i class="fas fa-arrow-right text-blue-500"></i></div></div></div>`;
             }).join('');
             containers.forEach(c => { if (c) c.innerHTML = cardsHTML; });
         }
@@ -896,7 +663,7 @@
             try {
                 await addDoc(collection(db, "courses", currentCourseId, "announcements"), { title: document.getElementById('announcement-title').value, content: document.getElementById('announcement-content').value, authorName: userData.name, createdAt: serverTimestamp() });
                 e.target.reset(); closeModal('add-announcement-modal'); loadAnnouncements();
-            } catch (error) { alert("❌ Error: " + error.message); }
+            } catch (error) { alert(" Error: " + error.message); }
         });
 
         async function loadAnnouncements() {
@@ -953,7 +720,7 @@
                         const subs = await getDocs(collection(db, "courses", currentCourseId, "units", uid, "activities", aDoc.id, "submissions"));
                         status = `<span class="text-xs text-blue-600 font-medium bg-blue-50 px-2 py-1 rounded-lg"><i class="fas fa-users mr-1"></i>${subs.size} entregas</span>`;
                     }
-                    actHTML += `<div class="activity-item flex items-center gap-3 p-4 rounded-xl border border-slate-200 bg-white"><div class="moodle-icon moodle-icon-activity"><i class="fas fa-tasks"></i></div><div class="flex-1 min-w-0"><p class="font-semibold text-sm text-slate-800">${ad.title}</p><p class="text-xs text-slate-500 mt-1"><i class="fas fa-clock mr-1"></i>${new Date(ad.deadline).toLocaleString()} • ${ad.maxScore} pts</p>${status}</div><div class="flex gap-2 flex-shrink-0">${!isProf?`<button onclick="viewActivityDetail('${uid}','${aDoc.id}')" class="btn-primary text-white px-3 py-1.5 rounded-lg text-sm font-medium">Ver</button>`:''}${isProf?`<button onclick="viewSubmissions('${uid}','${aDoc.id}','${ad.title}')" class="text-blue-600 hover:text-blue-700 w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center"><i class="fas fa-users"></i></button><button onclick="editActivityFn('${uid}','${aDoc.id}')" class="text-yellow-600 hover:text-yellow-700 w-8 h-8 rounded-lg hover:bg-yellow-50 flex items-center justify-center"><i class="fas fa-edit"></i></button><button onclick="deleteDocFn('units/${uid}/activities','${aDoc.id}')" class="text-red-600 hover:text-red-700 w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center"><i class="fas fa-trash"></i></button>`:''}</div></div>`;
+                    actHTML += `<div class="activity-item flex items-center gap-3 p-4 rounded-xl border border-slate-200 bg-white"><div class="moodle-icon moodle-icon-activity"><i class="fas fa-tasks"></i></div><div class="flex-1 min-w-0"><p class="font-semibold text-sm text-slate-800">${ad.title}</p><p class="text-xs text-slate-500 mt-1"><i class="fas fa-clock mr-1"></i>${new Date(ad.deadline).toLocaleString()} • ${ad.maxScore} pts</p>${status}</div><div class="flex gap-2 flex-shrink-0">${!isProf?`<button onclick="viewActivityDetail('${uid}','${aDoc.id}')" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-blue-700 transition">Ver</button>`:''}${isProf?`<button onclick="viewSubmissions('${uid}','${aDoc.id}','${ad.title}')" class="text-blue-600 hover:text-blue-700 w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center"><i class="fas fa-users"></i></button><button onclick="editActivityFn('${uid}','${aDoc.id}')" class="text-yellow-600 hover:text-yellow-700 w-8 h-8 rounded-lg hover:bg-yellow-50 flex items-center justify-center"><i class="fas fa-edit"></i></button><button onclick="deleteDocFn('units/${uid}/activities','${aDoc.id}')" class="text-red-600 hover:text-red-700 w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center"><i class="fas fa-trash"></i></button>`:''}</div></div>`;
                 }
 
                 container.innerHTML += `<div class="moodle-card unit-card rounded-2xl overflow-hidden shadow-sm"><div class="moodle-card-header bg-gradient-to-r from-blue-50 to-indigo-50" onclick="toggleUnit('${uid}')"><div class="moodle-icon moodle-icon-unit"><i class="fas fa-chevron-right" id="unit-icon-${uid}"></i></div><div class="flex-1"><h4 class="font-bold text-slate-800">${uData.title}</h4>${uData.description ? `<p class="text-xs text-slate-500 mt-1 line-clamp-1">${uData.description}</p>` : ''}</div>${isProf?`<div class="flex gap-1" onclick="event.stopPropagation()"><button onclick="openAddResource('${uid}')" class="text-blue-600 hover:text-blue-700 w-8 h-8 rounded-lg hover:bg-blue-100 flex items-center justify-center" title="Añadir recurso"><i class="fas fa-file-alt"></i></button><button onclick="openAddActivity('${uid}')" class="text-pink-600 hover:text-pink-700 w-8 h-8 rounded-lg hover:bg-pink-100 flex items-center justify-center" title="Añadir tarea"><i class="fas fa-tasks"></i></button><button onclick="editUnitFn('${uid}')" class="text-yellow-600 hover:text-yellow-700 w-8 h-8 rounded-lg hover:bg-yellow-100 flex items-center justify-center"><i class="fas fa-edit"></i></button><button onclick="deleteDocFn('units','${uid}')" class="text-red-600 hover:text-red-700 w-8 h-8 rounded-lg hover:bg-red-100 flex items-center justify-center"><i class="fas fa-trash"></i></button></div>`:''}</div><div id="unit-content-${uid}" class="hidden-section bg-white p-6">${uData.description?`<div class="mb-6 p-4 bg-amber-50 rounded-2xl border border-amber-200"><h5 class="font-bold text-sm text-amber-900 mb-2 flex items-center gap-2"><i class="fas fa-bullseye"></i>Objetivos</h5><p class="text-sm text-slate-700 whitespace-pre-wrap">${uData.description}</p></div>`:''}${resHTML?`<div class="mb-6"><h5 class="font-bold text-sm text-slate-700 mb-3 uppercase tracking-wide flex items-center gap-2"><i class="fas fa-book text-blue-600"></i>Apuntes y Recursos</h5><div class="space-y-2">${resHTML}</div></div>`:''}${actHTML?`<div><h5 class="font-bold text-sm text-slate-700 mb-3 uppercase tracking-wide flex items-center gap-2"><i class="fas fa-tasks text-pink-600"></i>Tareas</h5><div class="space-y-2">${actHTML}</div></div>`:''}</div></div>`;
@@ -1013,7 +780,8 @@
             document.getElementById('view-activity-title').textContent = d.title;
             document.getElementById('view-activity-meta').innerHTML = `<i class="fas fa-clock mr-1"></i>${new Date(d.deadline).toLocaleString()} • <span class="font-semibold">${d.maxScore} pts</span>`;
             document.getElementById('view-activity-description').textContent = d.description;
-            document.getElementById('view-activity-file-section').innerHTML = d.url ? `<div class="file-link"><i class="fas fa-file-pdf text-blue-600 text-2xl"></i><a href="${d.url}" target="_blank" class="flex-1"><p class="font-semibold text-blue-700">${d.filename || 'Archivo de la tarea'}</p><p class="text-xs text-slate-500">Clic para descargar</p></a></div>` : '';
+            // MODIFICADO: Enlace directo de descarga
+            document.getElementById('view-activity-file-section').innerHTML = d.url ? `<a href="${d.url}" target="_blank" class="file-link"><i class="fas fa-file-pdf text-blue-600 text-2xl"></i><div class="flex-1"><p class="font-semibold text-blue-700">${d.filename || 'Archivo de la tarea'}</p><p class="text-xs text-slate-500">Clic para abrir/descargar directamente</p></div><i class="fas fa-download text-blue-600"></i></a>` : '';
             
             const mySub = await getDocs(query(collection(db, "courses", currentCourseId, "units", uid, "activities", aid, "submissions"), where("studentId", "==", currentUser.uid)));
             const statusDiv = document.getElementById('view-activity-submission-status');
@@ -1022,7 +790,7 @@
             if (!mySub.empty) {
                 const s = mySub.docs[0].data();
                 statusDiv.className = 'p-5 rounded-2xl bg-green-50 border border-green-200';
-                statusDiv.innerHTML = `<p class="font-bold text-green-800 flex items-center gap-2"><i class="fas fa-check-circle"></i>Tarea entregada</p>${s.comment?`<p class="text-sm mt-2 text-slate-700">${s.comment}</p>`:''}${s.url?`<div class="file-link mt-3 !bg-white"><i class="fas fa-file-pdf text-green-600 text-xl"></i><a href="${s.url}" target="_blank" class="flex-1"><p class="font-semibold text-blue-700">${s.filename || 'Mi entrega'}</p><p class="text-xs text-slate-500">Clic para descargar</p></a></div>`:''}${s.grade!==undefined?`<div class="mt-3 bg-white p-3 rounded-xl border border-green-200"><p class="text-lg font-bold text-green-600">Nota: ${s.grade}/${s.maxScore||10}</p></div>`:''}${s.feedback?`<p class="text-sm mt-3 text-slate-700"><strong class="text-slate-800">Feedback del profesor:</strong> ${s.feedback}</p>`:''}`;
+                statusDiv.innerHTML = `<p class="font-bold text-green-800 flex items-center gap-2"><i class="fas fa-check-circle"></i>Tarea entregada</p>${s.comment?`<p class="text-sm mt-2 text-slate-700">${s.comment}</p>`:''}${s.url?`<a href="${s.url}" target="_blank" class="file-link mt-3 !bg-white"><i class="fas fa-file-pdf text-green-600 text-xl"></i><div class="flex-1"><p class="font-semibold text-blue-700">${s.filename || 'Mi entrega'}</p><p class="text-xs text-slate-500">Clic para abrir/descargar</p></div><i class="fas fa-download text-green-600"></i></a>`:''}${s.grade!==undefined?`<div class="mt-3 bg-white p-3 rounded-xl border border-green-200"><p class="text-lg font-bold text-green-600">Nota: ${s.grade}/${s.maxScore||10}</p></div>`:''}${s.feedback?`<p class="text-sm mt-3 text-slate-700"><strong class="text-slate-800">Feedback del profesor:</strong> ${s.feedback}</p>`:''}`;
                 submitSec.classList.add('hidden-section');
             } else {
                 const isLate = new Date(d.deadline) < new Date();
@@ -1055,7 +823,7 @@
             snap.docs.forEach(d => {
                 const data = d.data();
                 const gradeInfo = data.grade !== undefined ? `<span class="bg-green-100 text-green-800 px-3 py-1 rounded-lg text-sm font-bold">Nota: ${data.grade}/${data.maxScore||10}</span>` : '<span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-lg text-sm font-semibold">Sin calificar</span>';
-                container.innerHTML += `<div class="bg-slate-50 p-5 rounded-2xl border border-slate-200"><div class="flex justify-between flex-wrap gap-3 mb-3"><div><p class="font-bold text-slate-800">${data.studentName}</p><p class="text-xs text-slate-500">${data.studentEmail}</p></div>${gradeInfo}</div>${data.comment?`<p class="text-sm text-slate-700 italic bg-white p-3 rounded-xl border border-slate-100 mb-3">"${data.comment}"</p>`:''}${data.url?`<div class="file-link mb-3"><i class="fas fa-file-pdf text-blue-600 text-xl"></i><a href="${data.url}" target="_blank" class="flex-1"><p class="font-semibold text-blue-700">${data.filename || 'Archivo del alumno'}</p><p class="text-xs text-slate-500">Clic para descargar</p></a></div>`:'<p class="text-xs text-slate-500 mb-3"><i class="fas fa-times-circle mr-1"></i>Sin archivo adjunto</p>'}<div class="flex gap-2"><button onclick="openGradeSubmission('${uid}','${aid}','${d.id}','${data.studentName}','${data.studentEmail}','${(data.comment||'').replace(/'/g,"\\'")}','${data.url||''}','${data.filename||''}','${data.grade||''}','${data.feedback||''}')" class="btn-primary text-white px-4 py-2 rounded-xl text-sm font-semibold flex-1"><i class="fas fa-star mr-1"></i>Calificar</button><button onclick="deleteSubmission('${uid}','${aid}','${d.id}')" class="bg-red-500 text-white px-4 py-2 rounded-xl text-sm font-semibold"><i class="fas fa-trash"></i></button></div></div>`;
+                container.innerHTML += `<div class="bg-slate-50 p-5 rounded-2xl border border-slate-200"><div class="flex justify-between flex-wrap gap-3 mb-3"><div><p class="font-bold text-slate-800">${data.studentName}</p><p class="text-xs text-slate-500">${data.studentEmail}</p></div>${gradeInfo}</div>${data.comment?`<p class="text-sm text-slate-700 italic bg-white p-3 rounded-xl border border-slate-100 mb-3">"${data.comment}"</p>`:''}${data.url?`<a href="${data.url}" target="_blank" class="file-link mb-3"><i class="fas fa-file-pdf text-blue-600 text-xl"></i><div class="flex-1"><p class="font-semibold text-blue-700">${data.filename || 'Archivo del alumno'}</p><p class="text-xs text-slate-500">Clic para abrir/descargar</p></div><i class="fas fa-download text-blue-600"></i></a>`:'<p class="text-xs text-slate-500 mb-3"><i class="fas fa-times-circle mr-1"></i>Sin archivo adjunto</p>'}<div class="flex gap-2"><button onclick="openGradeSubmission('${uid}','${aid}','${d.id}','${data.studentName}','${data.studentEmail}','${(data.comment||'').replace(/'/g,"\\'")}','${data.url||''}','${data.filename||''}','${data.grade||''}','${data.feedback||''}')" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-sm font-semibold flex-1 hover:bg-blue-700 transition"><i class="fas fa-star mr-1"></i>Calificar</button><button onclick="deleteSubmission('${uid}','${aid}','${d.id}')" class="bg-red-500 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-red-600 transition"><i class="fas fa-trash"></i></button></div></div>`;
             });
         };
 
@@ -1067,7 +835,7 @@
             const fl = document.getElementById('grade-student-file');
             if (url) { 
                 fl.href = url; 
-                fl.innerHTML = `<div class="file-link !mt-0"><i class="fas fa-file-pdf text-blue-600 text-xl"></i><span class="flex-1"><p class="font-semibold text-blue-700">${filename || 'Ver entrega'}</p><p class="text-xs text-slate-500">Clic para descargar</p></span></div>`;
+                fl.innerHTML = `<div class="file-link !mt-0"><i class="fas fa-file-pdf text-blue-600 text-xl"></i><div class="flex-1"><p class="font-semibold text-blue-700">${filename || 'Ver entrega'}</p><p class="text-xs text-slate-500">Clic para abrir/descargar</p></div><i class="fas fa-download text-blue-600"></i></div>`;
                 fl.classList.remove('hidden-section'); 
             } else fl.classList.add('hidden-section');
             document.getElementById('grade-value').value = grade; document.getElementById('grade-feedback').value = feedback;
@@ -1107,7 +875,7 @@
                     let html = '', total = 0, count = 0;
                     gs.docs.forEach(g => { const gd = g.data(); total += gd.grade; count++; html += `<div class="flex justify-between text-sm py-2 border-b border-slate-100 last:border-0"><span>${gd.taskTitle||'Eval'}</span><span class="font-bold text-blue-700">${gd.grade}</span></div>`; });
                     const avg = count > 0 ? (total/count).toFixed(1) : '-';
-                    container.innerHTML += `<div class="bg-slate-50 p-5 rounded-2xl border border-slate-200"><div class="flex justify-between mb-3"><p class="font-bold text-slate-800">${em}</p><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">Media: ${avg}</span></div>${count>0?`<div class="bg-white p-3 rounded-xl border border-slate-100 mb-3">${html}</div>`:'<p class="text-sm text-slate-500 mb-3">Sin calificaciones</p>'}<div class="flex gap-2"><input type="text" id="gt-${em}" placeholder="Nombre evaluación" class="px-3 py-2 border border-slate-200 rounded-lg flex-1 text-sm bg-white"><input type="number" id="gv-${em}" placeholder="Nota" min="0" max="10" step="0.1" class="px-3 py-2 border border-slate-200 rounded-lg w-24 text-sm bg-white"><button onclick="saveGrade('${em}')" class="btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">Guardar</button></div></div>`;
+                    container.innerHTML += `<div class="bg-slate-50 p-5 rounded-2xl border border-slate-200"><div class="flex justify-between mb-3"><p class="font-bold text-slate-800">${em}</p><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">Media: ${avg}</span></div>${count>0?`<div class="bg-white p-3 rounded-xl border border-slate-100 mb-3">${html}</div>`:'<p class="text-sm text-slate-500 mb-3">Sin calificaciones</p>'}<div class="flex gap-2"><input type="text" id="gt-${em}" placeholder="Nombre evaluación" class="px-3 py-2 border border-slate-200 rounded-lg flex-1 text-sm bg-white"><input type="number" id="gv-${em}" placeholder="Nota" min="0" max="10" step="0.1" class="px-3 py-2 border border-slate-200 rounded-lg w-24 text-sm bg-white"><button onclick="saveGrade('${em}')" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition">Guardar</button></div></div>`;
                 }
             } else {
                 const container = document.getElementById('student-grades-list'); container.innerHTML = '';
