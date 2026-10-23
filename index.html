@@ -8,51 +8,55 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f5f5f5; }
+        body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; }
         .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .hidden-section { display: none !important; }
-        .tab-active { color: #ea580c; border-bottom: 2px solid #ea580c; }
-        .moodle-card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+        .tab-active { color: #1e40af; border-bottom: 2px solid #1e40af; }
+        .moodle-card { background: white; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
         .moodle-card-header { padding: 12px 16px; cursor: pointer; display: flex; align-items: center; gap: 12px; user-select: none; }
         .moodle-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-        .moodle-icon-unit { background: #fef3c7; color: #d97706; border: 2px solid #f59e0b; }
-        .moodle-icon-resource { background: #dbeafe; color: #2563eb; }
-        .moodle-icon-activity { background: #fce7f3; color: #db2777; }
+        .moodle-icon-unit { background: #dbeafe; color: #1e40af; border: 2px solid #3b82f6; }
+        .moodle-icon-resource { background: #e0e7ff; color: #3730a3; }
+        .moodle-icon-activity { background: #fce7f3; color: #be185d; }
         .resource-item, .activity-item { transition: all 0.2s; }
-        .resource-item:hover { background-color: #f9fafb; transform: translateX(4px); }
+        .resource-item:hover { background-color: #f8fafc; transform: translateX(4px); }
         .activity-item:hover { background-color: #eff6ff; transform: translateX(4px); }
-        .course-cover { height: 140px; background-size: cover; background-position: center; background-color: #f97316; }
-        .course-cover-placeholder { height: 140px; background: linear-gradient(135deg, #fb923c 0%, #f59e0b 100%); display: flex; align-items: center; justify-content: center; }
+        .course-cover { height: 140px; background-size: cover; background-position: center; }
+        .course-cover-placeholder { height: 140px; background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); display: flex; align-items: center; justify-content: center; }
+        .upload-btn { background: #e0f2fe; color: #0369a1; border: 2px dashed #7dd3fc; }
+        .upload-btn:hover { background: #bae6fd; }
+        .upload-btn.uploading { background: #fef3c7; color: #92400e; border-color: #fbbf24; cursor: wait; }
+        .preview-img { max-width: 100%; max-height: 150px; border-radius: 8px; margin-top: 8px; }
     </style>
 </head>
 <body class="text-gray-800 h-screen flex flex-col overflow-hidden">
 
     <!-- AUTENTICACIÓN -->
-    <div id="auth-section" class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-orange-500 to-amber-600">
+    <div id="auth-section" class="flex-1 flex items-center justify-center p-4 bg-gradient-to-br from-blue-600 to-indigo-700">
         <div class="glass-panel p-8 rounded-2xl shadow-2xl w-full max-w-md fade-in">
             <div class="text-center mb-6">
-                <h1 class="text-3xl font-bold text-orange-600"><i class="fas fa-graduation-cap mr-2"></i>EduBase</h1>
+                <h1 class="text-3xl font-bold text-blue-700"><i class="fas fa-graduation-cap mr-2"></i>EduBase</h1>
                 <p class="text-gray-600 mt-2">Aulas Virtuales</p>
             </div>
             <div class="flex mb-6 bg-gray-100 rounded-lg p-1">
-                <button onclick="showAuthTab('login')" id="tab-login" class="flex-1 py-2 rounded-md bg-white shadow text-orange-600 font-semibold transition">Iniciar Sesión</button>
-                <button onclick="showAuthTab('request')" id="tab-request" class="flex-1 py-2 rounded-md text-gray-600 hover:text-orange-600 transition">Solicitar Acceso</button>
+                <button onclick="showAuthTab('login')" id="tab-login" class="flex-1 py-2 rounded-md bg-white shadow text-blue-700 font-semibold transition">Iniciar Sesión</button>
+                <button onclick="showAuthTab('request')" id="tab-request" class="flex-1 py-2 rounded-md text-gray-600 hover:text-blue-700 transition">Solicitar Acceso</button>
             </div>
             <form id="login-form" class="space-y-4">
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Correo</label><input type="email" id="login-email" required placeholder="usuario@edubase.es" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label><input type="password" id="login-password" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></div>
-                <button type="submit" id="login-btn" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2.5 rounded-lg transition">Ingresar</button>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Correo</label><input type="email" id="login-email" required placeholder="usuario@edubase.es" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label><input type="password" id="login-password" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></div>
+                <button type="submit" id="login-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-lg transition">Ingresar</button>
                 <p id="login-error" class="text-red-600 text-sm text-center bg-red-50 p-2 rounded-lg hidden-section"></p>
             </form>
             <form action="https://formspree.io/f/meaowyvj" method="POST" id="request-form" class="space-y-4 hidden-section">
                 <input type="hidden" name="_subject" value="Nueva Solicitud de Acceso EduBase">
                 <div class="bg-blue-50 border-l-4 border-blue-500 p-3 text-sm text-blue-700"><i class="fas fa-info-circle mr-1"></i> Solo correos <strong>@edubase.es</strong></div>
-                <input type="text" name="nombre" required placeholder="Nombre completo" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
-                <input type="email" name="email" required placeholder="tucorreo@edubase.es" pattern="^[a-zA-Z0-9._%+-]+@edubase\.es$" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
-                <select name="rol" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"><option value="Alumno">Soy Alumno</option><option value="Profesor">Soy Profesor</option></select>
-                <textarea name="mensaje" required rows="3" placeholder="Motivo..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea>
+                <input type="text" name="nombre" required placeholder="Nombre completo" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="email" name="email" required placeholder="tucorreo@edubase.es" pattern="^[a-zA-Z0-9._%+-]+@edubase\.es$" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                <select name="rol" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"><option value="Alumno">Soy Alumno</option><option value="Profesor">Soy Profesor</option></select>
+                <textarea name="mensaje" required rows="3" placeholder="Motivo..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                 <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2.5 rounded-lg transition">Enviar Solicitud</button>
             </form>
         </div>
@@ -62,18 +66,18 @@
     <div id="app-section" class="hidden-section flex-1 flex overflow-hidden">
         <div class="absolute top-0 left-0 right-0 bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div class="flex items-center gap-6">
-                <h1 class="text-orange-600 font-bold text-lg"><i class="fas fa-graduation-cap mr-2"></i>aulas virtuales</h1>
+                <h1 class="text-blue-700 font-bold text-lg"><i class="fas fa-graduation-cap mr-2"></i>aulas virtuales</h1>
                 <nav class="flex gap-4 text-sm">
-                    <button onclick="showSection('dashboard')" class="text-gray-600 hover:text-orange-600 font-medium">página principal</button>
-                    <button onclick="showSection('profile')" class="text-gray-600 hover:text-orange-600 font-medium">área personal</button>
-                    <button onclick="showSection('courses')" class="text-gray-600 hover:text-orange-600 font-medium">mis cursos</button>
+                    <button onclick="showSection('dashboard')" class="text-gray-600 hover:text-blue-700 font-medium">página principal</button>
+                    <button onclick="showSection('profile')" class="text-gray-600 hover:text-blue-700 font-medium">área personal</button>
+                    <button onclick="showSection('courses')" class="text-gray-600 hover:text-blue-700 font-medium">mis cursos</button>
                 </nav>
             </div>
             <div class="flex items-center gap-4">
-                <button onclick="showSection('inbox')" class="relative text-gray-600 hover:text-orange-600"><i class="fas fa-envelope text-lg"></i><span id="inbox-badge-top" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden-section">0</span></button>
-                <button onclick="showSection('chat')" class="text-gray-600 hover:text-orange-600"><i class="fas fa-comments text-lg"></i></button>
+                <button onclick="showSection('inbox')" class="relative text-gray-600 hover:text-blue-700"><i class="fas fa-envelope text-lg"></i><span id="inbox-badge-top" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden-section">0</span></button>
+                <button onclick="showSection('chat')" class="text-gray-600 hover:text-blue-700"><i class="fas fa-comments text-lg"></i></button>
                 <div class="flex items-center gap-2 cursor-pointer" onclick="showSection('profile')">
-                    <div id="topbar-avatar-container" class="w-8 h-8 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-sm overflow-hidden"><span id="user-avatar">U</span></div>
+                    <div id="topbar-avatar-container" class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm overflow-hidden"><span id="user-avatar">U</span></div>
                     <span id="user-display-name-top" class="text-sm font-medium text-gray-700">Usuario</span>
                 </div>
                 <button onclick="logout()" class="text-gray-500 hover:text-red-600" title="Salir"><i class="fas fa-sign-out-alt"></i></button>
@@ -81,68 +85,54 @@
         </div>
 
         <main class="flex-1 overflow-y-auto bg-gray-50 pt-16">
-            <!-- DASHBOARD -->
             <div id="section-dashboard" class="app-section fade-in p-8">
                 <div class="max-w-6xl mx-auto">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold text-gray-800">Mis cursos</h2>
-                        <button id="dashboard-create-course-btn" onclick="openModal('create-course-modal')" class="hidden-section bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700"><i class="fas fa-plus mr-2"></i>Crear Curso</button>
+                        <button id="dashboard-create-course-btn" onclick="openModal('create-course-modal')" class="hidden-section bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"><i class="fas fa-plus mr-2"></i>Crear Curso</button>
                     </div>
                     <div id="courses-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </div>
             </div>
 
-            <!-- PERFIL -->
             <div id="section-profile" class="app-section hidden-section fade-in p-8">
-    <div class="max-w-4xl mx-auto">
-        <h2 class="text-2xl font-bold mb-6">Área Personal</h2>
-        <div class="bg-white rounded-lg shadow p-6">
-            <div class="flex items-center gap-6 mb-6 flex-wrap">
-                <div id="profile-avatar-container" class="w-24 h-24 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-3xl overflow-hidden flex-shrink-0">
-                    <span id="profile-avatar">U</span>
-                </div>
-                <div class="flex-1 min-w-[200px]">
-                    <h3 id="profile-name" class="text-xl font-bold"></h3>
-                    <p id="profile-email" class="text-gray-600"></p>
-                    <span id="profile-role" class="inline-block mt-2 px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm font-semibold"></span>
-                </div>
-                <button onclick="openEditProfileModal()" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700">
-                    <i class="fas fa-edit mr-2"></i>Editar Perfil
-                </button>
-            </div>
-            <div class="border-t pt-6">
-                <h4 class="font-semibold mb-3">Información</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div class="bg-gray-50 p-3 rounded-lg">
-                        <p class="text-gray-500 text-xs">Correo electrónico</p>
-                        <p id="profile-email-info" class="font-medium"></p>
-                    </div>
-                    <div class="bg-gray-50 p-3 rounded-lg">
-                        <p class="text-gray-500 text-xs">Rol</p>
-                        <p id="profile-role-info" class="font-medium"></p>
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-bold mb-6">Área Personal</h2>
+                    <div class="bg-white rounded-lg shadow p-6">
+                        <div class="flex items-center gap-6 mb-6 flex-wrap">
+                            <div id="profile-avatar-container" class="w-24 h-24 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-3xl overflow-hidden flex-shrink-0"><span id="profile-avatar">U</span></div>
+                            <div class="flex-1 min-w-[200px]">
+                                <h3 id="profile-name" class="text-xl font-bold"></h3>
+                                <p id="profile-email" class="text-gray-600"></p>
+                                <span id="profile-role" class="inline-block mt-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold"></span>
+                            </div>
+                            <button onclick="openEditProfileModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"><i class="fas fa-edit mr-2"></i>Editar Perfil</button>
+                        </div>
+                        <div class="border-t pt-6">
+                            <h4 class="font-semibold mb-3">Información</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div class="bg-gray-50 p-3 rounded-lg"><p class="text-gray-500 text-xs">Correo electrónico</p><p id="profile-email-info" class="font-medium"></p></div>
+                                <div class="bg-gray-50 p-3 rounded-lg"><p class="text-gray-500 text-xs">Rol</p><p id="profile-role-info" class="font-medium"></p></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
-            <!-- CURSOS -->
             <div id="section-courses" class="app-section hidden-section fade-in p-8">
                 <div class="max-w-6xl mx-auto">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-2xl font-bold">Mis Cursos</h2>
-                        <button id="courses-create-course-btn" onclick="openModal('create-course-modal')" class="hidden-section bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700"><i class="fas fa-plus mr-2"></i>Crear Curso</button>
+                        <button id="courses-create-course-btn" onclick="openModal('create-course-modal')" class="hidden-section bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"><i class="fas fa-plus mr-2"></i>Crear Curso</button>
                     </div>
                     <div id="courses-list-page" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
                 </div>
             </div>
 
-            <!-- DETALLE CURSO -->
             <div id="section-course-detail" class="app-section hidden-section fade-in">
                 <div class="bg-white border-b border-gray-200 px-8 py-4">
                     <div class="max-w-5xl mx-auto">
-                        <button onclick="showSection('courses')" class="text-orange-600 hover:text-orange-800 mb-2 text-sm"><i class="fas fa-arrow-left mr-1"></i>Volver a mis cursos</button>
+                        <button onclick="showSection('courses')" class="text-blue-600 hover:text-blue-800 mb-2 text-sm"><i class="fas fa-arrow-left mr-1"></i>Volver a mis cursos</button>
                         <h1 id="course-detail-title" class="text-2xl font-bold text-gray-800"></h1>
                         <p id="course-detail-teacher" class="text-sm text-gray-600 mt-1"></p>
                         <div id="course-actions-professor" class="hidden-section flex gap-2 mt-3">
@@ -153,15 +143,15 @@
                 <div class="bg-white border-b border-gray-200">
                     <div class="max-w-5xl mx-auto flex gap-6 px-8">
                         <button onclick="showCourseTab('course', this)" class="course-tab py-3 text-sm font-medium tab-active">curso</button>
-                        <button onclick="showCourseTab('participants', this)" class="course-tab py-3 text-sm font-medium text-gray-600 hover:text-orange-600">participantes</button>
-                        <button onclick="showCourseTab('grades', this)" class="course-tab py-3 text-sm font-medium text-gray-600 hover:text-orange-600">calificaciones</button>
+                        <button onclick="showCourseTab('participants', this)" class="course-tab py-3 text-sm font-medium text-gray-600 hover:text-blue-700">participantes</button>
+                        <button onclick="showCourseTab('grades', this)" class="course-tab py-3 text-sm font-medium text-gray-600 hover:text-blue-700">calificaciones</button>
                     </div>
                 </div>
                 <div class="max-w-5xl mx-auto p-8">
                     <div id="tab-course" class="course-tab-content">
                         <div id="professor-course-actions" class="hidden-section mb-6 flex gap-3">
-                            <button onclick="openModal('add-unit-modal')" class="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 text-sm"><i class="fas fa-plus mr-2"></i>Añadir Unidad</button>
-                            <button onclick="openModal('add-announcement-modal')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm"><i class="fas fa-bullhorn mr-2"></i>Añadir Aviso</button>
+                            <button onclick="openModal('add-unit-modal')" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm"><i class="fas fa-plus mr-2"></i>Añadir Unidad</button>
+                            <button onclick="openModal('add-announcement-modal')" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 text-sm"><i class="fas fa-bullhorn mr-2"></i>Añadir Aviso</button>
                         </div>
                         <div id="announcements-section" class="mb-6"></div>
                         <div id="units-list" class="space-y-3"></div>
@@ -182,11 +172,10 @@
                 </div>
             </div>
 
-            <!-- MENSAJES -->
             <div id="section-inbox" class="app-section hidden-section fade-in p-8">
                 <div class="max-w-5xl mx-auto"><h2 class="text-2xl font-bold mb-6">Mensajes</h2>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[calc(100vh-250px)]">
-                        <div class="lg:col-span-1 bg-white rounded-lg shadow flex flex-col"><div class="p-4 border-b"><button onclick="openModal('compose-modal')" class="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700"><i class="fas fa-pen mr-2"></i>Nuevo Mensaje</button></div><div id="inbox-list" class="flex-1 overflow-y-auto p-2 space-y-2"></div></div>
+                        <div class="lg:col-span-1 bg-white rounded-lg shadow flex flex-col"><div class="p-4 border-b"><button onclick="openModal('compose-modal')" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"><i class="fas fa-pen mr-2"></i>Nuevo Mensaje</button></div><div id="inbox-list" class="flex-1 overflow-y-auto p-2 space-y-2"></div></div>
                         <div class="lg:col-span-2 bg-white rounded-lg shadow p-6 flex flex-col">
                             <div id="inbox-empty-state" class="flex-1 flex items-center justify-center text-gray-400"><div class="text-center"><i class="fas fa-inbox text-4xl mb-2"></i><p>Selecciona un mensaje</p></div></div>
                             <div id="inbox-message-view" class="hidden-section flex-1 flex flex-col"><div class="border-b pb-4 mb-4"><h3 id="msg-subject" class="text-xl font-bold"></h3><p class="text-sm text-gray-500 mt-1">De: <span id="msg-from" class="font-semibold"></span></p><p class="text-xs text-gray-400" id="msg-date"></p></div><p id="msg-body" class="text-gray-700 flex-1 whitespace-pre-wrap"></p></div>
@@ -195,111 +184,181 @@
                 </div>
             </div>
 
-            <!-- CHAT -->
             <div id="section-chat" class="app-section hidden-section fade-in p-8">
                 <div class="max-w-4xl mx-auto h-[calc(100vh-200px)] flex flex-col">
                     <h2 class="text-2xl font-bold mb-4">Chat General</h2>
                     <div class="flex-1 bg-white rounded-lg shadow flex flex-col overflow-hidden">
                         <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50"></div>
-                        <form id="chat-form" class="p-4 border-t bg-white flex gap-2"><input type="text" id="chat-input" placeholder="Escribe un mensaje..." required class="flex-1 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"><button type="submit" class="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700"><i class="fas fa-paper-plane"></i></button></form>
+                        <form id="chat-form" class="p-4 border-t bg-white flex gap-2"><input type="text" id="chat-input" placeholder="Escribe un mensaje..." required class="flex-1 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"><button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"><i class="fas fa-paper-plane"></i></button></form>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- MODALES -->
-    <!-- Editar Perfil -->
+    <!-- MODAL EDITAR PERFIL -->
     <div id="edit-profile-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 fade-in">
             <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold">Editar Perfil</h3><button onclick="closeModal('edit-profile-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button></div>
             <form id="edit-profile-form" class="space-y-4">
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Nombre para mostrar</label><input type="text" id="edit-profile-name" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">URL de foto de perfil</label><input type="url" id="edit-profile-photo" placeholder="https://ejemplo.com/foto.jpg" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"><p class="text-xs text-gray-500 mt-1">Pega el enlace de una imagen (Google Drive, Imgur, etc.)</p></div>
-                <div class="flex justify-end gap-3"><button type="button" onclick="closeModal('edit-profile-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Guardar</button></div>
+                <div><label class="block text-sm font-medium text-gray-700 mb-1">Nombre para mostrar</label><input type="text" id="edit-profile-name" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Foto de perfil</label>
+                    <div class="flex gap-2">
+                        <input type="url" id="edit-profile-photo" placeholder="https://..." class="flex-1 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="upload-btn px-3 py-2 rounded-lg cursor-pointer text-sm font-medium flex items-center gap-1">
+                            <i class="fas fa-cloud-upload-alt"></i> Subir
+                            <input type="file" id="edit-profile-file" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(this)">
+                        </label>
+                    </div>
+                    <div id="profile-photo-preview"></div>
+                    <p class="text-xs text-gray-500 mt-1">Sube una imagen o pega una URL</p>
+                </div>
+                <div class="flex justify-end gap-3"><button type="button" onclick="closeModal('edit-profile-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Guardar</button></div>
             </form>
         </div>
     </div>
 
-    <!-- Crear Curso -->
+    <!-- MODAL CREAR CURSO -->
     <div id="create-course-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold">Crear Nuevo Curso</h3><button onclick="closeModal('create-course-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button></div>
             <form id="create-course-form" class="space-y-4">
-                <input type="text" id="course-name" placeholder="Nombre del curso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
-                <input type="text" id="course-center" placeholder="Centro educativo" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
-                <textarea id="course-desc" placeholder="Descripción breve" rows="2" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">URL imagen de portada (opcional)</label><input type="url" id="course-cover-url" placeholder="https://..." class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></div>
-                <div class="flex justify-end gap-3"><button type="button" onclick="closeModal('create-course-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Crear</button></div>
+                <input type="text" id="course-name" placeholder="Nombre del curso" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" id="course-center" placeholder="Centro educativo" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea id="course-desc" placeholder="Descripción breve" rows="2" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Imagen de portada</label>
+                    <div class="flex gap-2">
+                        <input type="url" id="course-cover-url" placeholder="https://..." class="flex-1 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="upload-btn px-3 py-2 rounded-lg cursor-pointer text-sm font-medium flex items-center gap-1">
+                            <i class="fas fa-cloud-upload-alt"></i> Subir
+                            <input type="file" id="course-cover-file" accept="image/*" class="hidden" onchange="handleCoverUpload(this)">
+                        </label>
+                    </div>
+                    <div id="cover-preview"></div>
+                </div>
+                <div class="flex justify-end gap-3"><button type="button" onclick="closeModal('create-course-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Crear</button></div>
             </form>
         </div>
     </div>
 
-    <!-- Añadir Alumno -->
+    <!-- MODAL AÑADIR ALUMNO -->
     <div id="add-student-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold">Añadir Alumno</h3><button onclick="closeModal('add-student-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button></div>
             <form id="add-student-form" class="space-y-4">
-                <div id="select-course-container"><select id="select-course" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"><option value="">Selecciona un curso...</option></select></div>
-                <input type="email" id="student-email" placeholder="alumno@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500">
+                <div id="select-course-container"><select id="select-course" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"><option value="">Selecciona un curso...</option></select></div>
+                <input type="email" id="student-email" placeholder="alumno@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
                 <div class="flex justify-end gap-3"><button type="button" onclick="closeModal('add-student-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Añadir</button></div>
             </form>
         </div>
     </div>
 
-    <!-- Unidad -->
+    <!-- MODAL UNIDAD -->
     <div id="add-unit-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4"><h3 id="unit-modal-title" class="text-lg font-bold">Añadir Unidad</h3><button onclick="closeModal('add-unit-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button></div>
-            <form id="add-unit-form" class="space-y-4"><input type="hidden" id="unit-edit-id"><input type="text" id="unit-title" placeholder="Título (ej: UT0)" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"><textarea id="unit-description" placeholder="Descripción / Objetivos..." rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea><div class="flex justify-end gap-3"><button type="button" onclick="closeModal('add-unit-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Guardar</button></div></form>
+            <form id="add-unit-form" class="space-y-4"><input type="hidden" id="unit-edit-id"><input type="text" id="unit-title" placeholder="Título (ej: UT0)" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"><textarea id="unit-description" placeholder="Descripción / Objetivos..." rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></textarea><div class="flex justify-end gap-3"><button type="button" onclick="closeModal('add-unit-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Guardar</button></div></form>
         </div>
     </div>
 
-    <!-- Recurso -->
+    <!-- MODAL RECURSO -->
     <div id="add-resource-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4"><h3 id="resource-modal-title" class="text-lg font-bold">Añadir Recurso</h3><button onclick="closeModal('add-resource-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button></div>
-            <form id="add-resource-form" class="space-y-4"><input type="hidden" id="resource-unit-id"><input type="hidden" id="resource-edit-id"><input type="text" id="resource-title" placeholder="Título" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"><textarea id="resource-content" placeholder="Contenido..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea><input type="url" id="resource-url" placeholder="Enlace al recurso (Drive, web...)" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"><div class="flex justify-end gap-3"><button type="button" onclick="closeModal('add-resource-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Guardar</button></div></form>
+            <form id="add-resource-form" class="space-y-4">
+                <input type="hidden" id="resource-unit-id"><input type="hidden" id="resource-edit-id">
+                <input type="text" id="resource-title" placeholder="Título" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea id="resource-content" placeholder="Contenido..." rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Enlace al recurso</label>
+                    <div class="flex gap-2">
+                        <input type="url" id="resource-url" placeholder="https://..." class="flex-1 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="upload-btn px-3 py-2 rounded-lg cursor-pointer text-sm font-medium flex items-center gap-1">
+                            <i class="fas fa-cloud-upload-alt"></i> Subir
+                            <input type="file" id="resource-file" class="hidden" onchange="handleResourceUpload(this)">
+                        </label>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Sube un archivo (GoFile) o pega una URL</p>
+                </div>
+                <div class="flex justify-end gap-3"><button type="button" onclick="closeModal('add-resource-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Guardar</button></div>
+            </form>
         </div>
     </div>
 
-    <!-- Tarea -->
+    <!-- MODAL TAREA -->
     <div id="add-activity-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in">
             <div class="flex justify-between items-center mb-4"><h3 id="activity-modal-title" class="text-lg font-bold">Añadir Tarea</h3><button onclick="closeModal('add-activity-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button></div>
-            <form id="add-activity-form" class="space-y-4"><input type="hidden" id="activity-unit-id"><input type="hidden" id="activity-edit-id"><input type="text" id="activity-title" placeholder="Título" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"><textarea id="activity-description" placeholder="Enunciado..." required rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea><div class="grid grid-cols-2 gap-3"><div><label class="block text-sm font-medium text-gray-700 mb-1">Fecha límite</label><input type="datetime-local" id="activity-deadline" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Puntuación</label><input type="number" id="activity-max-score" value="10" min="1" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></div></div><input type="url" id="activity-url" placeholder="Enlace al archivo de la tarea" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"><div class="flex justify-end gap-3"><button type="button" onclick="closeModal('add-activity-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700">Guardar</button></div></form>
+            <form id="add-activity-form" class="space-y-4">
+                <input type="hidden" id="activity-unit-id"><input type="hidden" id="activity-edit-id">
+                <input type="text" id="activity-title" placeholder="Título" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                <textarea id="activity-description" placeholder="Enunciado..." required rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Fecha límite</label><input type="datetime-local" id="activity-deadline" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></div>
+                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Puntuación</label><input type="number" id="activity-max-score" value="10" min="1" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Archivo de la tarea</label>
+                    <div class="flex gap-2">
+                        <input type="url" id="activity-url" placeholder="https://..." class="flex-1 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="upload-btn px-3 py-2 rounded-lg cursor-pointer text-sm font-medium flex items-center gap-1">
+                            <i class="fas fa-cloud-upload-alt"></i> Subir
+                            <input type="file" id="activity-file" class="hidden" onchange="handleActivityUpload(this)">
+                        </label>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3"><button type="button" onclick="closeModal('add-activity-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700">Guardar</button></div>
+            </form>
         </div>
     </div>
 
-    <!-- Ver Tarea Alumno -->
+    <!-- MODAL VER TAREA ALUMNO -->
     <div id="view-activity-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 fade-in max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-start mb-4"><div><h3 id="view-activity-title" class="text-2xl font-bold text-gray-900"></h3><p id="view-activity-meta" class="text-sm text-gray-500 mt-1"></p></div><button onclick="closeModal('view-activity-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button></div>
             <div class="border-t pt-4"><h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-clipboard-list mr-2"></i>Enunciado:</h4><div id="view-activity-description" class="text-gray-700 whitespace-pre-wrap bg-gray-50 p-4 rounded-lg"></div></div>
             <div id="view-activity-file-section" class="mt-4"></div>
             <div id="view-activity-submission-status" class="mt-4 p-4 rounded-lg"></div>
-            <div id="view-activity-submit-section" class="mt-4 hidden-section"><h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-upload mr-2"></i>Entregar:</h4><form id="view-activity-submit-form" class="space-y-3"><textarea id="view-activity-comment" placeholder="Comentario..." rows="2" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea><input type="url" id="view-activity-url" placeholder="Enlace a tu entrega (Drive...)" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"><button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"><i class="fas fa-upload mr-2"></i>Entregar</button></form></div>
+            <div id="view-activity-submit-section" class="mt-4 hidden-section">
+                <h4 class="font-semibold text-gray-700 mb-2"><i class="fas fa-upload mr-2"></i>Entregar:</h4>
+                <form id="view-activity-submit-form" class="space-y-3">
+                    <textarea id="view-activity-comment" placeholder="Comentario..." rows="2" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Archivo de entrega</label>
+                        <div class="flex gap-2">
+                            <input type="url" id="view-activity-url" placeholder="https://..." class="flex-1 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                            <label class="upload-btn px-3 py-2 rounded-lg cursor-pointer text-sm font-medium flex items-center gap-1">
+                                <i class="fas fa-cloud-upload-alt"></i> Subir
+                                <input type="file" id="view-activity-file" class="hidden" onchange="handleSubmissionUpload(this)">
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"><i class="fas fa-upload mr-2"></i>Entregar</button>
+                </form>
+            </div>
         </div>
     </div>
 
-    <!-- Entregas Profe -->
+    <!-- MODAL ENTREGAS -->
     <div id="submissions-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-3xl p-6 fade-in max-h-[90vh] overflow-y-auto"><div class="flex justify-between items-center mb-4"><h3 id="submissions-activity-title" class="text-xl font-bold"></h3><button onclick="closeModal('submissions-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button></div><div id="submissions-list" class="space-y-3"></div></div>
     </div>
 
-    <!-- Calificar -->
+    <!-- MODAL CALIFICAR -->
     <div id="grade-submission-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold">Calificar</h3><button onclick="closeModal('grade-submission-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button></div><form id="grade-submission-form" class="space-y-4"><input type="hidden" id="grade-activity-id"><input type="hidden" id="grade-submission-id"><div class="bg-gray-50 p-4 rounded-lg"><p class="font-semibold" id="grade-student-name"></p><p class="text-sm text-gray-600" id="grade-student-email"></p><p class="text-sm text-gray-600 mt-2 italic" id="grade-student-comment"></p><a id="grade-student-file" href="#" target="_blank" class="text-blue-600 text-sm hover:underline mt-2 inline-block hidden-section"><i class="fas fa-external-link-alt mr-1"></i>Ver entrega</a></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Nota (0-10)</label><input type="number" id="grade-value" min="0" max="10" step="0.1" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Feedback</label><textarea id="grade-feedback" rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea></div><div class="flex justify-end gap-3"><button type="button" onclick="closeModal('grade-submission-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Guardar</button></div></form></div>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold">Calificar</h3><button onclick="closeModal('grade-submission-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button></div><form id="grade-submission-form" class="space-y-4"><input type="hidden" id="grade-activity-id"><input type="hidden" id="grade-submission-id"><div class="bg-gray-50 p-4 rounded-lg"><p class="font-semibold" id="grade-student-name"></p><p class="text-sm text-gray-600" id="grade-student-email"></p><p class="text-sm text-gray-600 mt-2 italic" id="grade-student-comment"></p><a id="grade-student-file" href="#" target="_blank" class="text-blue-600 text-sm hover:underline mt-2 inline-block hidden-section"><i class="fas fa-external-link-alt mr-1"></i>Ver entrega</a></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Nota (0-10)</label><input type="number" id="grade-value" min="0" max="10" step="0.1" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></div><div><label class="block text-sm font-medium text-gray-700 mb-1">Feedback</label><textarea id="grade-feedback" rows="3" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></textarea></div><div class="flex justify-end gap-3"><button type="button" onclick="closeModal('grade-submission-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Guardar</button></div></form></div>
     </div>
 
-    <!-- Aviso -->
+    <!-- MODAL AVISO -->
     <div id="add-announcement-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold">Nuevo Aviso</h3><button onclick="closeModal('add-announcement-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button></div><form id="add-announcement-form" class="space-y-4"><input type="text" id="announcement-title" placeholder="Título" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"><textarea id="announcement-content" placeholder="Contenido..." required rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea><div class="flex justify-end gap-3"><button type="button" onclick="closeModal('add-announcement-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Publicar</button></div></form></div>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold">Nuevo Aviso</h3><button onclick="closeModal('add-announcement-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button></div><form id="add-announcement-form" class="space-y-4"><input type="text" id="announcement-title" placeholder="Título" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"><textarea id="announcement-content" placeholder="Contenido..." required rows="4" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></textarea><div class="flex justify-end gap-3"><button type="button" onclick="closeModal('add-announcement-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Publicar</button></div></form></div>
     </div>
 
-    <!-- Mensaje -->
+    <!-- MODAL MENSAJE -->
     <div id="compose-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden-section flex items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold">Nuevo Mensaje</h3><button onclick="closeModal('compose-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button></div><form id="compose-form" class="space-y-4"><input type="email" id="compose-to" placeholder="Para: usuario@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"><input type="text" id="compose-subject" placeholder="Asunto" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"><textarea id="compose-body" placeholder="Mensaje..." required rows="5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-orange-500"></textarea><div class="flex justify-end gap-3"><button type="button" onclick="closeModal('compose-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700">Enviar</button></div></form></div>
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 fade-in"><div class="flex justify-between items-center mb-4"><h3 class="text-lg font-bold">Nuevo Mensaje</h3><button onclick="closeModal('compose-modal')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-times text-xl"></i></button></div><form id="compose-form" class="space-y-4"><input type="email" id="compose-to" placeholder="Para: usuario@edubase.es" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"><input type="text" id="compose-subject" placeholder="Asunto" required class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"><textarea id="compose-body" placeholder="Mensaje..." required rows="5" class="w-full px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></textarea><div class="flex justify-end gap-3"><button type="button" onclick="closeModal('compose-modal')" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg">Cancelar</button><button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Enviar</button></div></form></div>
     </div>
 
     <script type="module">
@@ -321,6 +380,84 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // ============ APIs DE SUBIDA ============
+        const IMGBB_KEY = 'eac216e6e7c2fe97ee6052a4aad4b804';
+        const GOFILE_KEY = 'cP2Cik2szrubEJwP6kW2Q0cJLb8HH70f';
+
+        // Subir imagen a ImgBB (devuelve URL directa)
+        async function uploadToImgBB(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+            const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            if (data.success) return data.data.url;
+            throw new Error(data.error?.message || 'Error al subir imagen');
+        }
+
+        // Subir archivo a GoFile (devuelve enlace de descarga)
+        async function uploadToGoFile(file) {
+            // 1. Obtener servidor
+            const serversRes = await fetch('https://api.gofile.io/servers');
+            const serversData = await serversRes.json();
+            if (serversData.status !== 'ok') throw new Error('Error al obtener servidor GoFile');
+            const server = serversData.data.servers[0].name;
+            
+            // 2. Subir archivo
+            const formData = new FormData();
+            formData.append('file', file);
+            const response = await fetch(`https://${server}.gofile.io/uploadFile`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${GOFILE_KEY}` },
+                body: formData
+            });
+            const data = await response.json();
+            if (data.status === 'ok') return data.data.downloadPage;
+            throw new Error(data.message || 'Error al subir archivo');
+        }
+
+        // Helpers para botones de subida con feedback visual
+        async function handleFileUpload(fileInput, uploadFn, urlInputId, previewContainerId, isImage = false) {
+            const file = fileInput.files[0];
+            if (!file) return;
+            
+            const label = fileInput.parentElement;
+            const originalHTML = label.innerHTML;
+            label.classList.add('uploading');
+            label.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo...';
+            
+            try {
+                const url = await uploadFn(file);
+                document.getElementById(urlInputId).value = url;
+                
+                if (previewContainerId) {
+                    const preview = document.getElementById(previewContainerId);
+                    if (isImage) {
+                        preview.innerHTML = `<img src="${url}" class="preview-img" alt="Preview">`;
+                    } else {
+                        preview.innerHTML = `<p class="text-xs text-green-600 mt-1"><i class="fas fa-check-circle mr-1"></i>Archivo subido: <a href="${url}" target="_blank" class="text-blue-600 hover:underline">${file.name}</a></p>`;
+                    }
+                }
+            } catch (error) {
+                alert(' Error al subir: ' + error.message);
+            } finally {
+                label.classList.remove('uploading');
+                label.innerHTML = originalHTML;
+                // Re-attach onchange
+                const newInput = label.querySelector('input[type="file"]');
+                if (newInput) newInput.onchange = fileInput.onchange;
+            }
+        }
+
+        // Handlers específicos
+        window.handleProfilePhotoUpload = (input) => handleFileUpload(input, uploadToImgBB, 'edit-profile-photo', 'profile-photo-preview', true);
+        window.handleCoverUpload = (input) => handleFileUpload(input, uploadToImgBB, 'course-cover-url', 'cover-preview', true);
+        window.handleResourceUpload = (input) => handleFileUpload(input, uploadToGoFile, 'resource-url', null, false);
+        window.handleActivityUpload = (input) => handleFileUpload(input, uploadToGoFile, 'activity-url', null, false);
+        window.handleSubmissionUpload = (input) => handleFileUpload(input, uploadToGoFile, 'view-activity-url', null, false);
+
         let currentUser = null;
         let userData = null;
         let currentCourseId = null;
@@ -329,33 +466,34 @@
         let unsubscribeChat = null;
         let unsubscribeInbox = null;
 
-        // Renderizar avatar con imagen o inicial
         function renderAvatar(containerId, spanId, user) {
             const container = document.getElementById(containerId);
-            const span = document.getElementById(spanId);
             if (user && user.photoUrl) {
-                container.innerHTML = `<img src="${user.photoUrl}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"><span style="display:none" class="w-full h-full items-center justify-center font-bold bg-orange-500 text-white">${(user.name || 'U').charAt(0).toUpperCase()}</span>`;
+                container.innerHTML = `<img src="${user.photoUrl}" class="w-full h-full object-cover" onerror="this.outerHTML='<span class=\\'w-full h-full flex items-center justify-center font-bold bg-blue-600 text-white\\'>${(user.name||'U').charAt(0).toUpperCase()}</span>'">`;
             } else {
                 const initial = (user?.name || 'U').charAt(0).toUpperCase();
-                container.innerHTML = `<span class="w-full h-full flex items-center justify-center font-bold bg-orange-500 text-white">${initial}</span>`;
+                container.innerHTML = `<span class="w-full h-full flex items-center justify-center font-bold bg-blue-600 text-white">${initial}</span>`;
             }
         }
 
         function updateProfileUI() {
-            document.getElementById('user-display-name-top').textContent = userData.name || currentUser.email;
-            document.getElementById('profile-name').textContent = userData.name || currentUser.email;
-            document.getElementById('profile-email').textContent = currentUser.email;
-            document.getElementById('profile-email-info').textContent = currentUser.email;
-            document.getElementById('profile-role').textContent = userData.role.toUpperCase();
-            document.getElementById('profile-role-info').textContent = userData.role === 'profesor' ? 'Profesor' : 'Alumno';
+            const displayName = userData.name || currentUser.email;
+            const el = (id) => document.getElementById(id);
+            if (el('user-display-name-top')) el('user-display-name-top').textContent = displayName;
+            if (el('profile-name')) el('profile-name').textContent = displayName;
+            if (el('profile-email')) el('profile-email').textContent = currentUser.email;
+            if (el('profile-email-info')) el('profile-email-info').textContent = currentUser.email;
+            if (el('profile-role')) el('profile-role').textContent = userData.role === 'profesor' ? 'PROFESOR' : 'ALUMNO';
+            if (el('profile-role-info')) el('profile-role-info').textContent = userData.role === 'profesor' ? 'Profesor' : 'Alumno';
             
             renderAvatar('topbar-avatar-container', 'user-avatar', userData);
             renderAvatar('profile-avatar-container', 'profile-avatar', userData);
 
-            // Mostrar/ocultar botones de profesor
             const isProf = userData.role === 'profesor';
-            document.getElementById('dashboard-create-course-btn').classList.toggle('hidden-section', !isProf);
-            document.getElementById('courses-create-course-btn').classList.toggle('hidden-section', !isProf);
+            const dashBtn = el('dashboard-create-course-btn');
+            const coursesBtn = el('courses-create-course-btn');
+            if (dashBtn) dashBtn.classList.toggle('hidden-section', !isProf);
+            if (coursesBtn) coursesBtn.classList.toggle('hidden-section', !isProf);
         }
 
         window.showAuthTab = (tab) => {
@@ -363,10 +501,10 @@
             document.getElementById('request-form').classList.toggle('hidden-section', tab !== 'request');
             document.getElementById('tab-login').classList.toggle('bg-white', tab === 'login');
             document.getElementById('tab-login').classList.toggle('shadow', tab === 'login');
-            document.getElementById('tab-login').classList.toggle('text-orange-600', tab === 'login');
+            document.getElementById('tab-login').classList.toggle('text-blue-700', tab === 'login');
             document.getElementById('tab-request').classList.toggle('bg-white', tab === 'request');
             document.getElementById('tab-request').classList.toggle('shadow', tab === 'request');
-            document.getElementById('tab-request').classList.toggle('text-orange-600', tab === 'request');
+            document.getElementById('tab-request').classList.toggle('text-blue-700', tab === 'request');
         };
 
         const validateEduBaseEmail = (email) => email.toLowerCase().endsWith('@edubase.es');
@@ -398,7 +536,6 @@
                 try {
                     let userDoc = await getDoc(doc(db, "users", user.uid));
                     if (!userDoc.exists()) {
-                        // Detectar rol: si contiene 'pf' es profesor, si no alumno
                         const role = user.email.toLowerCase().includes('pf') ? 'profesor' : 'alumno';
                         const name = user.email.split('@')[0];
                         await setDoc(doc(db, "users", user.uid), { uid: user.uid, name, email: user.email, role, createdAt: serverTimestamp() });
@@ -432,12 +569,17 @@
             if (form) form.reset();
             const select = document.getElementById('select-course');
             if (select) select.parentElement.classList.remove('hidden-section');
+            // Limpiar previews
+            ['profile-photo-preview','cover-preview'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
         };
 
         // EDITAR PERFIL
         window.openEditProfileModal = () => {
             document.getElementById('edit-profile-name').value = userData.name || '';
             document.getElementById('edit-profile-photo').value = userData.photoUrl || '';
+            if (userData.photoUrl) {
+                document.getElementById('profile-photo-preview').innerHTML = `<img src="${userData.photoUrl}" class="preview-img">`;
+            }
             openModal('edit-profile-modal');
         };
 
@@ -458,7 +600,7 @@
         // CREAR CURSO
         document.getElementById('create-course-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (userData.role !== 'profesor') { alert("️ Solo los profesores pueden crear cursos."); return; }
+            if (userData.role !== 'profesor') { alert("⚠️ Solo los profesores pueden crear cursos."); return; }
             try {
                 await addDoc(collection(db, "courses"), {
                     name: document.getElementById('course-name').value,
@@ -517,7 +659,6 @@
                 select.parentElement.classList.add('hidden-section');
             } else {
                 select.parentElement.classList.remove('hidden-section');
-                // Cargar cursos del profe
                 const q = query(collection(db, "courses"), where("teacherId", "==", currentUser.uid));
                 getDocs(q).then(snap => {
                     select.innerHTML = '<option value="">Selecciona...</option>';
@@ -528,63 +669,60 @@
         };
 
         document.getElementById('add-student-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const courseId = currentCourseId || document.getElementById('select-course').value;
-    const studentEmail = document.getElementById('student-email').value.toLowerCase().trim();
-    
-    if (!courseId) { alert("️ Selecciona un curso"); return; }
-    if (!validateEduBaseEmail(studentEmail)) { alert("⚠️ El correo debe ser @edubase.es"); return; }
-    
-    const btn = e.target.querySelector('button[type="submit"]');
-    btn.disabled = true;
-    btn.textContent = 'Añadiendo...';
-    
-    try {
-        const courseRef = doc(db, "courses", courseId);
-        const courseSnap = await getDoc(courseRef);
-        
-        if (!courseSnap.exists()) {
-            alert("❌ El curso no existe");
-            return;
-        }
-        
-        const students = courseSnap.data().students || [];
-        
-        // Si ya existe, avisar pero no fallar
-        if (students.includes(studentEmail)) {
-            alert("⚠️ Este alumno ya está en el curso");
-            btn.disabled = false;
-            btn.textContent = 'Añadir';
-            return;
-        }
-        
-        // Añadir alumno al array
-        students.push(studentEmail);
-        await updateDoc(courseRef, { students });
-        
-        // Enviar mensaje de invitación
-        await addDoc(collection(db, "messages"), { 
-            to: studentEmail, 
-            from: currentUser.email, 
-            subject: "Invitación a Curso", 
-            body: `Has sido añadido al curso "${courseSnap.data().name}". Revisa la sección de cursos.`, 
-            read: false, 
-            createdAt: serverTimestamp() 
+            e.preventDefault();
+            const courseId = currentCourseId || document.getElementById('select-course').value;
+            const studentEmail = document.getElementById('student-email').value.toLowerCase().trim();
+            
+            if (!courseId) { alert("⚠️ Selecciona un curso"); return; }
+            if (!validateEduBaseEmail(studentEmail)) { alert("⚠️ El correo debe ser @edubase.es"); return; }
+            
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.disabled = true;
+            btn.textContent = 'Añadiendo...';
+            
+            try {
+                const courseRef = doc(db, "courses", courseId);
+                const courseSnap = await getDoc(courseRef);
+                
+                if (!courseSnap.exists()) {
+                    alert("❌ El curso no existe");
+                    return;
+                }
+                
+                const students = courseSnap.data().students || [];
+                
+                if (students.includes(studentEmail)) {
+                    alert("⚠️ Este alumno ya está en el curso");
+                    btn.disabled = false;
+                    btn.textContent = 'Añadir';
+                    return;
+                }
+                
+                students.push(studentEmail);
+                await updateDoc(courseRef, { students });
+                
+                await addDoc(collection(db, "messages"), { 
+                    to: studentEmail, 
+                    from: currentUser.email, 
+                    subject: "Invitación a Curso", 
+                    body: `Has sido añadido al curso "${courseSnap.data().name}". Revisa la sección de cursos.`, 
+                    read: false, 
+                    createdAt: serverTimestamp() 
+                });
+                
+                e.target.reset(); 
+                closeModal('add-student-modal'); 
+                alert("✅ Alumno añadido correctamente");
+                
+                if (currentCourseId) loadParticipants();
+            } catch (error) { 
+                console.error(error);
+                alert("❌ Error: " + error.message); 
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Añadir';
+            }
         });
-        
-        e.target.reset(); 
-        closeModal('add-student-modal'); 
-        alert("✅ Alumno añadido correctamente");
-        
-        if (currentCourseId) loadParticipants();
-    } catch (error) { 
-        console.error(error);
-        alert("❌ Error: " + error.message); 
-    } finally {
-        btn.disabled = false;
-        btn.textContent = 'Añadir';
-    }
-});
 
         // AVISOS
         document.getElementById('add-announcement-form').addEventListener('submit', async (e) => {
@@ -650,7 +788,7 @@
                         const subs = await getDocs(collection(db, "courses", currentCourseId, "units", uid, "activities", aDoc.id, "submissions"));
                         status = `<span class="text-xs text-blue-600">${subs.size} entregas</span>`;
                     }
-                    actHTML += `<div class="activity-item flex items-center gap-3 p-3 rounded-lg border"><div class="moodle-icon moodle-icon-activity"><i class="fas fa-tasks"></i></div><div class="flex-1"><p class="font-medium text-sm">${ad.title}</p><p class="text-xs text-gray-500">${new Date(ad.deadline).toLocaleString()} • ${ad.maxScore} pts</p>${status}</div><div class="flex gap-2">${!isProf?`<button onclick="viewActivityDetail('${uid}','${aDoc.id}')" class="text-orange-600 text-sm font-medium">Ver</button>`:''}${isProf?`<button onclick="viewSubmissions('${uid}','${aDoc.id}','${ad.title}')" class="text-blue-600 text-sm"><i class="fas fa-users"></i></button><button onclick="editActivityFn('${uid}','${aDoc.id}')" class="text-yellow-600 text-sm"><i class="fas fa-edit"></i></button><button onclick="deleteDocFn('units/${uid}/activities','${aDoc.id}')" class="text-red-600 text-sm"><i class="fas fa-trash"></i></button>`:''}</div></div>`;
+                    actHTML += `<div class="activity-item flex items-center gap-3 p-3 rounded-lg border"><div class="moodle-icon moodle-icon-activity"><i class="fas fa-tasks"></i></div><div class="flex-1"><p class="font-medium text-sm">${ad.title}</p><p class="text-xs text-gray-500">${new Date(ad.deadline).toLocaleString()} • ${ad.maxScore} pts</p>${status}</div><div class="flex gap-2">${!isProf?`<button onclick="viewActivityDetail('${uid}','${aDoc.id}')" class="text-blue-600 text-sm font-medium">Ver</button>`:''}${isProf?`<button onclick="viewSubmissions('${uid}','${aDoc.id}','${ad.title}')" class="text-blue-600 text-sm"><i class="fas fa-users"></i></button><button onclick="editActivityFn('${uid}','${aDoc.id}')" class="text-yellow-600 text-sm"><i class="fas fa-edit"></i></button><button onclick="deleteDocFn('units/${uid}/activities','${aDoc.id}')" class="text-red-600 text-sm"><i class="fas fa-trash"></i></button>`:''}</div></div>`;
                 }
 
                 container.innerHTML += `<div class="moodle-card"><div class="moodle-card-header unit-header" onclick="toggleUnit('${uid}')"><div class="moodle-icon moodle-icon-unit"><i class="fas fa-chevron-right" id="unit-icon-${uid}"></i></div><div class="flex-1"><h4 class="font-bold text-gray-900">${uData.title}</h4></div>${isProf?`<div class="flex gap-2" onclick="event.stopPropagation()"><button onclick="openAddResource('${uid}')" class="text-blue-600 text-sm"><i class="fas fa-file-alt"></i></button><button onclick="openAddActivity('${uid}')" class="text-pink-600 text-sm"><i class="fas fa-tasks"></i></button><button onclick="editUnitFn('${uid}')" class="text-yellow-600 text-sm"><i class="fas fa-edit"></i></button><button onclick="deleteDocFn('units','${uid}')" class="text-red-600 text-sm"><i class="fas fa-trash"></i></button></div>`:''}</div><div id="unit-content-${uid}" class="hidden-section bg-white p-4">${uData.description?`<div class="mb-4 p-3 bg-amber-50 rounded-lg border border-amber-200"><h5 class="font-semibold text-sm text-amber-900 mb-1">Objetivos:</h5><p class="text-sm text-gray-700 whitespace-pre-wrap">${uData.description}</p></div>`:''}${resHTML?`<div class="mb-4"><h5 class="font-semibold text-sm text-gray-700 mb-2 uppercase">Apuntes:</h5><div class="space-y-2">${resHTML}</div></div>`:''}${actHTML?`<div><h5 class="font-semibold text-sm text-gray-700 mb-2 uppercase">Tareas:</h5><div class="space-y-2">${actHTML}</div></div>`:''}</div></div>`;
@@ -739,7 +877,7 @@
                 const ad = (await getDoc(doc(db, "courses", currentCourseId, "units", currentViewUnitId, "activities", currentViewActivityId))).data();
                 await addDoc(collection(db, "courses", currentCourseId, "units", currentViewUnitId, "activities", currentViewActivityId, "submissions"), { studentId: currentUser.uid, studentName: userData.name, studentEmail: currentUser.email, comment, url, maxScore: ad.maxScore, submittedAt: serverTimestamp() });
                 closeModal('view-activity-modal'); alert("✅ Entregada"); loadUnits();
-            } catch (error) { alert(" Error: " + error.message); }
+            } catch (error) { alert("❌ Error: " + error.message); }
         });
 
         window.viewSubmissions = async (uid, aid, title) => {
@@ -751,7 +889,7 @@
             snap.docs.forEach(d => {
                 const data = d.data();
                 const gradeInfo = data.grade !== undefined ? `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-semibold">Nota: ${data.grade}/${data.maxScore||10}</span>` : '<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm">Sin calificar</span>';
-                container.innerHTML += `<div class="bg-gray-50 p-4 rounded-lg border"><div class="flex justify-between flex-wrap gap-2"><div><p class="font-semibold">${data.studentName}</p><p class="text-xs text-gray-500">${data.studentEmail}</p></div>${gradeInfo}</div>${data.comment?`<p class="text-sm italic mt-2">"${data.comment}"</p>`:''}${data.url?`<a href="${data.url}" target="_blank" class="inline-block mt-2 text-blue-600 hover:underline text-sm"><i class="fas fa-external-link-alt mr-1"></i>Ver entrega</a>`:''}<div class="mt-3 flex gap-2"><button onclick="openGradeSubmission('${uid}','${aid}','${d.id}','${data.studentName}','${data.studentEmail}','${(data.comment||'').replace(/'/g,"\\'")}','${data.url||''}','${data.grade||''}','${data.feedback||''}')" class="bg-orange-600 text-white px-3 py-1.5 rounded-lg text-sm"><i class="fas fa-star mr-1"></i>Calificar</button><button onclick="deleteSubmission('${uid}','${aid}','${d.id}')" class="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm"><i class="fas fa-trash mr-1"></i></button></div></div>`;
+                container.innerHTML += `<div class="bg-gray-50 p-4 rounded-lg border"><div class="flex justify-between flex-wrap gap-2"><div><p class="font-semibold">${data.studentName}</p><p class="text-xs text-gray-500">${data.studentEmail}</p></div>${gradeInfo}</div>${data.comment?`<p class="text-sm italic mt-2">"${data.comment}"</p>`:''}${data.url?`<a href="${data.url}" target="_blank" class="inline-block mt-2 text-blue-600 hover:underline text-sm"><i class="fas fa-external-link-alt mr-1"></i>Ver entrega</a>`:''}<div class="mt-3 flex gap-2"><button onclick="openGradeSubmission('${uid}','${aid}','${d.id}','${data.studentName}','${data.studentEmail}','${(data.comment||'').replace(/'/g,"\\'")}','${data.url||''}','${data.grade||''}','${data.feedback||''}')" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm"><i class="fas fa-star mr-1"></i>Calificar</button><button onclick="deleteSubmission('${uid}','${aid}','${d.id}')" class="bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm"><i class="fas fa-trash mr-1"></i></button></div></div>`;
             });
         };
 
@@ -783,10 +921,10 @@
         async function loadParticipants() {
             const container = document.getElementById('participants-list'); container.innerHTML = '';
             const cd = (await getDoc(doc(db, "courses", currentCourseId))).data();
-            container.innerHTML += `<div class="flex items-center gap-3 p-3 bg-orange-50 rounded-lg border border-orange-200"><div class="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">${(cd.teacherName||'P').charAt(0).toUpperCase()}</div><div class="flex-1"><p class="font-semibold">${cd.teacherName||cd.teacherEmail}</p><p class="text-xs text-gray-600">${cd.teacherEmail}</p></div><span class="text-xs bg-orange-200 text-orange-800 px-2 py-1 rounded-full">Profesor</span></div>`;
+            container.innerHTML += `<div class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200"><div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">${(cd.teacherName||'P').charAt(0).toUpperCase()}</div><div class="flex-1"><p class="font-semibold">${cd.teacherName||cd.teacherEmail}</p><p class="text-xs text-gray-600">${cd.teacherEmail}</p></div><span class="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded-full">Profesor</span></div>`;
             const students = cd.students || [];
             if (students.length === 0) container.innerHTML += '<p class="text-gray-500 text-sm mt-4">Sin alumnos.</p>';
-            else students.forEach(em => { const n = em.split('@')[0]; container.innerHTML += `<div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border"><div class="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">${n.charAt(0).toUpperCase()}</div><div class="flex-1"><p class="font-semibold">${n}</p><p class="text-xs text-gray-600">${em}</p></div><span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Alumno</span></div>`; });
+            else students.forEach(em => { const n = em.split('@')[0]; container.innerHTML += `<div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border"><div class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold">${n.charAt(0).toUpperCase()}</div><div class="flex-1"><p class="font-semibold">${n}</p><p class="text-xs text-gray-600">${em}</p></div><span class="text-xs bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full">Alumno</span></div>`; });
         }
 
         async function loadGrades() {
@@ -799,28 +937,28 @@
                     let html = '', total = 0, count = 0;
                     gs.docs.forEach(g => { const gd = g.data(); total += gd.grade; count++; html += `<div class="flex justify-between text-sm py-1 border-b"><span>${gd.taskTitle||'Eval'}</span><span class="font-semibold">${gd.grade}</span></div>`; });
                     const avg = count > 0 ? (total/count).toFixed(1) : '-';
-                    container.innerHTML += `<div class="bg-gray-50 p-4 rounded-lg"><div class="flex justify-between mb-2"><p class="font-semibold">${em}</p><span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-bold">Media: ${avg}</span></div>${count>0?`<div class="bg-white p-3 rounded mt-2">${html}</div>`:'<p class="text-sm text-gray-500">Sin notas</p>'}<div class="flex gap-2 mt-3"><input type="text" id="gt-${em}" placeholder="Nombre eval" class="px-3 py-2 border rounded-lg flex-1 text-sm"><input type="number" id="gv-${em}" placeholder="Nota" min="0" max="10" step="0.1" class="px-3 py-2 border rounded-lg w-24 text-sm"><button onclick="saveGrade('${em}')" class="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm">Guardar</button></div></div>`;
+                    container.innerHTML += `<div class="bg-gray-50 p-4 rounded-lg"><div class="flex justify-between mb-2"><p class="font-semibold">${em}</p><span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold">Media: ${avg}</span></div>${count>0?`<div class="bg-white p-3 rounded mt-2">${html}</div>`:'<p class="text-sm text-gray-500">Sin notas</p>'}<div class="flex gap-2 mt-3"><input type="text" id="gt-${em}" placeholder="Nombre eval" class="px-3 py-2 border rounded-lg flex-1 text-sm"><input type="number" id="gv-${em}" placeholder="Nota" min="0" max="10" step="0.1" class="px-3 py-2 border rounded-lg w-24 text-sm"><button onclick="saveGrade('${em}')" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">Guardar</button></div></div>`;
                 }
             } else {
                 const container = document.getElementById('student-grades-list'); container.innerHTML = '';
                 const snap = await getDocs(query(collection(db, "courses", currentCourseId, "grades"), where("studentEmail", "==", currentUser.email)));
                 if (snap.empty) { container.innerHTML = '<p class="text-gray-500">Sin calificaciones.</p>'; return; }
                 let total = 0, count = 0;
-                snap.docs.forEach(d => { const data = d.data(); total += data.grade; count++; container.innerHTML += `<div class="bg-gray-50 p-4 rounded-lg"><div class="flex justify-between"><div><p class="font-semibold">${data.taskTitle||'Eval'}</p><p class="text-sm text-gray-600">${data.feedback||''}</p></div><span class="text-2xl font-bold text-orange-600">${data.grade}</span></div></div>`; });
-                container.innerHTML = `<div class="bg-orange-50 p-4 rounded-lg mb-4 border border-orange-200"><p class="text-sm text-orange-700">Media:</p><p class="text-3xl font-bold text-orange-900">${(total/count).toFixed(1)}</p></div>` + container.innerHTML;
+                snap.docs.forEach(d => { const data = d.data(); total += data.grade; count++; container.innerHTML += `<div class="bg-gray-50 p-4 rounded-lg"><div class="flex justify-between"><div><p class="font-semibold">${data.taskTitle||'Eval'}</p><p class="text-sm text-gray-600">${data.feedback||''}</p></div><span class="text-2xl font-bold text-blue-600">${data.grade}</span></div></div>`; });
+                container.innerHTML = `<div class="bg-blue-50 p-4 rounded-lg mb-4 border border-blue-200"><p class="text-sm text-blue-700">Media:</p><p class="text-3xl font-bold text-blue-900">${(total/count).toFixed(1)}</p></div>` + container.innerHTML;
             }
         }
 
         window.saveGrade = async (em) => {
             const t = document.getElementById(`gt-${em}`).value; const g = document.getElementById(`gv-${em}`).value;
-            if (!g) { alert("️ Nota requerida"); return; }
+            if (!g) { alert("⚠️ Nota requerida"); return; }
             try { await addDoc(collection(db, "courses", currentCourseId, "grades"), { studentEmail: em, taskTitle: t||'Eval', grade: parseFloat(g), gradedByName: userData.name, createdAt: serverTimestamp() }); alert("✅ Guardada"); loadGrades(); } catch(e){alert("Error");}
         };
 
         function setupInbox() {
             unsubscribeInbox = onSnapshot(query(collection(db, "messages"), where("to", "==", currentUser.email), orderBy("createdAt", "desc")), (snap) => {
                 const c = document.getElementById('inbox-list'); c.innerHTML = ''; let u = 0;
-                snap.docs.forEach(d => { const data = d.data(); if (!data.read) u++; const div = document.createElement('div'); div.className = `p-3 rounded-lg cursor-pointer ${data.read?'bg-white hover:bg-gray-50':'bg-orange-50 border-l-4 border-orange-500'}`; div.innerHTML = `<p class="font-semibold text-sm truncate">${data.subject}</p><p class="text-xs text-gray-600 truncate">De: ${data.from}</p>`; div.onclick = () => viewMessage(d.id, data); c.appendChild(div); });
+                snap.docs.forEach(d => { const data = d.data(); if (!data.read) u++; const div = document.createElement('div'); div.className = `p-3 rounded-lg cursor-pointer ${data.read?'bg-white hover:bg-gray-50':'bg-blue-50 border-l-4 border-blue-500'}`; div.innerHTML = `<p class="font-semibold text-sm truncate">${data.subject}</p><p class="text-xs text-gray-600 truncate">De: ${data.from}</p>`; div.onclick = () => viewMessage(d.id, data); c.appendChild(div); });
                 const b = document.getElementById('inbox-badge-top'); if (u>0) { b.textContent = u; b.classList.remove('hidden-section'); } else b.classList.add('hidden-section');
             });
         }
@@ -841,7 +979,7 @@
         function setupChat() {
             unsubscribeChat = onSnapshot(query(collection(db, "chat_messages"), orderBy("createdAt", "asc")), (snap) => {
                 const c = document.getElementById('chat-messages'); c.innerHTML = '';
-                snap.docs.forEach(d => { const data = d.data(); const isMe = data.email === currentUser.email; const div = document.createElement('div'); div.className = `flex ${isMe?'justify-end':'justify-start'}`; div.innerHTML = `<div class="max-w-[70%] ${isMe?'bg-orange-600 text-white':'bg-white border text-gray-800'} rounded-2xl px-4 py-2 shadow-sm"><p class="text-xs ${isMe?'text-orange-200':'text-gray-500'} mb-1">${data.name} • ${data.createdAt?new Date(data.createdAt.toDate()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}</p><p>${data.text}</p></div>`; c.appendChild(div); });
+                snap.docs.forEach(d => { const data = d.data(); const isMe = data.email === currentUser.email; const div = document.createElement('div'); div.className = `flex ${isMe?'justify-end':'justify-start'}`; div.innerHTML = `<div class="max-w-[70%] ${isMe?'bg-blue-600 text-white':'bg-white border text-gray-800'} rounded-2xl px-4 py-2 shadow-sm"><p class="text-xs ${isMe?'text-blue-200':'text-gray-500'} mb-1">${data.name} • ${data.createdAt?new Date(data.createdAt.toDate()).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):''}</p><p>${data.text}</p></div>`; c.appendChild(div); });
                 c.scrollTop = c.scrollHeight;
             });
         }
